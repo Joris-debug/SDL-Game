@@ -1,0 +1,14 @@
+﻿  CMenu.cpp
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_SDL_GetError" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_SDL_CreateWindow" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_SDL_CreateRenderer" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_SDL_Init" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_IMG_Init" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+CMenu.obj : error LNK2019: Verweis auf nicht aufgelöstes externes Symbol "_TTF_Init" in Funktion ""public: __thiscall CMenu::CMenu(void)" (??0CMenu@@QAE@XZ)".
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\SDL2-2.0.20\lib\x64\SDL2.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\SDL2-2.0.20\lib\x64\SDL2main.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\SDL2_ttf\lib\libfreetype-6.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\SDL2_ttf\lib\libharfbuzz-0.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\SDL2_ttf\lib\SDL2_ttf.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\libs\box2d\lib\Debug\box2d.lib : warning LNK4272: Bibliothekcomputertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Debug\Game.exe : fatal error LNK1120: 6 nicht aufgelöste Externe
