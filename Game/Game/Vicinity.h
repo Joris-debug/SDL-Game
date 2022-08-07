@@ -5,12 +5,15 @@ class Vicinity
 {
 private:
 	SDL_Texture* m_p_texture_;
-	SDL_Rect m_bounds_;
+	SDL_FRect m_bounds_;
 
 public:
-	Vicinity(SDL_Surface* surface, SDL_Rect m_bounds_, SDL_Renderer* renderer);
+	Vicinity(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer);
 	~Vicinity();
-	void moveVicinty(int x, int y);
-	void renderVicinity(SDL_Renderer* renderer, double pixel_per_pixel);
+	Vicinity();
+	void moveVicinity(float x, float y, int screenWidth);
+	void renderVicinity(SDL_Renderer* renderer, double pixel_per_pixel, int screenWidth);
+	inline SDL_FRect* getBounds() { return &m_bounds_; }
+	inline SDL_Texture* getTexture() { return m_p_texture_; }
 };
 

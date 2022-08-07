@@ -11,7 +11,6 @@ Interface::Interface()
         std::cout << "Error initializing SDL_ttf: " << TTF_GetError() << std::endl;
     }
     SDL_Init(SDL_INIT_EVERYTHING);
- 
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;
     int initted = IMG_Init(flags);
     if ((initted & flags) != flags) {
@@ -19,7 +18,7 @@ Interface::Interface()
         printf("IMG_Init: %s\n", IMG_GetError());
     }
 
-    m_p_window_ = SDL_CreateWindow("Part Time Knight", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    m_p_window_ = SDL_CreateWindow("Part Time Knight", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     m_p_renderer_ = SDL_CreateRenderer(m_p_window_, -1, 0);
     //SDL_SetWindowFullscreen(m_p_window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
     getPixelPerPixel();
@@ -62,8 +61,7 @@ void Interface::getPixelPerPixel()
     int width;
     int height;
     SDL_GetWindowSize(m_p_window_, &width, &height);
-    m_pixel_per_pixel_ = double(height) / 320;
-    std::cout << m_pixel_per_pixel_ << std::endl;
+    m_pixel_per_pixel_ = double(height) / 640; // The windows should always show 640 pixels on the y-axis
 }
 
 
