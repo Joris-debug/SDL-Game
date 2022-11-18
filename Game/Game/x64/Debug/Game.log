@@ -1,6 +1,8 @@
-﻿  Player.cpp
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Player.cpp(32,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Player.cpp(33,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Player.cpp(34,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Player.cpp(35,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+﻿  World.cpp
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(29,26): warning C4244: "+=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(30,26): warning C4244: "+=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(55,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(56,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(57,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(58,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\x64\Debug\Game.exe

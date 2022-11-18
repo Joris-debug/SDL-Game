@@ -3,7 +3,7 @@
 class GameHandler;
 class Vicinity
 {
-private:
+protected:
 	SDL_Texture* m_p_texture_;
 	SDL_FRect m_bounds_;
 

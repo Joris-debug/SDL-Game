@@ -27,14 +27,21 @@ int GameHandler::gameLoop()
 				case SDL_KEYDOWN:
 					switch (m_p_interface_->getInputQueue()->key.keysym.sym)
 					{
-					case SDLK_s:
+
+					case SDLK_w:
 						y_input = 1;
 						break;
-					case SDLK_a:
-						x_input = -1;
+
+					case SDLK_s:
+						y_input = -1;
 						break;
-					case SDLK_d:
+
+					case SDLK_a:
 						x_input = 1;
+						break;
+
+					case SDLK_d:
+						x_input = -1;
 						break;
 
 					case SDLK_0:
@@ -52,7 +59,7 @@ int GameHandler::gameLoop()
 
 					switch (m_p_interface_->getInputQueue()->key.keysym.sym)
 					{
-
+					case SDLK_w:
 					case SDLK_s:
 						y_input = 0;
 						break;
@@ -92,12 +99,7 @@ GameHandler::~GameHandler()
 
 int GameHandler::initLevel1()
 {
-	m_p_currentWorld_ = std::unique_ptr<World>(new World(IMG_Load(RSC_LEVEL_1), { -500,-500,1792 * 2,768 * 2 }, m_p_renderer_));
-	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_CASTLE_BACKGROUND_LAYER_01), { 0,-100,426 * 2,384 * 2 }, m_p_renderer_));
-	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_CASTLE_BACKGROUND_LAYER_02), { 0,-100,426 * 2,384 * 2 }, m_p_renderer_));
-	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_CASTLE_BACKGROUND_LAYER_03B), { 0,-100,426 * 2,384 * 2 }, m_p_renderer_));
-	/*m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_CASTLE_BACKGROUND_LAYER_04), { 0,-300,426 * 2,384 * 2 }, m_p_renderer_));*/
-	
+	m_p_currentWorld_ = std::unique_ptr<World>(new World(IMG_Load(RSC_LEVEL_1), { -1190,-1250,1632 * 2,1632 * 2 }, m_p_renderer_));	
 	return gameLoop();
 }
 

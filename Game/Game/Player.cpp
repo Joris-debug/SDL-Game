@@ -2,31 +2,108 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
-Player::Player(SDL_Renderer* renderer)
+Player::Player(SDL_Renderer* renderer) : Body({ 400 - 20, 400, 38 * 2, 20 * 2 }, { 330, 300 - (80 - 20), 120 * 2, 80 * 2 }, { 0, 0, 0, 0 })
 {
-	m_bounds_ = { 400 - 20, 400, 38 * 2, 20 * 2};
-	m_spriteBounds_ = { 330, 300 - (80 - 20), 120 * 2, 80 * 2 };
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
 	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
-	currentMode = 1; //Player spawns in idle
+
+	tmpSurface = IMG_Load(RSC_PLAYER_RUN);
+	m_p_textureRun_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	SDL_FreeSurface(tmpSurface);
+
+	tmpSurface = IMG_Load(RSC_PLAYER_TURN);
+	m_p_textureTurn_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	SDL_FreeSurface(tmpSurface);
+
+	m_isTurning_ = false;
 }
 
 Player::~Player()
 {
+	//todo
 }
 
-void Player::animatePlayer()
+bool Player::detectTurning(int x, int y)
 {
-	
-	int totalFrames = 10;   
-	int delayPerFrame = 150;
-	int tmp = 120 * ((SDL_GetTicks() / delayPerFrame) % totalFrames);
-	currentMode = 1;
-	m_spriteCoords_ = { tmp, 0, 120, 80 };
+	if (x == -1)
+		return false;
+
+	if (m_lastMove_.x == 1 && x != 1) {
+		return true;
+	}
+
+	if (m_lastMove_.y == -1 && y != -1) {
+		return true;
+	}
+
+	return false;
 }
 
-void Player::renderPlayer(SDL_Renderer *renderer, double pixel_per_pixel)
+void Player::animatePlayer(int x, int y)
+{	
+	int totalSprites = 1;
+	int delayPerFrame = 100;
+	int spriteLayer = 0;
+
+	if (m_isTurning_) //A turn started less than 3 frames ago
+	{
+		totalSprites = 3;
+		if (m_currentSprite_ == 2)
+			m_isTurning_ = false;
+	}
+
+	else if (detectTurning(x, y)) {	//A turn starts now
+		totalSprites = 3;
+		m_currentMode_ = 4;
+		m_isTurning_ = true;
+		m_lastFrame_ = SDL_GetTicks();
+		m_currentSprite_ = 0;
+	}
+
+	else if (!x && !y) {
+		totalSprites = 10;
+		m_currentMode_ = 1;
+	}
+
+	else if (x == -1) {		//Walk right
+		totalSprites = 10;
+		m_currentMode_ = 2;
+	}
+
+	else if (x == 1) {		//Walk left
+		spriteLayer = 1;
+		totalSprites = 10;
+		m_currentMode_ = 3;
+	}
+
+	else if (y == 1) {		//Walk upwards
+		totalSprites = 10;
+		m_currentMode_ = 3;
+	}
+
+	else if (y == -1) {		//Walk downwards
+		spriteLayer = 1;
+		totalSprites = 10;
+		m_currentMode_ = 2;
+	}
+
+	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {
+		m_lastFrame_ = SDL_GetTicks();
+		m_currentSprite_++;
+	}
+	
+	if (m_currentSprite_ >= totalSprites) {
+		m_currentSprite_ = 1;
+	}
+
+	m_lastMove_.x = x;
+	m_lastMove_.y = y;
+
+	m_spriteCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
+}
+
+void Player::renderPlayer(SDL_Renderer* renderer, double pixel_per_pixel)
 {
 	SDL_FRect tmp = m_spriteBounds_;
 	tmp.x = round(tmp.x * pixel_per_pixel);
@@ -34,6 +111,16 @@ void Player::renderPlayer(SDL_Renderer *renderer, double pixel_per_pixel)
 	tmp.w = round(tmp.w * pixel_per_pixel);
 	tmp.h = round(tmp.h * pixel_per_pixel);
 
-	if (currentMode == 1)
+	switch (m_currentMode_) {
+	case 1:
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_spriteCoords_, &tmp);
+		break;
+	case 2:
+	case 3:
+		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_spriteCoords_, &tmp);
+		break;
+	case 4:
+		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_spriteCoords_, &tmp);
+		break;
+	}
 }

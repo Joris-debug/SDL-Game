@@ -30,10 +30,13 @@
     <ClCompile Include="World.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
+    <ClCompile Include="Body.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +56,13 @@
     <ClInclude Include="World.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="Body.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
