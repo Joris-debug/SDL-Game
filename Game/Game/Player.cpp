@@ -2,7 +2,7 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
-Player::Player(SDL_Renderer* renderer) : Body({ 400 - 20, 400, 38 * 2, 20 * 2 }, { 330, 300 - (80 - 20), 120 * 2, 80 * 2 }, { 0, 0, 0, 0 })
+Player::Player(SDL_Renderer* renderer) : Body({ 400 - 20, 400, 38 * 2, 20 * 2 }, { 310, 240, 120 * 2, 80 * 2 })
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
 	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
@@ -16,6 +16,8 @@ Player::Player(SDL_Renderer* renderer) : Body({ 400 - 20, 400, 38 * 2, 20 * 2 },
 	m_p_textureTurn_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
+	m_footSpace_ = { 380, 400, 38 * 2, 10 * 2 }; //Todo
+
 	m_isTurning_ = false;
 }
 
@@ -26,21 +28,14 @@ Player::~Player()
 
 bool Player::detectTurning(int x, int y)
 {
-	if (x == -1)
-		return false;
-
-	if (m_lastMove_.x == 1 && x != 1) {
-		return true;
-	}
-
-	if (m_lastMove_.y == -1 && y != -1) {
+	if ((m_lastMove_.y == -1 || m_lastMove_.x == 1) && x == 0 && y == 0) {
 		return true;
 	}
 
 	return false;
 }
 
-void Player::animatePlayer(int x, int y)
+void Player::animateBody(int x, int y)
 {	
 	int totalSprites = 1;
 	int delayPerFrame = 100;
@@ -103,7 +98,7 @@ void Player::animatePlayer(int x, int y)
 	m_spriteCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
 }
 
-void Player::renderPlayer(SDL_Renderer* renderer, double pixel_per_pixel)
+void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 {
 	SDL_FRect tmp = m_spriteBounds_;
 	tmp.x = round(tmp.x * pixel_per_pixel);
