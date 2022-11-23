@@ -2,7 +2,7 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
-Player::Player(SDL_Renderer* renderer) : Body({ 400 - 20, 400, 38 * 2, 20 * 2 }, { 310, 240, 120 * 2, 80 * 2 })
+Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 })
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
 	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
@@ -95,7 +95,7 @@ void Player::animateBody(int x, int y)
 	m_lastMove_.x = x;
 	m_lastMove_.y = y;
 
-	m_spriteCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
+	m_textureCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
 }
 
 void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
@@ -108,14 +108,14 @@ void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 
 	switch (m_currentMode_) {
 	case 1:
-		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_spriteCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
 		break;
 	case 2:
 	case 3:
-		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_spriteCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
 		break;
 	case 4:
-		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_spriteCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &tmp);
 		break;
 	}
 }

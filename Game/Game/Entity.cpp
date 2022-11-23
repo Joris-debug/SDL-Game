@@ -8,3 +8,4 @@ Entity::Entity(SDL_FRect m_bounds_)
 Entity::~Entity()
 {
 }
+

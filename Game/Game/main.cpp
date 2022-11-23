@@ -3,6 +3,5 @@
 
 int main()
 {
-	Interface gui;
-	
+	Interface gui;	
 }

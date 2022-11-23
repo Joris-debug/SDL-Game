@@ -16,22 +16,11 @@ Vicinity::Vicinity()
 {
 }
 
-void Vicinity::moveVicinity(float x, float y, int screenWidth)
+void Vicinity::moveVicinity(float x, float y)
 {
 	m_bounds_.x += x;
 	m_bounds_.y += y;
 
-	if (m_bounds_.x + m_bounds_.w >= 0)
-	{
-		m_bounds_.x -= m_bounds_.w;
-		return;
-	}
-
-	if (m_bounds_.x <= m_bounds_.w * -3)
-	{
-		m_bounds_.x += m_bounds_.w;
-		return;
-	}
 }
 
 void Vicinity::renderVicinity(SDL_Renderer* renderer, double pixel_per_pixel, int screenWidth)
