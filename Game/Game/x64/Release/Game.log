@@ -1,0 +1,24 @@
+﻿  World.cpp
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(59,37): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(59,22): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(62,38): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(62,23): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(68,45): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(68,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(78,27): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(86,27): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(90,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(98,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(103,38): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(103,27): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(110,39): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(110,27): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(127,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(128,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(129,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(130,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+  Code wird generiert.
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 218 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Codegenerierung ist abgeschlossen.
+  Game.vcxproj -> C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\x64\Release\Game.exe

@@ -16,6 +16,10 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_p_textureTurn_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
+	tmpSurface = IMG_Load(RSC_PLAYER_ATTACK);
+	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	SDL_FreeSurface(tmpSurface);
+
 	m_footSpace_ = { 380, 400, 38 * 2, 10 * 2 }; //Todo
 
 	m_isTurning_ = false;
@@ -41,54 +45,68 @@ void Player::animateBody(int x, int y)
 	int delayPerFrame = 100;
 	int spriteLayer = 0;
 
-	if (m_isTurning_) //A turn started less than 3 frames ago
-	{
-		totalSprites = 3;
-		if (m_currentSprite_ == 2)
-			m_isTurning_ = false;
-	}
 
-	else if (detectTurning(x, y)) {	//A turn starts now
-		totalSprites = 3;
-		m_currentMode_ = 4;
-		m_isTurning_ = true;
-		m_lastFrame_ = SDL_GetTicks();
-		m_currentSprite_ = 0;
-	}
+	do {
 
-	else if (!x && !y) {
-		totalSprites = 10;
-		m_currentMode_ = 1;
-	}
+		if (m_isAttacking_) //An attack started
+		{
+			totalSprites = 10;
+			m_currentMode_ = 3;
+			if (m_lastMove_.x == 1 || (m_lastMove_.y == -1 && m_lastMove_.x != -1))
+				spriteLayer = 1;
+			if (m_currentSprite_ >= 9)
+				m_isAttacking_ = false;
 
-	else if (x == -1) {		//Walk right
-		totalSprites = 10;
-		m_currentMode_ = 2;
-	}
+			x = m_lastMove_.x;
+			y = m_lastMove_.y;
+			break;
+		}
+		if (m_isTurning_) //A turn started less than 3 frames ago
+		{
+			totalSprites = 3;
+			if (m_currentSprite_ >= 2)
+				m_isTurning_ = false;
+			break;
+		}
 
-	else if (x == 1) {		//Walk left
-		spriteLayer = 1;
-		totalSprites = 10;
-		m_currentMode_ = 3;
-	}
+		if (detectTurning(x, y)) {	//A turn movement starts now
+			totalSprites = 3;
+			m_currentMode_ = 4;
+			m_isTurning_ = true;
+			m_lastFrame_ = SDL_GetTicks();
+			m_currentSprite_ = 0;
+			break;
+		}
 
-	else if (y == 1) {		//Walk upwards
-		totalSprites = 10;
-		m_currentMode_ = 3;
-	}
+		if (!x && !y) {	//Idle
+			totalSprites = 10;
+			m_currentMode_ = 1;
+			break;
+		}
 
-	else if (y == -1) {		//Walk downwards
-		spriteLayer = 1;
-		totalSprites = 10;
-		m_currentMode_ = 2;
-	}
+		if (x == -1 || (y == 1 && x != 1)) {		//Walk right or upwards
+			totalSprites = 10;
+			m_currentMode_ = 2;
+			break;
+		}
 
-	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {
+		if (x == 1 || (y == -1 && x != -1)) {		//Walk left or downwards
+			spriteLayer = 1;
+			totalSprites = 10;
+			m_currentMode_ = 2;
+			break;
+		}
+
+
+	} while (false);
+
+
+	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {	//Next sprite
 		m_lastFrame_ = SDL_GetTicks();
 		m_currentSprite_++;
 	}
 	
-	if (m_currentSprite_ >= totalSprites) {
+	if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
 		m_currentSprite_ = 1;
 	}
 
@@ -96,6 +114,13 @@ void Player::animateBody(int x, int y)
 	m_lastMove_.y = y;
 
 	m_textureCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
+}
+
+void Player::attack(std::list<std::unique_ptr<Enemy>>* entityList)
+{
+	m_isAttacking_ = true;
+	m_lastAttack_ = SDL_GetTicks();
+	m_currentSprite_ = 0;
 }
 
 void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
@@ -111,8 +136,10 @@ void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
 		break;
 	case 2:
-	case 3:
 		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
+		break;
+	case 3:
+		SDL_RenderCopyF(renderer, m_p_textureAttack_, &m_textureCoords_, &tmp);
 		break;
 	case 4:
 		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &tmp);

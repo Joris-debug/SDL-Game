@@ -15,7 +15,7 @@ protected:
 	SDL_Rect m_textureCoords_;
 	walkingVector m_lastMove_;
 	Uint32 m_lastFrame_;
-	int m_currentMode_;		// 1: Idle, 2: Walk left, 3: Walk right, ...
+	int m_currentMode_;		// 1: Idle, 2: Walk, 3: Attack, 4: Turn, ...
 	int m_currentSprite_;	// The current sprite of the animation that is playing
 public:
 	virtual void animateBody(int x, int y) = 0;

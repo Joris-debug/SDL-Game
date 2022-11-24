@@ -10,7 +10,7 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_FR
 walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 {
 	Player* enemyTarget = p_world->getPlayer()->get();
-	SDL_FRect targetLocation = enemyTarget->getBounds();
+	SDL_FRect targetLocation = *(enemyTarget->getBounds());
 
 	int x = 0, y = 0;
 	int margin = 8;
@@ -25,18 +25,51 @@ walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 	else if (targetLocation.y + (targetLocation.h / 2.0) + margin < m_bounds_.y + (m_bounds_.h / 2.0))
 		y = -1;
 
-	bool xCollision = false, yCollision = false;
+	bool xCollision = true, yCollision = true;
+	double factor = (unsigned int)this % 5;
+	factor += 3;
+	double xMovement = (x * deltaTime) * (factor / 10), yMovement = (y * deltaTime) * (factor / 10);
+	
 	if (x != 0) {
-		this->moveEntity(x * deltaTime, 0);
-		for (auto const& cursor : *p_world->getEnemyList()) {
-			if (SDL_HasIntersectionF(this->m_bounds_, cursor->getBounds())) {
+		xCollision = false;
+		this->moveEntity(xMovement, 0);
 
+		for (auto const& cursor : *p_world->getEnemyList()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				xCollision = true;
+				break;
 			}
 		}
-
-		
+		this->moveEntity(-xMovement, 0);
 	}
-	return { x * !xCollision, y * !yCollision };
+
+	if (y != 0) {
+		this->moveEntity(0, yMovement);
+		yCollision = false;
+		for (auto const& cursor : *p_world->getEnemyList()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				yCollision = true;
+				break;
+			}
+		}
+		this->moveEntity(0 , -yMovement);
+	}
+
+	if (!xCollision && !yCollision && x != 0 && y != 0) { //check if x and y movement results in colission
+
+		this->moveEntity(xMovement, yMovement);
+		for (auto const& cursor : *p_world->getEnemyList()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				yCollision = true;
+				break;
+			}
+		}
+		this->moveEntity(-xMovement, -yMovement);
+	}
+
+	this->moveBody((x * deltaTime * !xCollision) * (factor / 10), (y * deltaTime * !yCollision) * (factor / 10));
+
+	return { x , y };
 }
 
 void Enemy::animateBody(int x, int y)
@@ -45,35 +78,44 @@ void Enemy::animateBody(int x, int y)
 	int delayPerFrame = 100;
 	int spriteLayer = 0;
 
-	if (!x && !y) {
-		delayPerFrame = 6000;
-		m_currentMode_ = 1;
-		totalSprites = 4;
-	}
+	do {
 
-	else if (x == 1) {
-		m_currentMode_ = 2;
-		totalSprites = 4;
-		spriteLayer = 1;
-	}
+		if (!x && !y) {
+			delayPerFrame = 6000;
+			m_currentMode_ = 1;
+			totalSprites = 4;
+			break;
+		}
 
-	else if (x == -1) {
-		m_currentMode_ = 3;
-		totalSprites = 4;
-		spriteLayer = 2;
-	}
+		if (x == 1) {
+			m_currentMode_ = 2;
+			totalSprites = 4;
+			spriteLayer = 1;
+			break;
+		}
 
-	else if (y == 1) {
-		m_currentMode_ = 4;
-		totalSprites = 4;
-		spriteLayer = 0;
-	}
+		if (x == -1) {
+			m_currentMode_ = 2;
+			totalSprites = 4;
+			spriteLayer = 2;
+			break;
+		}
 
-	else if (y == -1) {
-		m_currentMode_ = 4;
-		totalSprites = 4;
-		spriteLayer = 3;
-	}
+		if (y == 1) {
+			m_currentMode_ = 2;
+			totalSprites = 4;
+			spriteLayer = 0;
+			break;
+		}
+
+		if (y == -1) {
+			m_currentMode_ = 2;
+			totalSprites = 4;
+			spriteLayer = 3;
+			break;
+		}
+
+	} while (false);
 
 	int tmp = 32 * ((SDL_GetTicks() / delayPerFrame) % totalSprites);
 	m_textureCoords_ = { tmp, 32 * spriteLayer,  32,  32 };
@@ -92,8 +134,6 @@ void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
 		break;
 	case 2:
-	case 3:
-	case 4:
 		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
 		break;
 	}

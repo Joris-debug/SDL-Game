@@ -1,5 +1,6 @@
 #pragma once
 #include "Vicinity.h"
+#include "Body.h"
 #include "Entity.h"
 #include <list>
 #include <iostream>
@@ -18,8 +19,10 @@ public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer);
     ~World();
     World();
+    walkingVector checkPlayerMove(int x, int y, double deltaTime);
     void moveWorld(int x, int y, double deltaTime, Interface* p_Interface);
     void renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interface* p_Interface);
+    void triggerPlayerAttack();
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
     inline std::list<std::unique_ptr<Enemy>>* getEnemyList() { return &m_enemyList_; }
     inline std::list<std::unique_ptr<Entity>>* getEntityList() { return &m_entityList_; }

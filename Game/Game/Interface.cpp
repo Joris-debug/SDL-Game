@@ -11,11 +11,11 @@ Interface::Interface()
         std::cout << "Error initializing SDL_ttf: " << TTF_GetError() << std::endl;
     }
     SDL_Init(SDL_INIT_EVERYTHING);
-    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
-    int initted = IMG_Init(flags);
-    if ((initted & flags) != flags) {
-        printf("IMG_Init: Failed to init required jpg and png support!\n");
-        printf("IMG_Init: %s\n", IMG_GetError());
+
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags))
+    {
+        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
     }
 
     m_p_window_ = SDL_CreateWindow("Part Time Knight", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);

@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 int GameHandler::gameLoop()
 {
-	int x_input = 0, y_input = 0;
+	int x_input = 0, y_input = 0, attackTrigger = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
 	while (true)
 	{
@@ -24,6 +24,8 @@ int GameHandler::gameLoop()
 				{
 				case SDL_QUIT:
 					exit(1);
+					break;
+
 				case SDL_KEYDOWN:
 					switch (m_p_interface_->getInputQueue()->key.keysym.sym)
 					{
@@ -44,14 +46,14 @@ int GameHandler::gameLoop()
 						x_input = -1;
 						break;
 
-					case SDLK_0:
-						SDL_SetWindowFullscreen(m_p_interface_->getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
+					//case SDLK_0:
+					//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
+					//	break;
 
-						break;
-					case SDLK_1:
-						SDL_SetWindowFullscreen(m_p_interface_->getWindow(), 0);
-						SDL_SetWindowSize(m_p_interface_->getWindow(), STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT);
-						break;
+					//case SDLK_1:
+					//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), 0);
+					//	SDL_SetWindowSize(m_p_interface_->getWindow(), STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT);
+					//	break;
 					}
 					break;
 
@@ -70,13 +72,22 @@ int GameHandler::gameLoop()
 						break;
 					}
 					break;
+
+
+				case SDL_MOUSEBUTTONDOWN:
+					attackTrigger = true;
+					break;
+
 				}
 			}
 
 		m_p_interface_->getPixelPerPixel();
+		if (attackTrigger) {	
+			m_p_currentWorld_->triggerPlayerAttack();
+		}
 		m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_, m_p_interface_);
 		renderEverything();
-
+		attackTrigger = false;
 		}
 		
 	}
@@ -99,7 +110,10 @@ GameHandler::~GameHandler()
 
 int GameHandler::initLevel1()
 {
-	m_p_currentWorld_ = std::unique_ptr<World>(new World(IMG_Load(RSC_LEVEL_1), { -1190,-1250,1632 * 2,1632 * 2 }, m_p_renderer_));	
+	m_p_currentWorld_ = std::unique_ptr<World>(new World(IMG_Load(RSC_LEVEL_1), { -1190,-1250,1632 * 2,1632 * 2 }, m_p_renderer_));
+	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_LEVEL_1_TOP), { -1190,-1250,1632 * 2,1632 * 2 }, m_p_renderer_));
+	//new Entity({0, 0, 500, 32});
+	//m_p_currentWorld_->getEntityList()->push_back();
 	return gameLoop();
 }
 
