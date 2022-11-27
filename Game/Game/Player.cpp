@@ -20,7 +20,7 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
-	m_footSpace_ = { 380, 400, 38 * 2, 10 * 2 }; //Todo
+	m_footSpace_ = { 378, 336, 42, 24}; //Todo
 
 	m_isTurning_ = false;
 }

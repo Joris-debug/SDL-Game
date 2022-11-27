@@ -34,21 +34,20 @@ World::World()
 void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 {
 
+	m_p_player_->animateBody(x, y);
 	if (m_p_player_->getIsAttacking()) { //No moving while attacking
 		x = 0;
 		y = 0;
 	}
 	else {
-		//walkingVector legalMove = checkPlayerMove(x, y, deltaTime);
-		//x = legalMove.x;
-		//y = legalMove.y;
+		walkingVector legalMove = checkPlayerMove(x, y, deltaTime);
+		x = legalMove.x;
+		y = legalMove.y;
 	}
-	m_p_player_->animateBody(x, y);
 
 	for (auto const& cursor : m_enemyList_) {
 		walkingVector enemyPath = cursor->enemyPathfinding(this, deltaTime);
 		cursor->animateBody(enemyPath.x, enemyPath.y);
-		//cursor->moveBody(enemyPath.x * deltaTime * 0.4, enemyPath.y * deltaTime * 0.4);
 	}
 
 	if (x == 0 && y == 0) {
@@ -59,57 +58,55 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 		cursor->moveBody(x * deltaTime, y * deltaTime);
 	}
 
-	this->moveVicinity(x * deltaTime, y * deltaTime);
+	for (auto const& cursor : m_entityList_) {
+		cursor->moveEntity(x * deltaTime, y * deltaTime);
+	}
 
-	int screenWidth;
-	int screenHeight;
-	SDL_GetWindowSize(p_Interface->getWindow(), &screenWidth, &screenHeight);
+	this->moveVicinity(x * deltaTime, y * deltaTime);
 
 	m_p_topMap_->moveVicinity(x * deltaTime, y * deltaTime);
 }
 
 walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
 {
-	bool xCollision = true, yCollision = true;
-	double xMovement = x * deltaTime, yMovement = y * deltaTime;
-
-	if (x != 0) {
-		xCollision = false;
-		m_p_player_->moveEntity(xMovement, 0);
-
-		for (auto const& cursor : m_entityList_) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds())) {
-				xCollision = true;
-				break;
-			}
-		}
-		m_p_player_->moveEntity(-xMovement, 0);
+	if (!x && !y) {
+		return { 0, 0 };
 	}
 
-	if (y != 0) {
-		m_p_player_->moveEntity(0, yMovement);
-		yCollision = false;
+	bool xCollision = false, yCollision = false;
+	double xMovement = x * deltaTime * -1, yMovement = y * deltaTime * -1; //Invert because now I am going to move the player and not the world
+	SDL_FRect* p_playerBounds = m_p_player_->getFootSpace();
+
+	m_p_player_->moveFootSpace(xMovement, 0);
+
+	for (auto const& cursor : m_entityList_) {
+		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
+			xCollision = true;
+			break;
+		}
+	}
+	m_p_player_->moveFootSpace(-xMovement, 0);
+
+	m_p_player_->moveFootSpace(0, yMovement);
+	for (auto const& cursor : m_entityList_) {
+		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
+			yCollision = true;
+			break;
+		}
+	}
+	m_p_player_->moveFootSpace(0, -yMovement);
+
+	if (!xCollision && !yCollision) { //check if x and y movement results in colission
+
+		m_p_player_->moveFootSpace(xMovement, yMovement);
 		for (auto const& cursor : m_entityList_) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds())) {
+			if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 				yCollision = true;
 				break;
 			}
 		}
-		m_p_player_->moveEntity(0, -yMovement);
+		m_p_player_->moveFootSpace(-xMovement, -yMovement);
 	}
-
-	if (!xCollision && !yCollision && x != 0 && y != 0) { //check if x and y movement results in colission
-
-		m_p_player_->moveEntity(xMovement, yMovement);
-		for (auto const& cursor : m_entityList_) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds())) {
-				yCollision = true;
-				break;
-			}
-		}
-		m_p_player_->moveEntity(-xMovement, -yMovement);
-	}
-
 	return{ !xCollision * x, !yCollision * y };
 }
 
@@ -136,11 +133,10 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 	}  
 
 	m_p_player_->renderBody(renderer, pixel_per_pixel);
-	//SDL_FRect tmpB = *m_p_player_->getBounds();
+
+	//SDL_FRect tmpB = *m_entityList_.front().get()->getBounds();
 	//SDL_RenderDrawRectF(renderer, &tmpB);
-	//tmpB = *m_enemyList_.front()->getBounds();
-	//SDL_RenderDrawRectF(renderer, &tmpB);
-	//tmpB = *m_enemyList_.back()->getBounds();
+	//tmpB = *m_p_player_.get()->getFootSpace();
 	//SDL_RenderDrawRectF(renderer, &tmpB);
 	m_p_topMap_->renderVicinity(renderer, pixel_per_pixel, screenWidth);	//Funktion to render top map
 }

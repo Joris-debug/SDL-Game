@@ -24,5 +24,7 @@ public:
     void attack(std::list <std::unique_ptr<Enemy>>* entityList);
     void renderBody(SDL_Renderer *renderer, double pixel_per_pixel) override;
     bool inline getIsAttacking() { return m_isAttacking_; }
+    inline SDL_FRect* getFootSpace() { return &m_footSpace_; }
+    inline void moveFootSpace(float x, float y) { m_footSpace_.x += x; m_footSpace_.y += y; }
 };
 

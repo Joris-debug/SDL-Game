@@ -24,6 +24,7 @@ public:
     void renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interface* p_Interface);
     void triggerPlayerAttack();
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
+    inline void addEntityToMap(Entity* newEntity) { m_entityList_.push_back(std::unique_ptr<Entity>(newEntity)); }
     inline std::list<std::unique_ptr<Enemy>>* getEnemyList() { return &m_enemyList_; }
     inline std::list<std::unique_ptr<Entity>>* getEntityList() { return &m_entityList_; }
     inline std::unique_ptr<Player>* getPlayer() { return &m_p_player_; }
