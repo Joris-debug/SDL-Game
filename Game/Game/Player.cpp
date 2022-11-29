@@ -21,7 +21,7 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	SDL_FreeSurface(tmpSurface);
 
 	m_footSpace_ = { 378, 336, 42, 24}; //Todo
-
+	m_playerLives_ = 3;
 	m_isTurning_ = false;
 }
 
@@ -118,9 +118,12 @@ void Player::animateBody(int x, int y)
 
 void Player::attack(std::list<std::unique_ptr<Enemy>>* entityList)
 {
+	if (m_isAttacking_) //Player is already attacking
+		return;
 	m_isAttacking_ = true;
-	m_lastAttack_ = SDL_GetTicks();
 	m_currentSprite_ = 0;
+	
+
 }
 
 void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)

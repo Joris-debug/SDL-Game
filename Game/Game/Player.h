@@ -13,9 +13,9 @@ private:
     SDL_Texture* m_p_textureRun_;
     SDL_Texture* m_p_textureTurn_;
     SDL_Texture* m_p_textureAttack_;
-    Uint32 m_lastAttack_;
     bool m_isAttacking_;
-    bool m_isTurning_; 
+    bool m_isTurning_;
+    short m_playerLives_;
 public:
     Player(SDL_Renderer *renderer);
     ~Player();

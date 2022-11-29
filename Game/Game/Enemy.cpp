@@ -40,6 +40,16 @@ walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 				break;
 			}
 		}
+
+		if (!xCollision) {
+			for (auto const& cursor : *p_world->getEntityList()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					xCollision = true;
+					break;
+				}
+			}
+		}
+
 		this->moveEntity(-xMovement, 0);
 	}
 
@@ -52,6 +62,16 @@ walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 				break;
 			}
 		}
+
+		if (!yCollision) {
+			for (auto const& cursor : *p_world->getEntityList()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					yCollision = true;
+					break;
+				}
+			}
+		}
+
 		this->moveEntity(0 , -yMovement);
 	}
 
@@ -62,6 +82,14 @@ walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
 				yCollision = true;
 				break;
+			}
+		}
+		if (!yCollision) {
+			for (auto const& cursor : *p_world->getEntityList()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					yCollision = true;
+					break;
+				}
 			}
 		}
 		this->moveEntity(-xMovement, -yMovement);
@@ -128,7 +156,7 @@ void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 	tmp.y = round(tmp.y * pixel_per_pixel);
 	tmp.w = round(tmp.w * pixel_per_pixel);
 	tmp.h = round(tmp.h * pixel_per_pixel);
-
+	std::cout<<this->m_bounds_.x<<std::endl;
 	switch (m_currentMode_) {
 	case 1:
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);

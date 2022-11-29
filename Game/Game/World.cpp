@@ -8,19 +8,6 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer) 
 {
 	m_p_player_ = std::unique_ptr<Player>(new Player(renderer));
 
-	SDL_Surface* tmpSurfaceIdle = IMG_Load(RSC_MANTIS_IDLE);
-
-	SDL_Surface* tmpSurfaceWalk = IMG_Load(RSC_MANTIS_WALK);
-	m_enemyList_.push_back(std::unique_ptr<Enemy>(new Enemy(SDL_CreateTextureFromSurface(renderer, tmpSurfaceIdle), SDL_CreateTextureFromSurface(renderer, tmpSurfaceWalk), {100, 100, 64, 64}, { 100, 100, 64, 64 })));
-	SDL_FreeSurface(tmpSurfaceIdle);
-	SDL_FreeSurface(tmpSurfaceWalk);
-
-
-	tmpSurfaceIdle = IMG_Load(RSC_MAGGOT_IDLE);
-	tmpSurfaceWalk = IMG_Load(RSC_MAGGOT_WALK);
-	m_enemyList_.push_back(std::unique_ptr<Enemy>(new Enemy(SDL_CreateTextureFromSurface(renderer, tmpSurfaceIdle), SDL_CreateTextureFromSurface(renderer, tmpSurfaceWalk), { -100, -100, 64, 64 }, { -100, -100, 64, 64 })));
-	SDL_FreeSurface(tmpSurfaceIdle);
-	SDL_FreeSurface(tmpSurfaceWalk);
 }
 
 World::~World()
@@ -134,8 +121,8 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 
 	m_p_player_->renderBody(renderer, pixel_per_pixel);
 
-	//SDL_FRect tmpB = *m_entityList_.front().get()->getBounds();
-	//SDL_RenderDrawRectF(renderer, &tmpB);
+	SDL_FRect tmpB = *m_enemyList_.back().get()->getBounds();
+	SDL_RenderDrawRectF(renderer, &tmpB);
 	//tmpB = *m_p_player_.get()->getFootSpace();
 	//SDL_RenderDrawRectF(renderer, &tmpB);
 	m_p_topMap_->renderVicinity(renderer, pixel_per_pixel, screenWidth);	//Funktion to render top map

@@ -1,26 +1,22 @@
-﻿  World.cpp
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(58,37): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(58,22): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(62,39): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(62,24): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(65,38): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(65,23): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(67,45): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(67,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(80,29): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(88,29): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(90,32): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(97,32): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(101,41): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(101,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(108,42): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(108,30): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(124,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(125,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(126,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(127,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+﻿  Enemy.cpp
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(29,37): warning C4311: "Typumwandlung": Zeigerverkürzung von "Enemy *" zu "unsigned int"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(29,37): warning C4302: "Typumwandlung": Verkürzung von "Enemy *" in "unsigned int"
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(35,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(53,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(57,23): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(75,24): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(80,31): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(80,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(95,32): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(95,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(98,94): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(98,47): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(155,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(156,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(157,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(158,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
   Code wird generiert.
-  7 of 263 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
+  8 of 308 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     2 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
