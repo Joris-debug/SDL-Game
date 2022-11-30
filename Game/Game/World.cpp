@@ -20,7 +20,6 @@ World::World()
 
 void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 {
-
 	m_p_player_->animateBody(x, y);
 	if (m_p_player_->getIsAttacking()) { //No moving while attacking
 		x = 0;
@@ -32,7 +31,12 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 		y = legalMove.y;
 	}
 
-	for (auto const& cursor : m_enemyList_) {
+	if (m_p_player_->getIsAttacking()) {
+		damageEnemysInPlayerRadius();
+	}
+
+
+	for (auto const& cursor : m_enemyVector_) {
 		walkingVector enemyPath = cursor->enemyPathfinding(this, deltaTime);
 		cursor->animateBody(enemyPath.x, enemyPath.y);
 	}
@@ -41,11 +45,11 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 		return;
 	}
 	
-	for (auto const& cursor : m_enemyList_) {
+	for (auto const& cursor : m_enemyVector_) {
 		cursor->moveBody(x * deltaTime, y * deltaTime);
 	}
 
-	for (auto const& cursor : m_entityList_) {
+	for (auto const& cursor : m_entityVector_) {
 		cursor->moveEntity(x * deltaTime, y * deltaTime);
 	}
 
@@ -66,7 +70,7 @@ walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
 
 	m_p_player_->moveFootSpace(xMovement, 0);
 
-	for (auto const& cursor : m_entityList_) {
+	for (auto const& cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 			xCollision = true;
 			break;
@@ -75,7 +79,7 @@ walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
 	m_p_player_->moveFootSpace(-xMovement, 0);
 
 	m_p_player_->moveFootSpace(0, yMovement);
-	for (auto const& cursor : m_entityList_) {
+	for (auto const& cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 			yCollision = true;
 			break;
@@ -86,7 +90,7 @@ walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
 	if (!xCollision && !yCollision) { //check if x and y movement results in colission
 
 		m_p_player_->moveFootSpace(xMovement, yMovement);
-		for (auto const& cursor : m_entityList_) {
+		for (auto const& cursor : m_entityVector_) {
 			if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 				yCollision = true;
 				break;
@@ -115,14 +119,14 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 	
 	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &tmp);
 
-	for (auto const& cursor : m_enemyList_) {
+	for (auto const& cursor : m_enemyVector_) {
 		cursor->renderBody(renderer, pixel_per_pixel);
 	}  
 
 	m_p_player_->renderBody(renderer, pixel_per_pixel);
 
-	SDL_FRect tmpB = *m_enemyList_.back().get()->getBounds();
-	SDL_RenderDrawRectF(renderer, &tmpB);
+	//SDL_FRect tmpB = *m_enemyList_.back().get()->getBounds();
+	//SDL_RenderDrawRectF(renderer, &tmpB);
 	//tmpB = *m_p_player_.get()->getFootSpace();
 	//SDL_RenderDrawRectF(renderer, &tmpB);
 	m_p_topMap_->renderVicinity(renderer, pixel_per_pixel, screenWidth);	//Funktion to render top map
@@ -130,5 +134,23 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 
 void World::triggerPlayerAttack()
 {
-	m_p_player_->attack(&m_enemyList_);
+	m_p_player_->initiateAttack();
+}
+
+void World::damageEnemysInPlayerRadius()
+{
+
+	auto it = m_enemyVector_.begin();
+	while (it != m_enemyVector_.end()) {
+		if (SDL_HasIntersectionF(m_p_player_->getBounds(), it->get()->getBounds())) {
+
+			it->get()->damageBody(1);
+			if (it->get()->getCurrentLives() == 0) {
+				m_enemyVector_.erase(it);
+				it--;
+			}				
+		}
+		it++;		
+	}
+
 }

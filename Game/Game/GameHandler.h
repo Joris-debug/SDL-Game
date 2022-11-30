@@ -1,6 +1,6 @@
 #include "SDL.h"
 #include <iostream>
-#include <list>
+#include <vector>
 #pragma once
 class Interface;
 class World;
@@ -12,8 +12,8 @@ private:
 	std::unique_ptr<World> m_p_currentWorld_;
 	SDL_Renderer* m_p_renderer_;
 	double *m_p_pixel_per_pixel_;
-	std::list<SDL_Texture*> m_enemyTexturesWalk_; //these textures are needed for creating Enemies
-	std::list<SDL_Texture*> m_enemyTexturesIdle_;
+	std::vector<SDL_Texture*> m_enemyTexturesWalk_; //these textures are needed for creating Enemies
+	std::vector<SDL_Texture*> m_enemyTexturesIdle_;
 	int gameLoop();
 public:
 	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_, double *m_p_pixel_per_pixel_);

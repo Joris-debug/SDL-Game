@@ -3,5 +3,5 @@
 
 int main()
 {
-	Interface gui;	
+	Interface::getInstance().startGame();
 }

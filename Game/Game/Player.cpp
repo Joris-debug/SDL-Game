@@ -2,7 +2,7 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
-Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 })
+Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 }, 1)
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
 	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
@@ -20,14 +20,17 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
-	m_footSpace_ = { 378, 336, 42, 24}; //Todo
+	m_footSpace_ = { 378, 336, 42, 24};
 	m_playerLives_ = 3;
 	m_isTurning_ = false;
 }
 
 Player::~Player()
 {
-	//todo
+	SDL_DestroyTexture(m_p_textureAttack_);
+	SDL_DestroyTexture(m_p_textureTurn_);
+	SDL_DestroyTexture(m_p_textureIdle_);
+	SDL_DestroyTexture(m_p_textureRun_);
 }
 
 bool Player::detectTurning(int x, int y)
@@ -116,14 +119,12 @@ void Player::animateBody(int x, int y)
 	m_textureCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
 }
 
-void Player::attack(std::list<std::unique_ptr<Enemy>>* entityList)
+void Player::initiateAttack()
 {
 	if (m_isAttacking_) //Player is already attacking
 		return;
 	m_isAttacking_ = true;
 	m_currentSprite_ = 0;
-	
-
 }
 
 void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)

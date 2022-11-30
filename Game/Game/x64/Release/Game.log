@@ -1,23 +1,7 @@
-﻿  Enemy.cpp
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(29,37): warning C4311: "Typumwandlung": Zeigerverkürzung von "Enemy *" zu "unsigned int"
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(29,37): warning C4302: "Typumwandlung": Verkürzung von "Enemy *" in "unsigned int"
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(35,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(53,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(57,23): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(75,24): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(80,31): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(80,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(95,32): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(95,20): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(98,94): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(98,47): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(155,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(156,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(157,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(158,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+﻿  Body.cpp
   Code wird generiert.
-  8 of 308 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
+  3 of 319 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\x64\Release\Game.exe

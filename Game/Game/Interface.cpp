@@ -22,8 +22,12 @@ Interface::Interface()
     m_p_renderer_ = SDL_CreateRenderer(m_p_window_, -1, 0);
     //SDL_SetWindowFullscreen(m_p_window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
     getPixelPerPixel();
-    m_p_GameHandler_ = new GameHandler(this, m_p_renderer_, &m_pixel_per_pixel_);
-    m_p_GameHandler_->initLevel1();
+}
+
+Interface& Interface::getInstance()
+{
+    static Interface instance;
+    return instance;
 }
 
 Interface::~Interface()
@@ -62,6 +66,12 @@ void Interface::getPixelPerPixel()
     int height;
     SDL_GetWindowSize(m_p_window_, &width, &height);
     m_pixel_per_pixel_ = double(height) / 640; // The window should always show 640 pixels on the y-axis
+}
+
+void Interface::startGame()
+{
+    m_p_GameHandler_ = new GameHandler(this, m_p_renderer_, &m_pixel_per_pixel_);
+    m_p_GameHandler_->initLevel1();
 }
 
 
