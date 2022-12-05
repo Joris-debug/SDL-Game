@@ -1,16 +1,21 @@
 #include "Enemy.h"
 #include "World.h"
 #include "Player.h"
-Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : Body(m_bounds_, m_spriteBounds_, m_maxLives_)
+Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : Body(m_bounds_, m_spriteBounds_, m_maxLives_)
 {
 	this->m_p_textureIdle_ = m_p_textureIdle_;
 	this->m_p_textureRun_ = m_p_textureRun_;
+	this->m_p_textureHit_ = m_p_textureHit_;
 }
 
-walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
+walkingVector Enemy::enemyPathfinding(World* p_world, float deltaTime)
 {
 	Player* enemyTarget = p_world->getPlayer()->get();
 	SDL_FRect targetLocation = *(enemyTarget->getBounds());
+
+	if (isInvincible()) {	//Hurt Enemies don't move
+		return { 0, 0 };
+	}
 
 	int x = 0, y = 0;
 	int margin = 8;
@@ -26,9 +31,9 @@ walkingVector Enemy::enemyPathfinding(World* p_world, double deltaTime)
 		y = -1;
 
 	bool xCollision = true, yCollision = true;
-	double factor = (unsigned int)this % 5;
+	float factor = (unsigned int)this % 5;
 	factor += 3;
-	double xMovement = (x * deltaTime) * (factor / 10), yMovement = (y * deltaTime) * (factor / 10);
+	float xMovement = (x * deltaTime) * (factor / 10), yMovement = (y * deltaTime) * (factor / 10);
 	
 	if (x != 0) {
 		xCollision = false;
@@ -106,38 +111,43 @@ void Enemy::animateBody(int x, int y)
 	int delayPerFrame = 100;
 	int spriteLayer = 0;
 
-	do {
+ 	do {
+		if (isInvincible()) {
+			m_currentMode_ = Mode::hit;
+			totalSprites = 6;
+			break;
+		}
 
 		if (!x && !y) {
 			delayPerFrame = 6000;
-			m_currentMode_ = 1;
+			m_currentMode_ = Mode::idle;
 			totalSprites = 4;
 			break;
 		}
 
 		if (x == 1) {
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			totalSprites = 4;
 			spriteLayer = 1;
 			break;
 		}
 
 		if (x == -1) {
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			totalSprites = 4;
 			spriteLayer = 2;
 			break;
 		}
 
 		if (y == 1) {
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			totalSprites = 4;
 			spriteLayer = 0;
 			break;
 		}
 
 		if (y == -1) {
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			totalSprites = 4;
 			spriteLayer = 3;
 			break;
@@ -145,8 +155,20 @@ void Enemy::animateBody(int x, int y)
 
 	} while (false);
 
-	int tmp = 32 * ((SDL_GetTicks() / delayPerFrame) % totalSprites);
-	m_textureCoords_ = { tmp, 32 * spriteLayer,  32,  32 };
+	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {	//Next sprite
+		m_lastFrame_ = SDL_GetTicks();
+		m_currentSprite_++;
+	}
+
+	if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
+		m_currentSprite_ = 0;
+	}
+
+	m_lastMove_.x = x;
+	m_lastMove_.y = y;
+	m_textureCoords_.x = m_textureCoords_.w * m_currentSprite_;
+	m_textureCoords_.y = m_textureCoords_.h * spriteLayer;
+
 }
 
 void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
@@ -158,11 +180,14 @@ void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 	tmp.h = round(tmp.h * pixel_per_pixel);
 
 	switch (m_currentMode_) {
-	case 1:
+	case Mode::idle:
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
 		break;
-	case 2:
+	case Mode::walk:
 		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
+		break;
+	case Mode::hit:
+		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &tmp);
 		break;
 	}
 }

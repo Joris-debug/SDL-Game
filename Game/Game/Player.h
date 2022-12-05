@@ -1,8 +1,7 @@
 #pragma once
-#include "SDL.h"
 #include <iostream>
+#include "SDL.h"
 #include "Body.h"
-#include <list>
 class Enemy;
 class Player :
     public Body
@@ -15,16 +14,15 @@ private:
     SDL_Texture* m_p_textureAttack_;
     bool m_isAttacking_;
     bool m_isTurning_;
-    short m_playerLives_;
 public:
     Player(SDL_Renderer *renderer);
     ~Player();
     bool detectTurning(int x, int y);
     void animateBody(int x, int y) override;
     void renderBody(SDL_Renderer *renderer, double pixel_per_pixel) override;
-    void initiateAttack();
-    bool inline getIsAttacking() { return m_isAttacking_; }
-    inline SDL_FRect* getFootSpace() { return &m_footSpace_; }
+    inline bool getIsAttacking() { return m_isAttacking_; }
+	inline void setIsAttacking() { m_isAttacking_ = true; m_currentSprite_ = 0; }    
     inline void moveFootSpace(float x, float y) { m_footSpace_.x += x; m_footSpace_.y += y; }
+	inline SDL_FRect* getFootSpace() { return &m_footSpace_; }
 };
 

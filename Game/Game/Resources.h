@@ -14,3 +14,4 @@
 #define RSC_MANTIS_HIT "./Sprites/Enemies/Mantis/_Hit.png"
 #define RSC_MAGGOT_IDLE "./Sprites/Enemies/Maggot/_Idle.png"
 #define RSC_MAGGOT_WALK "./Sprites/Enemies/Maggot/_Walk.png"
+#define RSC_MAGGOT_HIT "./Sprites/Enemies/Maggot/_Hit.png"

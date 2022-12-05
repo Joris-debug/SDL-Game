@@ -102,33 +102,44 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_,
 	this->m_p_renderer_ = m_p_renderer_;
 	this->m_p_pixel_per_pixel_ = m_p_pixel_per_pixel;
 	this->m_deltaTime_ = 1;
+
+	SDL_Surface* p_tmpSurface;
 	//Load all Mantis Spritesheets
-	SDL_Surface* tmpSurfaceIdle = IMG_Load(RSC_MANTIS_IDLE);
-	m_enemyTexturesIdle_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, tmpSurfaceIdle));
-	SDL_Surface* tmpSurfaceWalk = IMG_Load(RSC_MANTIS_WALK);
-	m_enemyTexturesWalk_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, tmpSurfaceWalk));
-	SDL_FreeSurface(tmpSurfaceIdle);
-	SDL_FreeSurface(tmpSurfaceWalk);
+	p_tmpSurface = IMG_Load(RSC_MANTIS_IDLE);
+	m_enemyTexturesIdle_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_MANTIS_WALK);
+	m_enemyTexturesWalk_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));	
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_MANTIS_HIT);
+	m_enemyTexturesHit_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
 
 	//Load all Maggot Spritesheets
-	tmpSurfaceIdle = IMG_Load(RSC_MAGGOT_IDLE);
-	m_enemyTexturesIdle_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, tmpSurfaceIdle));
-	tmpSurfaceWalk = IMG_Load(RSC_MAGGOT_WALK);
-	m_enemyTexturesWalk_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, tmpSurfaceWalk));
-	SDL_FreeSurface(tmpSurfaceIdle);
-	SDL_FreeSurface(tmpSurfaceWalk);
+	p_tmpSurface = IMG_Load(RSC_MAGGOT_IDLE);
+	m_enemyTexturesIdle_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_MAGGOT_WALK);
+	m_enemyTexturesWalk_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_MAGGOT_HIT);
+	m_enemyTexturesHit_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 
 }
 
 GameHandler::~GameHandler()
 {
-	short numberOfTextures = m_enemyTexturesIdle_.size();
+	int numberOfTextures = m_enemyTexturesIdle_.size();
 
-	for (short i = 0; i < numberOfTextures; i++) {
+	for (int i = 0; i < numberOfTextures; i++) {
 		SDL_DestroyTexture(m_enemyTexturesIdle_.front());
 		m_enemyTexturesIdle_.pop_back();
 		SDL_DestroyTexture(m_enemyTexturesWalk_.front());
 		m_enemyTexturesWalk_.pop_back();
+		SDL_DestroyTexture(m_enemyTexturesHit_.front());
+		m_enemyTexturesHit_.pop_back();
 	}
 }
 
@@ -141,9 +152,9 @@ int GameHandler::initLevel1()
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
 
 
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], { 500, 100, 64, 64 }, { 500, 100, 64, 64 }, 1));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], { 100, 100, 64, 64 }, { 100, 100, 64, 64 }, 1));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], { -100, -68, 64, 32 }, { -100, -100, 64, 64 }, 1));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 100, 64, 64 }, { 500, 100, 64, 64 }, 2));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 100, 100, 64, 64 }, { 100, 100, 64, 64 }, 2));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -100, -68, 64, 32 }, { -100, -100, 64, 64 }, 1));
 
 
 	return gameLoop();

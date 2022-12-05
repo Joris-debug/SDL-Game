@@ -2,7 +2,7 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
-Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 }, 1)
+Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 }, 3)
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
 	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
@@ -19,10 +19,9 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	tmpSurface = IMG_Load(RSC_PLAYER_ATTACK);
 	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
-
-	m_footSpace_ = { 378, 336, 42, 24};
-	m_playerLives_ = 3;
+	m_footSpace_ = { 378, 336, 42, 24}; //This area collides with obstacles 
 	m_isTurning_ = false;
+	m_isAttacking_ = false;
 }
 
 Player::~Player()
@@ -48,16 +47,15 @@ void Player::animateBody(int x, int y)
 	int delayPerFrame = 100;
 	int spriteLayer = 0;
 
-
 	do {
 
 		if (m_isAttacking_) //An attack started
 		{
 			totalSprites = 10;
-			m_currentMode_ = 3;
+			m_currentMode_ = Mode::attack;
 			if (m_lastMove_.x == 1 || (m_lastMove_.y == -1 && m_lastMove_.x != -1))
 				spriteLayer = 1;
-			if (m_currentSprite_ >= 9)
+			if (m_currentSprite_ >= 9) //Attack ends
 				m_isAttacking_ = false;
 
 			x = m_lastMove_.x;
@@ -74,7 +72,7 @@ void Player::animateBody(int x, int y)
 
 		if (detectTurning(x, y)) {	//A turn movement starts now
 			totalSprites = 3;
-			m_currentMode_ = 4;
+			m_currentMode_ = Mode::turn;
 			m_isTurning_ = true;
 			m_lastFrame_ = SDL_GetTicks();
 			m_currentSprite_ = 0;
@@ -83,20 +81,20 @@ void Player::animateBody(int x, int y)
 
 		if (!x && !y) {	//Idle
 			totalSprites = 10;
-			m_currentMode_ = 1;
+			m_currentMode_ = Mode::idle;
 			break;
 		}
 
 		if (x == -1 || (y == 1 && x != 1)) {		//Walk right or upwards
 			totalSprites = 10;
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			break;
 		}
 
 		if (x == 1 || (y == -1 && x != -1)) {		//Walk left or downwards
 			spriteLayer = 1;
 			totalSprites = 10;
-			m_currentMode_ = 2;
+			m_currentMode_ = Mode::walk;
 			break;
 		}
 
@@ -119,14 +117,6 @@ void Player::animateBody(int x, int y)
 	m_textureCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
 }
 
-void Player::initiateAttack()
-{
-	if (m_isAttacking_) //Player is already attacking
-		return;
-	m_isAttacking_ = true;
-	m_currentSprite_ = 0;
-}
-
 void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 {
 	SDL_FRect tmp = m_spriteBounds_;
@@ -136,16 +126,16 @@ void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 	tmp.h = round(tmp.h * pixel_per_pixel);
 
 	switch (m_currentMode_) {
-	case 1:
+	case Mode::idle:
 		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
 		break;
-	case 2:
+	case Mode::walk:
 		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
 		break;
-	case 3:
+	case Mode::attack:
 		SDL_RenderCopyF(renderer, m_p_textureAttack_, &m_textureCoords_, &tmp);
 		break;
-	case 4:
+	case Mode::turn:
 		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &tmp);
 		break;
 	}

@@ -12,10 +12,6 @@ Vicinity::~Vicinity()
 	SDL_DestroyTexture(m_p_texture_);
 }
 
-Vicinity::Vicinity()
-{
-}
-
 void Vicinity::moveVicinity(float x, float y)
 {
 	m_bounds_.x += x;

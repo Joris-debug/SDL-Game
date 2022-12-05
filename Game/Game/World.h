@@ -18,12 +18,12 @@ private:
 public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer);
     ~World();
-    World();
-    walkingVector checkPlayerMove(int x, int y, double deltaTime);
-    void moveWorld(int x, int y, double deltaTime, Interface* p_Interface);
+    walkingVector checkPlayerMove(int x, int y, float deltaTime);
+    void moveWorld(int x, int y, float deltaTime, Interface* p_Interface);
     void renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interface* p_Interface);
     void triggerPlayerAttack();
     void damageEnemysInPlayerRadius();
+    void checkForDefeatedEnemies();
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
     inline void addEntityToMap(Entity* newEntity) { m_entityVector_.push_back(std::unique_ptr<Entity>(newEntity)); }
     inline void addEnemyToMap(Enemy* newEnemy) { m_enemyVector_.push_back(std::unique_ptr<Enemy>(newEnemy)); }

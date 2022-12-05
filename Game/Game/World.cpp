@@ -14,13 +14,10 @@ World::~World()
 {
 }
 
-World::World()
-{
-}
-
-void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
+void World::moveWorld(int x, int y, float deltaTime, Interface* p_Interface)
 {
 	m_p_player_->animateBody(x, y);
+
 	if (m_p_player_->getIsAttacking()) { //No moving while attacking
 		x = 0;
 		y = 0;
@@ -35,6 +32,7 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 		damageEnemysInPlayerRadius();
 	}
 
+	checkForDefeatedEnemies();
 
 	for (auto const& cursor : m_enemyVector_) {
 		walkingVector enemyPath = cursor->enemyPathfinding(this, deltaTime);
@@ -44,7 +42,7 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 	if (x == 0 && y == 0) {
 		return;
 	}
-	
+	//------------------------------------------------------- Move the whole world
 	for (auto const& cursor : m_enemyVector_) {
 		cursor->moveBody(x * deltaTime, y * deltaTime);
 	}
@@ -54,18 +52,17 @@ void World::moveWorld(int x, int y, double deltaTime, Interface* p_Interface)
 	}
 
 	this->moveVicinity(x * deltaTime, y * deltaTime);
-
 	m_p_topMap_->moveVicinity(x * deltaTime, y * deltaTime);
 }
 
-walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
+walkingVector World::checkPlayerMove(int x, int y, float deltaTime)
 {
 	if (!x && !y) {
 		return { 0, 0 };
 	}
 
 	bool xCollision = false, yCollision = false;
-	double xMovement = x * deltaTime * -1, yMovement = y * deltaTime * -1; //Invert because now I am going to move the player and not the world
+	float xMovement = x * deltaTime * -1, yMovement = y * deltaTime * -1; //Invert because now I am going to move the player and not the world
 	SDL_FRect* p_playerBounds = m_p_player_->getFootSpace();
 
 	m_p_player_->moveFootSpace(xMovement, 0);
@@ -104,13 +101,11 @@ walkingVector World::checkPlayerMove(int x, int y, double deltaTime)
 void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interface* p_Interface)
 {
 	SDL_RenderClear(renderer);
-	int screenWidth;
-	int screenHeight;
 
+	int screenHeight, screenWidth;
 	SDL_GetWindowSize(p_Interface->getWindow(), &screenWidth, &screenHeight);
 	
-	//Render the actual level
-	
+	//-------------------------------------------- Render the actual level	
 	SDL_FRect tmp = m_bounds_;	
 	tmp.x = round(tmp.x * pixel_per_pixel);
 	tmp.y = round((tmp.y * pixel_per_pixel));
@@ -125,32 +120,42 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 
 	m_p_player_->renderBody(renderer, pixel_per_pixel);
 
-	//SDL_FRect tmpB = *m_enemyList_.back().get()->getBounds();
-	//SDL_RenderDrawRectF(renderer, &tmpB);
-	//tmpB = *m_p_player_.get()->getFootSpace();
-	//SDL_RenderDrawRectF(renderer, &tmpB);
 	m_p_topMap_->renderVicinity(renderer, pixel_per_pixel, screenWidth);	//Funktion to render top map
+	
+	//SDL_FRect* playerTextureCoords = m_p_player_->getSpriteBounds();
+	//SDL_FRect attackRadius = { playerTextureCoords->x + 26 * 2, playerTextureCoords->y + 40 * 2, 68 * 2, 40 * 2 };
+	//SDL_RenderDrawRectF(renderer, &attackRadius);
 }
 
 void World::triggerPlayerAttack()
 {
-	m_p_player_->initiateAttack();
+	if (m_p_player_->getIsAttacking())  //Player is already attacking
+		return;	
+	else
+		m_p_player_->setIsAttacking();
 }
 
 void World::damageEnemysInPlayerRadius()
 {
-
+	SDL_FRect* playerTextureCoords = m_p_player_->getSpriteBounds();
+	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 40*2 };
 	auto it = m_enemyVector_.begin();
 	while (it != m_enemyVector_.end()) {
-		if (SDL_HasIntersectionF(m_p_player_->getBounds(), it->get()->getBounds())) {
-
-			it->get()->damageBody(1);
-			if (it->get()->getCurrentLives() == 0) {
-				m_enemyVector_.erase(it);
-				it--;
-			}				
+		if (SDL_HasIntersectionF(&attackRadius, it->get()->getBounds())) {
+			it->get()->damageBody(1);			
 		}
 		it++;		
 	}
+}
 
+void World::checkForDefeatedEnemies()
+{
+	auto it = m_enemyVector_.begin();
+	while (it != m_enemyVector_.end()) {
+		if (it->get()->getCurrentLives() == 0 && !it->get()->isInvincible()) {
+			m_enemyVector_.erase(it);
+			it--;
+		}
+		it++;
+	}
 }
