@@ -6,20 +6,23 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureIdle_ = m_p_textureIdle_;
 	this->m_p_textureRun_ = m_p_textureRun_;
 	this->m_p_textureHit_ = m_p_textureHit_;
+	m_TracedObstacle_ = ObstacleLocation::noObstacle;
+	m_factor_ = (unsigned int)this % 5 + 3;	//Random number to set a certain speed (3-7)
 }
 
-walkingVector Enemy::enemyPathfinding(World* p_world, float deltaTime)
+void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 {
-	Player* enemyTarget = p_world->getPlayer()->get();
-	SDL_FRect targetLocation = *(enemyTarget->getBounds());
+
+	Player* p_enemyTarget = p_world->getPlayer()->get();
+	SDL_FRect targetLocation = *(p_enemyTarget->getBounds());
 
 	if (isInvincible()) {	//Hurt Enemies don't move
-		return { 0, 0 };
+		this->animateBody(0, 0);
+		return;
 	}
 
-	int x = 0, y = 0;
-	int margin = 8;
-
+	short x = 0, y = 0, margin = 8;
+	bool inPlayerRange = false;
 	if (targetLocation.x + (targetLocation.w / 2.0) > m_bounds_.x + (m_bounds_.w / 2.0) + margin)
 		x = 1;
 	else if (targetLocation.x + (targetLocation.w / 2.0) + margin < m_bounds_.x + (m_bounds_.w / 2.0))
@@ -30,79 +33,49 @@ walkingVector Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	else if (targetLocation.y + (targetLocation.h / 2.0) + margin < m_bounds_.y + (m_bounds_.h / 2.0))
 		y = -1;
 
-	bool xCollision = true, yCollision = true;
-	float factor = (unsigned int)this % 5;
-	factor += 3;
-	float xMovement = (x * deltaTime) * (factor / 10), yMovement = (y * deltaTime) * (factor / 10);
-	
-	if (x != 0) {
-		xCollision = false;
-		this->moveEntity(xMovement, 0);
-
-		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-				xCollision = true;
-				break;
-			}
-		}
-
-		if (!xCollision) {
-			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-					xCollision = true;
-					break;
-				}
-			}
-		}
-
-		this->moveEntity(-xMovement, 0);
+	if (SDL_HasIntersectionF(&m_bounds_, &targetLocation)) {
+		x = 0, y = 0;
 	}
 
-	if (y != 0) {
-		this->moveEntity(0, yMovement);
-		yCollision = false;
-		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-				yCollision = true;
-				break;
+	if (!y && !x) 
+		inPlayerRange = true;
+
+	if (m_TracedObstacle_ != ObstacleLocation::noObstacle) { //If the enemy detected an obstacle in its way
+		walkingVector xDirectionStruct = { x, 0 };
+		walkingVector yDirectionStruct = { 0, y };
+		switch (m_TracedObstacle_) {						//This switch is needed to see if the obstacle still needs to be traced 
+		case ObstacleLocation::xObstacle:			
+			if (xDirectionStruct == this->checkEnemyMove(p_world, x, 0, deltaTime)) {
+				m_TracedObstacle_ = ObstacleLocation::noObstacle;
 			}
+			break;
+		case ObstacleLocation::yObstacle:			
+			if (yDirectionStruct == this->checkEnemyMove(p_world, 0, y, deltaTime))
+				m_TracedObstacle_ = ObstacleLocation::noObstacle;
+			break;
 		}
 
-		if (!yCollision) {
-			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-					yCollision = true;
-					break;
-				}
-			}
+		switch (m_TracedObstacle_) {			//This switch is needed to start evasive manoeuvres
+		case ObstacleLocation::xObstacle:
+			(m_factor_ % 2 == 0) ? y = 1 : y = -1;
+			break;
+		case ObstacleLocation::yObstacle:
+			(m_factor_ % 2 == 0) ? x = 1 : x = -1;
+			break;
 		}
-
-		this->moveEntity(0 , -yMovement);
 	}
 
-	if (!xCollision && !yCollision && x != 0 && y != 0) { //check if x and y movement results in colission
-
-		this->moveEntity(xMovement, yMovement);
-		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-				yCollision = true;
-				break;
-			}
-		}
-		if (!yCollision) {
-			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-					yCollision = true;
-					break;
-				}
-			}
-		}
-		this->moveEntity(-xMovement, -yMovement);
+	walkingVector legalMove = this->checkEnemyMove(p_world, x, y, deltaTime);
+	walkingVector empty = { 0, 0 };				//Looking for a better solution
+	if (!inPlayerRange && legalMove == empty) {	//If the enemy stopped before reaching the player
+		if (x) 
+			m_TracedObstacle_ = ObstacleLocation::xObstacle;
+		else 
+			m_TracedObstacle_ = ObstacleLocation::yObstacle;
 	}
 
-	this->moveBody((x * deltaTime * !xCollision) * (factor / 10), (y * deltaTime * !yCollision) * (factor / 10));
-
-	return { x , y };
+	this->moveBody((legalMove.x * deltaTime) * (m_factor_ / 10.0), (deltaTime * legalMove.y) * (m_factor_ / 10.0));
+	this->animateBody(x, y);
 }
 
 void Enemy::animateBody(int x, int y)
@@ -190,6 +163,86 @@ void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &tmp);
 		break;
 	}
+}
+
+walkingVector Enemy::checkEnemyMove(World* p_world, int x, int y, float deltaTime)
+{
+	bool xCollision = false, yCollision = false;
+	float xMovement = (x * deltaTime) * (m_factor_ / 10.0), yMovement = (y * deltaTime) * (m_factor_ / 10.0);
+
+	if (!x && !y)
+		return { 0,0 };
+
+
+	//------------------------------------------------------------------------------------------- Detect collision on x-axis
+	if (x != 0) {
+		this->moveEntity(xMovement, 0);
+
+		for (auto const& cursor : *p_world->getEnemyVector()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				xCollision = true;
+				break;
+			}
+		}
+
+		if (!xCollision) {
+			for (auto const& cursor : *p_world->getEntityVector()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					xCollision = true;
+					break;
+				}
+			}
+		}
+
+		this->moveEntity(-xMovement, 0);
+	}
+
+	//------------------------------------------------------------------------------------------- Detect collision on y-axis
+	if (y != 0) {
+		this->moveEntity(0, yMovement);
+		for (auto const& cursor : *p_world->getEnemyVector()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				yCollision = true;
+				break;
+			}
+		}
+
+		if (!yCollision) {
+			for (auto const& cursor : *p_world->getEntityVector()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					yCollision = true;
+					break;
+				}
+			}
+		}
+
+		this->moveEntity(0, -yMovement);
+	}
+
+	//------------------------------------------------------------------------------------------- Detect collision on y-axis and x-axis
+	if (!xCollision && !yCollision && x != 0 && y != 0) {
+
+		this->moveEntity(xMovement, yMovement);
+		for (auto const& cursor : *p_world->getEnemyVector()) {
+			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				xCollision = true;
+				yCollision = true;
+				break;
+			}
+		}
+		if (!yCollision) {
+			for (auto const& cursor : *p_world->getEntityVector()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+					xCollision = true;
+					yCollision = true;
+					break;
+				}
+			}
+		}
+		this->moveEntity(-xMovement, -yMovement);
+	}
+
+	return { x * !xCollision, y * !yCollision };
 }
 
 Enemy::~Enemy()

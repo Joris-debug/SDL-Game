@@ -8,15 +8,15 @@ int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0, attackTrigger = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
+	Uint32 lastTime = currentTime;
 	while (true)
 	{
-		Uint32 lastTime = currentTime;
 		currentTime = SDL_GetTicks();
-		m_deltaTime_ = (currentTime - lastTime) * 0.2;
+		m_deltaTime_ = (currentTime - lastTime);
 
-		if (m_deltaTime_ < float(1000 / 60)) //Limit FPS auf 60
+		if (m_deltaTime_ > float(1000 / 60)) //Limit FPS auf 60
 		{
-
+			lastTime = currentTime;
 			while (SDL_PollEvent(m_p_interface_->getInputQueue()) != 0)
 			{
 
@@ -80,14 +80,14 @@ int GameHandler::gameLoop()
 
 				}
 			}
+			if (attackTrigger) {	
+				m_p_currentWorld_->triggerPlayerAttack();
+				attackTrigger = false;
+			}
 
-		m_p_interface_->getPixelPerPixel();
-		if (attackTrigger) {	
-			m_p_currentWorld_->triggerPlayerAttack();
-		}
-		m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_, m_p_interface_);
-		renderEverything();
-		attackTrigger = false;
+			m_p_interface_->getPixelPerPixel();
+			m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_ * 0.2, m_p_interface_);
+			renderEverything();
 		}
 		
 	}
