@@ -8,13 +8,14 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureHit_ = m_p_textureHit_;
 	m_TracedObstacle_ = ObstacleLocation::noObstacle;
 	m_factor_ = (unsigned int)this % 5 + 3;	//Random number to set a certain speed (3-7)
+	std::cout << m_factor_ << std::endl;
 }
 
 void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 {
 
 	Player* p_enemyTarget = p_world->getPlayer()->get();
-	SDL_FRect targetLocation = *(p_enemyTarget->getBounds());
+	SDL_FRect* targetLocation = p_enemyTarget->getBounds();
 
 	if (isInvincible()) {	//Hurt Enemies don't move
 		this->animateBody(0, 0);
@@ -23,59 +24,71 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 
 	short x = 0, y = 0, margin = 8;
 	bool inPlayerRange = false;
-	if (targetLocation.x + (targetLocation.w / 2.0) > m_bounds_.x + (m_bounds_.w / 2.0) + margin)
+	if (targetLocation->x + (targetLocation->w / 2.0) > m_bounds_.x + (m_bounds_.w / 2.0) + margin)
 		x = 1;
-	else if (targetLocation.x + (targetLocation.w / 2.0) + margin < m_bounds_.x + (m_bounds_.w / 2.0))
+	else if (targetLocation->x + (targetLocation->w / 2.0) + margin < m_bounds_.x + (m_bounds_.w / 2.0))
 		x = -1;
 
-	if (targetLocation.y + (targetLocation.h / 2.0) > m_bounds_.y + (m_bounds_.h / 2.0) + margin)
+	if (targetLocation->y + (targetLocation->h / 2.0) > m_bounds_.y + (m_bounds_.h / 2.0) + margin)
 		y = 1;
-	else if (targetLocation.y + (targetLocation.h / 2.0) + margin < m_bounds_.y + (m_bounds_.h / 2.0))
+	else if (targetLocation->y + (targetLocation->h / 2.0) + margin < m_bounds_.y + (m_bounds_.h / 2.0))
 		y = -1;
 
-	if (SDL_HasIntersectionF(&m_bounds_, &targetLocation)) {
-		x = 0, y = 0;
-	}
-
-	if (!y && !x) 
+	if (SDL_HasIntersectionF(targetLocation, &m_bounds_))
 		inPlayerRange = true;
 
 	if (m_TracedObstacle_ != ObstacleLocation::noObstacle) { //If the enemy detected an obstacle in its way
-		walkingVector xDirectionStruct = { x, 0 };
-		walkingVector yDirectionStruct = { 0, y };
-		switch (m_TracedObstacle_) {						//This switch is needed to see if the obstacle still needs to be traced 
-		case ObstacleLocation::xObstacle:			
-			if (xDirectionStruct == this->checkEnemyMove(p_world, x, 0, deltaTime)) {
-				m_TracedObstacle_ = ObstacleLocation::noObstacle;
-			}
+		switch (m_TracedObstacle_) {						 //This switch is needed to start evasive manoeuvres
+		case ObstacleLocation::xObstacle_R:
+			y = 1;
 			break;
-		case ObstacleLocation::yObstacle:			
-			if (yDirectionStruct == this->checkEnemyMove(p_world, 0, y, deltaTime))
-				m_TracedObstacle_ = ObstacleLocation::noObstacle;
+		case ObstacleLocation::xObstacle_L:
+			y = -1;
 			break;
-		}
-
-		switch (m_TracedObstacle_) {			//This switch is needed to start evasive manoeuvres
-		case ObstacleLocation::xObstacle:
-			(m_factor_ % 2 == 0) ? y = 1 : y = -1;
-			break;
-		case ObstacleLocation::yObstacle:
-			(m_factor_ % 2 == 0) ? x = 1 : x = -1;
+		case ObstacleLocation::yObstacle_T:
+			x = 1;
+		case ObstacleLocation::yObstacle_B:
+			x = -1;
 			break;
 		}
 	}
 
 	walkingVector legalMove = this->checkEnemyMove(p_world, x, y, deltaTime);
-	walkingVector empty = { 0, 0 };				//Looking for a better solution
-	if (!inPlayerRange && legalMove == empty) {	//If the enemy stopped before reaching the player
-		if (x) 
-			m_TracedObstacle_ = ObstacleLocation::xObstacle;
-		else 
-			m_TracedObstacle_ = ObstacleLocation::yObstacle;
+	walkingVector empty = { 0, 0 };
+	if (!inPlayerRange && legalMove == empty && m_TracedObstacle_ == ObstacleLocation::noObstacle) {	//If the enemy stopped before reaching the player
+		if (x == 1) 
+			m_TracedObstacle_ = ObstacleLocation::xObstacle_R;
+		else if(x == -1)
+			m_TracedObstacle_ = ObstacleLocation::xObstacle_L;
+		else if (y == 1)
+			m_TracedObstacle_ = ObstacleLocation::yObstacle_B;
+		else if (y == -1)
+			m_TracedObstacle_ = ObstacleLocation::yObstacle_T;
 	}
 
 	this->moveBody((legalMove.x * deltaTime) * (m_factor_ / 10.0), (deltaTime * legalMove.y) * (m_factor_ / 10.0));
 	this->animateBody(x, y);
+
+	if (m_TracedObstacle_ != ObstacleLocation::noObstacle) {
+		walkingVector xDirectionStruct = { x, 0 };
+		walkingVector yDirectionStruct = { 0, y };
+		switch (m_TracedObstacle_) {						//This switch is needed to see if the obstacle still needs to be traced 
+		case ObstacleLocation::xObstacle_R:
+		case ObstacleLocation::xObstacle_L:
+			if (xDirectionStruct == this->checkEnemyMove(p_world, x, 0, 16) && legalMove.x) { //Only stop tracing an Object if there is enough room afterwards 
+				m_TracedObstacle_ = ObstacleLocation::noObstacle;
+			}
+			break;
+
+		case ObstacleLocation::yObstacle_T:
+		case ObstacleLocation::yObstacle_B:
+			if (yDirectionStruct == this->checkEnemyMove(p_world, 0, y, 16) && legalMove.y) {
+				m_TracedObstacle_ = ObstacleLocation::noObstacle;
+			}
+			break;
+		}
+	}
+
 }
 
 void Enemy::animateBody(int x, int y)
@@ -221,25 +234,38 @@ walkingVector Enemy::checkEnemyMove(World* p_world, int x, int y, float deltaTim
 
 	//------------------------------------------------------------------------------------------- Detect collision on y-axis and x-axis
 	if (!xCollision && !yCollision && x != 0 && y != 0) {
-
+		bool bothCollisons = false;
 		this->moveEntity(xMovement, yMovement);
 		for (auto const& cursor : *p_world->getEnemyVector()) {
 			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-				xCollision = true;
-				yCollision = true;
+				bothCollisons = true;
 				break;
 			}
 		}
-		if (!yCollision) {
+		if (!bothCollisons) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
 				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
-					xCollision = true;
-					yCollision = true;
+					bothCollisons = true;
 					break;
 				}
 			}
 		}
 		this->moveEntity(-xMovement, -yMovement);
+
+		if(bothCollisons)
+			switch (m_TracedObstacle_) {			//This switch is needed to start evasive manoeuvres
+			case ObstacleLocation::xObstacle_R:
+			case ObstacleLocation::xObstacle_L:
+				yCollision = true;
+				break;
+			case ObstacleLocation::yObstacle_B:
+			case ObstacleLocation::yObstacle_T:
+				xCollision = true;
+				break;
+			default:
+				xCollision = true;
+				break;
+			}
 	}
 
 	return { x * !xCollision, y * !yCollision };

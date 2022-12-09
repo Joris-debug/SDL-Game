@@ -1,7 +1,7 @@
 #pragma once
 #include "Body.h"
 
-enum class ObstacleLocation {noObstacle, xObstacle, yObstacle};
+enum class ObstacleLocation {noObstacle, xObstacle_L, xObstacle_R, yObstacle_T, yObstacle_B};
 
 class World;
 class Enemy :

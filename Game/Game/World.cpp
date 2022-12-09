@@ -114,16 +114,16 @@ void World::renderWorld(SDL_Renderer* renderer, double pixel_per_pixel, Interfac
 
 	for (auto const& cursor : m_enemyVector_) {
 		cursor->renderBody(renderer, pixel_per_pixel);
-		SDL_FRect* playerTextureCoords = cursor->getBounds();
-		SDL_RenderDrawRectF(renderer, playerTextureCoords);
+		//SDL_FRect* playerTextureCoords = cursor->getBounds();
+		//SDL_RenderDrawRectF(renderer, playerTextureCoords);
 	}  
 
 	m_p_player_->renderBody(renderer, pixel_per_pixel);
 
 	m_p_topMap_->renderVicinity(renderer, pixel_per_pixel, screenWidth);	//Funktion to render top map
 	
-	SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
-	SDL_RenderDrawRectF(renderer, playerTextureCoords);
+	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
+	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
 }
 
 void World::triggerPlayerAttack()

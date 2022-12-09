@@ -1,14 +1,23 @@
 ﻿  Enemy.cpp
 C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(10,33): warning C4311: "Typumwandlung": Zeigerverkürzung von "Enemy *" zu "unsigned int"
 C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(10,33): warning C4302: "Typumwandlung": Verkürzung von "Enemy *" in "unsigned int"
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(77,91): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(77,43): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(150,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(151,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(152,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(153,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(171,18): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(171,68): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(69,91): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(69,43): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(163,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(164,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(165,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(166,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(184,18): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\Enemy.cpp(184,68): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+  GameHandler.cpp
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\GameHandler.cpp(15,31): warning C4244: "=": Konvertierung von "Uint32" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\GameHandler.cpp(89,64): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\GameHandler.cpp(134,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
+  World.cpp
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(108,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(109,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(110,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\BLL-SDL-Game\Game\Game\World.cpp(111,15): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
   Code wird generiert.
   3 of 323 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation

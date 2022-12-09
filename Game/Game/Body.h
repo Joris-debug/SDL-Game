@@ -7,13 +7,11 @@ enum class Mode{idle, walk, attack, turn, hit};	// 0: Idle, 1: Walk, 2: Attack, 
 struct walkingVector {
 	int x = 0;
 	int y = 0;
-
-	bool operator ==(walkingVector a)	{
+	bool operator ==(walkingVector a) {
 		if ((a.x == this->x) && (a.y == this->y))
 			return true;
 		return false;
 	}
-
 };
 
 class Body :
