@@ -27,14 +27,5 @@ void Vicinity::renderVicinity(SDL_Renderer* renderer, double pixel_per_pixel, in
 	tmp.w = round(tmp.w * pixel_per_pixel);
 	tmp.h = round(tmp.h * pixel_per_pixel);
 	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &tmp);
-
-
-	while(tmp.x + tmp.w < screenWidth)
-	{ 
-		tmp.x += tmp.w;
-		SDL_RenderCopyF(renderer, m_p_texture_, NULL, &tmp);
-	}
-
-	
 	
 }

@@ -1,13 +1,15 @@
+#include <functional>
 #include "World.h"
 #include "Interface.h"
 #include "Resources.h"
 #include "SDL_image.h"
 #include "Enemy.h"
 #include "Player.h"
-World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer) : Vicinity(surface, m_bounds_, renderer)
+
+World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_) : Vicinity(surface, m_bounds_, renderer)
 {
 	m_p_player_ = std::unique_ptr<Player>(new Player(renderer));
-
+	this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
 }
 
 World::~World()
@@ -43,7 +45,7 @@ void World::moveWorld(int x, int y, float deltaTime, Interface* p_Interface)
 
 	//------------------------------------------------------- Move the whole world
 	for (auto const& cursor : m_enemyVector_) {
-		cursor->moveBody(x * deltaTime, y * deltaTime);
+		cursor->moveEntity(x * deltaTime, y * deltaTime);
 	}
 
 	for (auto const& cursor : m_entityVector_) {
@@ -54,7 +56,7 @@ void World::moveWorld(int x, int y, float deltaTime, Interface* p_Interface)
 	m_p_topMap_->moveVicinity(x * deltaTime, y * deltaTime);
 }
 
-walkingVector World::checkPlayerMove(int x, int y, float deltaTime)
+walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 {
 	if (!x && !y) 
 		return { 0, 0 };	
@@ -157,4 +159,139 @@ void World::checkForDefeatedEnemies()
 		}
 		it++;
 	}
+}
+
+SDL_FPoint World::getRandomCoordinate()
+{
+	int randomXCoordinate = getRandomNumber(m_bounds_.x, m_bounds_.x + m_bounds_.w);
+	int randomYCoordinate = getRandomNumber(m_bounds_.y, m_bounds_.x + m_bounds_.h);
+	return { float(randomXCoordinate), float(randomYCoordinate) };
+}
+
+int World::getRandomNumber(int rangeBegin, int rangeEnde)
+{
+	std::uniform_int_distribution<int> distribution(rangeBegin, rangeEnde);
+	return (distribution(*m_p_randomNumberEngine_));
+}
+
+int World::computeCodeForCohenSutherland(SDL_FRect* rectangle, float x, float y)
+{
+	const int INSIDE = 0; // 0000
+	const int LEFT = 1; // 0001
+	const int RIGHT = 2; // 0010
+	const int BOTTOM = 4; // 0100
+	const int TOP = 8; // 1000
+
+	int code = INSIDE;	// initialized as being inside	
+
+	float x_max = rectangle->x + rectangle->w;
+	float y_max = rectangle->y + rectangle->h;
+	float x_min = rectangle->x;
+	float y_min = rectangle->y;
+
+	if (x < x_min) // to the left of rectangle
+		code |= LEFT;
+	else if (x > x_max) // to the right of rectangle
+		code |= RIGHT;
+	if (y < y_min) // below the rectangle
+		code |= BOTTOM;
+	else if (y > y_max) // above the rectangle
+		code |= TOP;
+
+	return code;
+}
+
+bool World::IntersectEntityAndLine(SDL_FRect* rectangle, SDL_FPoint point1, SDL_FPoint point2)
+{
+	const int INSIDE = 0; // 0000
+	const int LEFT = 1; // 0001
+	const int RIGHT = 2; // 0010
+	const int BOTTOM = 4; // 0100
+	const int TOP = 8; // 1000
+
+	float x1 = point1.x;
+	float y1 = point1.y;
+	float x2 = point2.x;
+	float y2 = point2.y;
+	
+	// Compute region codes for P1, P2
+	int code1 = computeCodeForCohenSutherland(rectangle, x1, y1);
+	int code2 = computeCodeForCohenSutherland(rectangle, x2, y2);
+
+	float x_max = rectangle->x + rectangle->w;
+	float y_max = rectangle->y + rectangle->h;
+	float x_min = rectangle->x;
+	float y_min = rectangle->y;
+
+	// Initialize line as outside the rectangular window
+	bool accept = false;
+
+	while (true) {
+		if ((code1 == 0) && (code2 == 0)) {
+			// If both endpoints lie within rectangle
+			accept = true;
+			break;
+		}
+		else if (code1 & code2) {
+			// If both endpoints are outside rectangle,
+			// in same region
+			break;
+		}
+		else {
+			// Some segment of line lies within the
+			// rectangle
+			int code_out;
+			double x, y;
+
+			// At least one endpoint is outside the
+			// rectangle, pick it.
+			if (code1 != 0)
+				code_out = code1;
+			else
+				code_out = code2;
+
+			// Find intersection point;
+			// using formulas y = y1 + slope * (x - x1),
+			// x = x1 + (1 / slope) * (y - y1)
+			if (code_out & TOP) {
+				// point is above the clip rectangle
+				x = x1 + (x2 - x1) * (y_max - y1) / (y2 - y1);
+				y = y_max;
+			}
+			else if (code_out & BOTTOM) {
+				// point is below the rectangle
+				x = x1 + (x2 - x1) * (y_min - y1) / (y2 - y1);
+				y = y_min;
+			}
+			else if (code_out & RIGHT) {
+				// point is to the right of rectangle
+				y = y1 + (y2 - y1) * (x_max - x1) / (x2 - x1);
+				x = x_max;
+			}
+			else if (code_out & LEFT) {
+				// point is to the left of rectangle
+				y = y1 + (y2 - y1) * (x_min - x1) / (x2 - x1);
+				x = x_min;
+			}
+
+			// Now intersection point x, y is found
+			// We replace point outside rectangle
+			// by intersection point
+			if (code_out == code1) {
+				x1 = x;
+				y1 = y;
+				code1 = computeCodeForCohenSutherland(rectangle, x1, y1);
+			}
+			else {
+				x2 = x;
+				y2 = y;
+				code2 = computeCodeForCohenSutherland(rectangle, x2, y2);
+			}
+		}
+	}
+
+	if (accept)
+		return false;
+	else
+		return true;
 }

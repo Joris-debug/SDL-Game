@@ -41,7 +41,7 @@ bool Player::detectTurning(int x, int y)
 	return false;
 }
 
-void Player::animateBody(int x, int y)
+void Player::animateBody(float x, float y)
 {	
 	int totalSprites = 1;
 	int delayPerFrame = 100;
@@ -139,4 +139,13 @@ void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
 		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &tmp);
 		break;
 	}
+}
+
+SDL_FPoint* Player::getPlayerTargets()
+{
+	SDL_FPoint playerTargets[3];
+	playerTargets[0] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 }; //Middle of the Player
+	playerTargets[1] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y }; //Head of the Player
+	playerTargets[2] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h }; //Feet of the Player
+	return playerTargets;
 }

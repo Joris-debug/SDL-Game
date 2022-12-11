@@ -1,8 +1,8 @@
 #include "Body.h"
 #include <iostream>
-void Body::moveBody(float x, float y)
+void Body::moveEntity(float x, float y)
 {
-	moveEntity(x, y);
+	Entity::moveEntity(x, y);
 	m_spriteBounds_.x += x;
 	m_spriteBounds_.y += y;
 }

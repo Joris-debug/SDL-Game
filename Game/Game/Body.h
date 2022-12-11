@@ -5,8 +5,8 @@
 enum class Mode{idle, walk, attack, turn, hit};	// 0: Idle, 1: Walk, 2: Attack, 3: Turn, 4: Hit, ...
 
 struct walkingVector {
-	int x = 0;
-	int y = 0;
+	float x = 0;
+	float y = 0;
 	bool operator ==(walkingVector a) {
 		if ((a.x == this->x) && (a.y == this->y))
 			return true;
@@ -28,9 +28,9 @@ protected:
 	short m_currentLives_;		
 	short m_maxLives_;		
 public:
-	virtual void animateBody(int x, int y) = 0;
+	virtual void animateBody(float x, float y) = 0;
 	virtual void renderBody(SDL_Renderer* renderer, double pixel_per_pixel) = 0;
-	void moveBody(float x, float y);
+	void moveEntity(float x, float y) override;
 	void damageBody(short damage);
 	inline short getCurrentLives() { return m_currentLives_; }
 	inline SDL_FRect* getSpriteBounds() { return &m_spriteBounds_; }
