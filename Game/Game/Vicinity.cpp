@@ -19,13 +19,7 @@ void Vicinity::moveVicinity(float x, float y)
 
 }
 
-void Vicinity::renderVicinity(SDL_Renderer* renderer, double pixel_per_pixel, int screenWidth)
+void Vicinity::renderVicinity(SDL_Renderer* renderer)
 {
-	SDL_FRect tmp = m_bounds_;
-	tmp.x = round(tmp.x * pixel_per_pixel);
-	tmp.y = round(tmp.y * pixel_per_pixel);
-	tmp.w = round(tmp.w * pixel_per_pixel);
-	tmp.h = round(tmp.h * pixel_per_pixel);
-	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &tmp);
-	
+	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &m_bounds_);	
 }

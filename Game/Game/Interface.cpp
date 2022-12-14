@@ -66,11 +66,12 @@ void Interface::getPixelPerPixel()
     int height;
     SDL_GetWindowSize(m_p_window_, &width, &height);
     m_pixel_per_pixel_ = double(height) / 640.0; // The window should always show 640 pixels on the y-axis
+    SDL_RenderSetScale(m_p_renderer_, m_pixel_per_pixel_, m_pixel_per_pixel_);
 }
 
 void Interface::startGame()
 {
-    m_p_GameHandler_ = new GameHandler(this, m_p_renderer_, &m_pixel_per_pixel_);
+    m_p_GameHandler_ = new GameHandler(this, m_p_renderer_);
     m_p_GameHandler_->initLevel1();
 }
 

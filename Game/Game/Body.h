@@ -12,6 +12,16 @@ struct walkingVector {
 			return true;
 		return false;
 	}
+	bool operator <=(int a) {
+		if ((a >= this->x) && (a >= this->y))
+			return true;
+		return false;
+	}
+	bool operator >=(int a) {
+		if ((a <= this->x) && (a <= this->y))
+			return true;
+		return false;
+	}
 };
 
 class Body :
@@ -29,7 +39,7 @@ protected:
 	short m_maxLives_;		
 public:
 	virtual void animateBody(float x, float y) = 0;
-	virtual void renderBody(SDL_Renderer* renderer, double pixel_per_pixel) = 0;
+	virtual void renderBody(SDL_Renderer* renderer) = 0;
 	void moveEntity(float x, float y) override;
 	void damageBody(short damage);
 	inline short getCurrentLives() { return m_currentLives_; }

@@ -7,6 +7,7 @@ class Enemy :
     public Body
 {
 protected:
+    Uint32 m_lastTargetAssigned_;
     SDL_Texture* m_p_textureIdle_;
     SDL_Texture* m_p_textureRun_;
     SDL_Texture* m_p_textureHit_;
@@ -17,7 +18,7 @@ public:
     void enemyPathfinding(World* p_world, float deltaTime);
     void animateBody(float x, float y) override;
     void moveEntity(float x, float y) override;
-    void renderBody(SDL_Renderer* renderer, double pixel_per_pixel) override;
+    void renderBody(SDL_Renderer* renderer) override;
     walkingVector checkEnemyMove(World* p_world, float x, float y, float deltaTime);        //Returns a legal move
     ~Enemy();
 };

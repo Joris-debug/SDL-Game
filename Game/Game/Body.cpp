@@ -19,6 +19,7 @@ void Body::damageBody(short damage)
 		m_currentLives_ = 0;
 	}
 	m_lastDamageTaken_ = SDL_GetTicks();
+	m_lastFrame_ = SDL_GetTicks();
 	m_currentSprite_ = 0;
 }
 

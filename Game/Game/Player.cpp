@@ -19,9 +19,16 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	tmpSurface = IMG_Load(RSC_PLAYER_ATTACK);
 	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
+
+	tmpSurface = IMG_Load(RSC_PLAYER_HIT);
+	m_p_textureHit_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	SDL_FreeSurface(tmpSurface);
+
 	m_footSpace_ = { 378, 336, 42, 24}; //This area collides with obstacles 
 	m_isTurning_ = false;
 	m_isAttacking_ = false;
+
+	m_lastAttack_ = SDL_GetTicks();
 }
 
 Player::~Player()
@@ -48,6 +55,11 @@ void Player::animateBody(float x, float y)
 	int spriteLayer = 0;
 
 	do {
+		if (isInvincible()) {
+			m_currentMode_ = Mode::hit;
+			totalSprites = 2;
+			break;
+		}
 
 		if (m_isAttacking_) //An attack started
 		{
@@ -108,7 +120,7 @@ void Player::animateBody(float x, float y)
 	}
 	
 	if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
-		m_currentSprite_ = 1;
+		m_currentSprite_ = 0;
 	}
 
 	m_lastMove_.x = x;
@@ -117,35 +129,32 @@ void Player::animateBody(float x, float y)
 	m_textureCoords_ = { 120 * m_currentSprite_, spriteLayer * 80, 120, 80 };
 }
 
-void Player::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
+void Player::renderBody(SDL_Renderer* renderer)
 {
-	SDL_FRect tmp = m_spriteBounds_;
-	tmp.x = round(tmp.x * pixel_per_pixel);
-	tmp.y = round(tmp.y * pixel_per_pixel);
-	tmp.w = round(tmp.w * pixel_per_pixel);
-	tmp.h = round(tmp.h * pixel_per_pixel);
-
 	switch (m_currentMode_) {
 	case Mode::idle:
-		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	case Mode::walk:
-		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	case Mode::attack:
-		SDL_RenderCopyF(renderer, m_p_textureAttack_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureAttack_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	case Mode::turn:
-		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureTurn_, &m_textureCoords_, &m_spriteBounds_);
+		break;
+	case Mode::hit:
+		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	}
 }
 
 SDL_FPoint* Player::getPlayerTargets()
 {
-	SDL_FPoint playerTargets[3];
-	playerTargets[0] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 }; //Middle of the Player
-	playerTargets[1] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y }; //Head of the Player
-	playerTargets[2] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h }; //Feet of the Player
-	return playerTargets;
+	static SDL_FPoint s_playerTargets[3];
+	s_playerTargets[0] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 }; //Middle of the Player
+	s_playerTargets[1] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y }; //Head of the Player
+	s_playerTargets[2] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h }; //Feet of the Player
+	return s_playerTargets;
 }

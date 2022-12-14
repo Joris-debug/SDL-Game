@@ -8,7 +8,7 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureRun_ = m_p_textureRun_;
 	this->m_p_textureHit_ = m_p_textureHit_;
 	m_factor_ = (unsigned int)this % 5 + 3;	//Random number for certain calculations
-	std::cout << m_factor_ << std::endl;
+	m_lastTargetAssigned_ = 0;
 	m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
 }
 
@@ -18,32 +18,42 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		this->animateBody(0, 0);
 		return;
 	}
-	//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
-	
-	SDL_FPoint* p_playerTargets = p_world->getPlayer()->get()->getPlayerTargets();
+		
 	SDL_FPoint enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
 
-	bool playerSpotted = true;
-	auto p_entityVector = p_world->getEntityVector();
-	auto it = p_entityVector->begin();
-	while (it != p_entityVector->end()) {
-		if (SDL_IntersectFRectAndLine(it->get()->getBounds(), &p_playerTargets[0].x, &p_playerTargets[0].y, &enemyMiddle.x, &enemyMiddle.y)) {
-			playerSpotted = false;
-			std::cout << "lol" << std::endl;
-		}			
-		it++;
-	}
-	if (playerSpotted == true) {
-		std::cout << "player spotted" << std::endl;
-	}
-	else 
-		std::cout << "player not spotted" << std::endl;
-	short margin = 8;
-	if (abs(enemyMiddle.x - m_enemyTarget_.x) < margin && abs(enemyMiddle.y - m_enemyTarget_.y) < margin) {		//New direction assigned if the old target is reached
-		m_enemyTarget_ = p_world->getRandomCoordinate();
-	}
-	else if (p_world->getRandomNumber(0, 200) == Uint32(this) % 10) {			//New direction assigned if a random check is hit
-		m_enemyTarget_ = p_world->getRandomCoordinate();
+	if (SDL_GetTicks() - m_lastTargetAssigned_ > 500) {
+		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
+		SDL_FPoint* p_playerTargets = p_world->getPlayer()->get()->getPlayerTargets();
+		bool playerSpotted = true;
+		auto p_entityVector = p_world->getEntityVector();
+		for (short targetNr = 0; targetNr < 3; targetNr++) {				//Looping the three possible target options			
+			auto it = p_entityVector->begin();
+			while (it != p_entityVector->end()) {					//Looping for every entity on the map
+				if (SDL_IntersectFRectAndLine(it->get()->getBounds(), &p_playerTargets[targetNr].x, &p_playerTargets[targetNr].y, &enemyMiddle.x, &enemyMiddle.y)) {
+					playerSpotted = false;
+					break;
+				}
+				it++;
+			}
+			if (playerSpotted) {
+				m_enemyTarget_ = p_playerTargets[targetNr];
+				break;
+			}
+			else if (targetNr < 3) {		//Im reseting the variables for the next run
+				playerSpotted = true;
+				enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
+			}
+		}
+
+		short margin = 8;
+		if (abs(enemyMiddle.x - m_enemyTarget_.x) < margin && abs(enemyMiddle.y - m_enemyTarget_.y) < margin) {		//New direction assigned if the old target is reached
+			m_enemyTarget_ = p_world->getRandomCoordinate();
+			m_lastTargetAssigned_ = SDL_GetTicks();
+		}
+		else if (p_world->getRandomNumber(0, 200) == Uint32(this) % 10 && !playerSpotted) {			//New direction assigned if a random check is hit
+			m_enemyTarget_ = p_world->getRandomCoordinate();
+			m_lastTargetAssigned_ = SDL_GetTicks();
+		}
 	}
 
 	float dirX = m_enemyTarget_.x - enemyMiddle.x;
@@ -51,11 +61,12 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	float hyp = sqrt(dirX * dirX + dirY * dirY);
 
 	dirX /= hyp;
-	dirY /= hyp;	
+	dirY /= hyp;
+
 	walkingVector legalMove = this->checkEnemyMove(p_world, dirX, dirY, deltaTime);
-	walkingVector empty = { 0, 0 };
-	if (legalMove == empty) {	//If the enemy stopped before reaching the target
-		m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 };	// On the next run of the enemyPathfinding method, a new target should be assigned
+	if (abs(legalMove.x) < 0.001 && abs(legalMove.y) < 0.001) {	//If the enemy stopped before reaching the target
+		m_enemyTarget_ = p_world->getRandomCoordinate();
+		m_lastTargetAssigned_ = SDL_GetTicks();
 	}
 	Body::moveEntity((legalMove.x * deltaTime) * ENEMY_SPEED, (deltaTime * legalMove.y) * ENEMY_SPEED); //This method does not move the enemy target
 	animateBody(dirX, dirY);
@@ -139,30 +150,23 @@ void Enemy::moveEntity(float x, float y)
 	m_enemyTarget_.y += y;
 }
 
-void Enemy::renderBody(SDL_Renderer* renderer, double pixel_per_pixel)
+void Enemy::renderBody(SDL_Renderer* renderer)
 {
-	SDL_FRect tmp = m_spriteBounds_;
-	tmp.x = round(tmp.x * pixel_per_pixel);
-	tmp.y = round(tmp.y * pixel_per_pixel);
-	tmp.w = round(tmp.w * pixel_per_pixel);
-	tmp.h = round(tmp.h * pixel_per_pixel);
-
 	switch (m_currentMode_) {
 	case Mode::idle:
-		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	case Mode::walk:
-		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	case Mode::hit:
-		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &tmp);
+		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	}
 }
 
 walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float deltaTime)
-{
-	
+{ 	
 	if (!x && !y)
 		return { 0,0 };
 	
