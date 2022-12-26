@@ -58,6 +58,7 @@ void Player::animateBody(float x, float y)
 		if (isInvincible()) {
 			m_currentMode_ = Mode::hit;
 			totalSprites = 2;
+			m_isAttacking_ = false;
 			break;
 		}
 

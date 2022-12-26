@@ -43,6 +43,7 @@ public:
 	void moveEntity(float x, float y) override;
 	void damageBody(short damage);
 	inline short getCurrentLives() { return m_currentLives_; }
+	inline short getMaxLives() { return m_maxLives_; }
 	inline SDL_FRect* getSpriteBounds() { return &m_spriteBounds_; }
 	bool isInvincible();
 	Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_);
