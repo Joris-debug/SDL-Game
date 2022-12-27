@@ -7,8 +7,8 @@ C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(235,41
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(235,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(238,23): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
   Code wird generiert.
-  1 of 544 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  4 of 508 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    15 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\x64\Release\Game.exe

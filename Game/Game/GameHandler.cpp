@@ -32,9 +32,9 @@ int GameHandler::gameLoop()
 
 			if (m_p_serial_->dataAvailable()) {
 				std::string input = m_p_serial_->readLine();
-				input = input.substr( 1, input.size() - 3); //Cut the quotation marks
 				std::string direction = input.substr(0, input.find(';'));
-				std::string attack = input.substr(input.find(';') + 1, input.size() - 1);
+				std::string attack = input.substr(input.find(';') + 1);
+				attack = attack.substr(0, attack.size() - 1);
 
 				if (attack == "true") {
 					attackTrigger = true;
@@ -214,9 +214,9 @@ int GameHandler::initLevel1()
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 608 * 2, 192, 64 })); //Holy statue
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
 
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 500, 64, 64 }, { 500, 500, 64, 64 }, 2));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
+	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
+	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 500, 64, 64 }, { 500, 500, 64, 64 }, 2));
+	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
 
 
 	return gameLoop();
