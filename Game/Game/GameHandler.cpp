@@ -4,7 +4,7 @@
 #include "Resources.h"
 #include "Enemy.h"
 #include "Player.h"
-#include <SDL_image.h>
+#include "SDL_image.h"
 #include "Serial.h"
 int GameHandler::gameLoop()
 {
@@ -107,7 +107,7 @@ int GameHandler::gameLoop()
 			}
 
 			m_p_interface_->getPixelPerPixel();
-			m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_ * 0.2, m_p_interface_);
+			m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_ * 0.2);
 			renderEverything();
 
 			if (!m_p_currentWorld_->getPlayer()->get()->getCurrentLives()) {

@@ -7,7 +7,7 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureIdle_ = m_p_textureIdle_;
 	this->m_p_textureRun_ = m_p_textureRun_;
 	this->m_p_textureHit_ = m_p_textureHit_;
-	m_factor_ = (unsigned int)this % 5 + 3;	//Random number for certain calculations
+	m_factor_ = (Uint32)this % 5 + 3;	//Random number for certain calculations
 	m_lastTargetAssigned_ = 0;
 	m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
 }

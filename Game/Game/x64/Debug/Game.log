@@ -1,0 +1,20 @@
+﻿  Enemy.cpp
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(10,27): warning C4311: "Typumwandlung": Zeigerverkürzung von "Enemy *" zu "Uint32"
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(10,27): warning C4302: "Typumwandlung": Verkürzung von "Enemy *" in "Uint32"
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(53,11): warning C4311: "<function-style-cast>": Zeigerverkürzung von "Enemy *" zu "Uint32"
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(53,11): warning C4302: "<function-style-cast>": Verkürzung von "Enemy *" in "Uint32"
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(71,86): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(71,45): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(174,18): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+D:\Knight-SDL-Game\Game\Game\Enemy.cpp(174,61): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+  GameHandler.cpp
+D:\Knight-SDL-Game\Game\Game\GameHandler.cpp(7,10): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "SDL_image.h": No such file or directory
+  Interface.cpp
+D:\Knight-SDL-Game\Game\Game\Interface.cpp(2,10): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "SDL_image.h": No such file or directory
+  Player.cpp
+D:\Knight-SDL-Game\Game\Game\Player.cpp(2,10): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "SDL_image.h": No such file or directory
+  Serial.cpp
+D:\Knight-SDL-Game\Game\Game\Serial.cpp(114,65): warning C4267: "Argument": Konvertierung von "size_t" nach "DWORD", Datenverlust möglich
+  World.cpp
+D:\Knight-SDL-Game\Game\Game\World.cpp(5,10): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "SDL_image.h": No such file or directory
+  Code wird generiert...

@@ -16,22 +16,19 @@ World::~World()
 {
 }
 
-void World::moveWorld(int x, int y, float deltaTime, Interface* p_Interface)
+void World::moveWorld(int x, int y, float deltaTime)
 {
 	m_p_player_->animateBody(x, y);
 
 	if (m_p_player_->getIsAttacking()) { //No moving while attacking
 		x = 0;
 		y = 0;
+		damageEnemysInPlayerRadius();
 	}
 	else {
 		walkingVector legalMove = checkPlayerMove(x, y, deltaTime);
 		x = legalMove.x;
 		y = legalMove.y;
-	}
-
-	if (m_p_player_->getIsAttacking()) {
-		damageEnemysInPlayerRadius();
 	}
 
 	checkIfPlayerHit();
