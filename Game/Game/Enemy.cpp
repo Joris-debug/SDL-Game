@@ -21,7 +21,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		
 	SDL_FPoint enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
 
-	if (SDL_GetTicks() - m_lastTargetAssigned_ > 500) {
+	if (SDL_GetTicks() - m_lastTargetAssigned_ > 1000) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
 		SDL_FPoint* p_playerTargets = p_world->getPlayer()->get()->getPlayerTargets();
 		bool playerSpotted = true;
@@ -64,7 +64,8 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	dirY /= hyp;
 
 	walkingVector legalMove = this->checkEnemyMove(p_world, dirX, dirY, deltaTime);
-	if (abs(legalMove.x) < 0.001 && abs(legalMove.y) < 0.001) {	//If the enemy stopped before reaching the target
+	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1) {	//If the enemy stopped before reaching the target
+		std::cout << "0 movement\n";
 		m_enemyTarget_ = p_world->getRandomCoordinate();
 		m_lastTargetAssigned_ = SDL_GetTicks();
 	}

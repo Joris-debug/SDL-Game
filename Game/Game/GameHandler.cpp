@@ -19,89 +19,70 @@ int GameHandler::gameLoop()
 		if (m_deltaTime_ > float(1000 / 60)) //Limit FPS auf 60
 		{
 			lastTime = currentTime;
-
-			while (SDL_PollEvent(m_p_interface_->getInputQueue()) != 0) //Needed for basic window responses (scaling, moving, closing)
+			while (SDL_PollEvent(m_p_interface_->getInputQueue()) != 0)
 			{
+
 				switch (m_p_interface_->getInputQueue()->type)
 				{
 				case SDL_QUIT:
 					exit(1);
 					break;
-				}
-			}
 
-			if (m_p_serial_->dataAvailable()) {
-				std::string input = m_p_serial_->readLine();
-				std::string direction = input.substr(0, input.find(';'));
-				std::string attack = input.substr(input.find(';') + 1);
-				attack = attack.substr(0, attack.size() - 1);
+				case SDL_KEYDOWN:
+					switch (m_p_interface_->getInputQueue()->key.keysym.sym)
+					{
 
-				if (attack == "true") {
+					case SDLK_w:
+						y_input = 1;
+						break;
+
+					case SDLK_s:
+						y_input = -1;
+						break;
+
+					case SDLK_a:
+						x_input = 1;
+						break;
+
+					case SDLK_d:
+						x_input = -1;
+						break;
+
+						//case SDLK_0:
+						//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
+						//	break;
+
+						//case SDLK_1:
+						//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), 0);
+						//	SDL_SetWindowSize(m_p_interface_->getWindow(), STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT);
+						//	break;
+					}
+					break;
+
+				case SDL_KEYUP:
+
+					switch (m_p_interface_->getInputQueue()->key.keysym.sym)
+					{
+					case SDLK_w:
+					case SDLK_s:
+						y_input = 0;
+						break;
+
+					case SDLK_d:
+					case SDLK_a:
+						x_input = 0;
+						break;
+					}
+					break;
+
+
+				case SDL_MOUSEBUTTONDOWN:
 					attackTrigger = true;
-				}
+					break;
 
-				this->m_lastDirection_ = direction;
+				}
 			}
-
-			do {
-
-				if (m_lastDirection_ == "C") {
-					x_input = 0;
-					y_input = 0;
-					break;
-				}
-
-				if (m_lastDirection_ == "N") {
-					x_input = 0;
-					y_input = 1;
-					break;
-				}
-
-				if (m_lastDirection_ == "NE") {
-					x_input = -1;
-					y_input = 1;
-					break;
-				}
-
-				if (m_lastDirection_ == "E") {
-					x_input = -1;
-					y_input = 0;
-					break;
-				}
-
-				if (m_lastDirection_ == "SE") {
-					x_input = -1;
-					y_input = -1;
-					break;
-				}
-
-				if (m_lastDirection_ == "S") {
-					x_input = 0;
-					y_input = -1;
-					break;
-				}
-
-				if (m_lastDirection_ == "SW") {
-					x_input = 1;
-					y_input = -1;
-					break;
-				}
-
-				if (m_lastDirection_ == "W") {
-					x_input = 1;
-					y_input = 0;
-					break;
-				}
-
-				if (m_lastDirection_ == "NW") {
-					x_input = 1;
-					y_input = 1;
-					break;
-				}
-
-			} while (false);
-
-			if (attackTrigger) {	
+			if (attackTrigger) {
 				m_p_currentWorld_->triggerPlayerAttack();
 				attackTrigger = false;
 			}
@@ -114,7 +95,7 @@ int GameHandler::gameLoop()
 				break;
 			}
 		}
-		
+
 	}
 
 	m_p_interface_->waitForInput(1000);
@@ -166,15 +147,6 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	p_tmpSurface = IMG_Load(RSC_HEALTHBAR_CHECK);
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
-
-	std::string comName;
-	std::cout << "Please specify port [Nr]: ";
-	std::cin >> comName;
-	this->m_p_serial_ = new Serial("COM" + comName, 9600, 8, 1, 0);
-	if (!m_p_serial_->open()) {
-		std::cout << "Error" << std::endl;
-	}
-	this->m_lastDirection_ = "C"; //No direction
 }
 
 GameHandler::~GameHandler()
@@ -197,7 +169,6 @@ GameHandler::~GameHandler()
 		m_hudTextures_.pop_back();
 	}
 
-	m_p_serial_->close();
 }
 
 int GameHandler::initLevel1()
@@ -214,9 +185,9 @@ int GameHandler::initLevel1()
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 608 * 2, 192, 64 })); //Holy statue
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
 
-	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
-	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 500, 64, 64 }, { 500, 500, 64, 64 }, 2));
-	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 500, 64, 64 }, { 500, 500, 64, 64 }, 2));
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
 
 
 	return gameLoop();

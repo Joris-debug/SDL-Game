@@ -5,12 +5,9 @@
 #pragma once
 class Interface;
 class World;
-class Serial;
 class GameHandler	
 {
 private:
-	Serial* m_p_serial_;
-	std::string m_lastDirection_;
 	Interface *m_p_interface_;
 	float m_deltaTime_;
 	std::unique_ptr<World> m_p_currentWorld_;
