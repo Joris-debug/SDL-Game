@@ -2,9 +2,15 @@
 #include "SDL.h"
 class GameHandler;
 
+struct windowDimensions {
+	int width;
+	int height;
+};
+
 class Interface
 {
 private:
+	windowDimensions m_windowDimensions_;
 	GameHandler *m_p_GameHandler_;
 	SDL_Window *m_p_window_;
 	SDL_Renderer* m_p_renderer_;
@@ -18,6 +24,7 @@ public:
 	inline SDL_Window* getWindow() { return m_p_window_; }
 	inline SDL_Event* getInputQueue() {	return &m_inputQueue_; }
 	void getPixelPerPixel();
+	void checkWindowProportions();
 	void startGame();
 };
 

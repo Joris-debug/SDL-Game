@@ -17,11 +17,13 @@ private:
 	std::vector<SDL_Texture*> m_enemyTexturesIdle_;
 	std::vector<SDL_Texture*> m_enemyTexturesHit_;
 	std::vector<SDL_Texture*> m_hudTextures_; //This vector stores every texture needed for printing the hud
+	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed
 	int gameLoop();
 public:
 	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_);
 	~GameHandler();
 	int initLevel1();
+	void renderWorldBackground();
 	void renderHud(); //This function will render healthbar, attack status, etc
 	void renderEverything();
 };

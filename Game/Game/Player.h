@@ -19,7 +19,7 @@ private:
 public:
     Player(SDL_Renderer *renderer);
     ~Player();
-    bool detectTurning(int x, int y);
+    bool detectTurning(float x, float y);
     void animateBody(float x, float y) override;
     void renderBody(SDL_Renderer *renderer) override;
     inline Uint32 getLastAttack() { return m_lastAttack_; }

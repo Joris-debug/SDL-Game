@@ -20,7 +20,10 @@ Interface::Interface()
 
     m_p_window_ = SDL_CreateWindow("Part Time Knight", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     m_p_renderer_ = SDL_CreateRenderer(m_p_window_, -1, 0);
-    //SDL_SetWindowFullscreen(m_p_window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+    m_windowDimensions_.width = 800;
+    m_windowDimensions_.height = 640;
+
     getPixelPerPixel();
 }
 
@@ -62,11 +65,32 @@ void Interface::waitForInput(Uint32 ticksToWait)
 
 void Interface::getPixelPerPixel()
 {
-    int width;
-    int height;
-    SDL_GetWindowSize(m_p_window_, &width, &height);
-    m_pixel_per_pixel_ = double(height) / 640.0; // The window should always show 640 pixels on the y-axis
+    checkWindowProportions();
+    m_pixel_per_pixel_ = double(m_windowDimensions_.height) / 640.0; // The window should always show 640 pixels on the y-axis
     SDL_RenderSetScale(m_p_renderer_, m_pixel_per_pixel_, m_pixel_per_pixel_);
+}
+
+void Interface::checkWindowProportions()
+{
+    int newWidth, newHeight;
+    SDL_GetWindowSize(m_p_window_, &newWidth, &newHeight);
+
+    if (m_windowDimensions_.width == newWidth && m_windowDimensions_.height == newHeight)
+        return;
+    
+    if (m_windowDimensions_.height != newHeight) {
+        m_windowDimensions_.height = newHeight;
+        m_windowDimensions_.width = newHeight * 1.25;
+        SDL_SetWindowSize(m_p_window_, m_windowDimensions_.width, m_windowDimensions_.height);
+        return;
+    }
+
+    if (m_windowDimensions_.width != newWidth) {
+        m_windowDimensions_.width = newWidth;
+        m_windowDimensions_.height = newWidth / 1.25;
+        SDL_SetWindowSize(m_p_window_, m_windowDimensions_.width, m_windowDimensions_.height);
+        return;
+    }
 }
 
 void Interface::startGame()

@@ -16,8 +16,14 @@ World::~World()
 {
 }
 
-void World::moveWorld(int x, int y, float deltaTime)
+void World::moveWorld(float x, float y, float deltaTime)
 {
+
+	if (x && y)	{ //If the player moves in 2 directions
+		x *= 0.707;
+		y *= 0.707;
+	}
+
 	m_p_player_->animateBody(x, y);
 
 	if (m_p_player_->getIsAttacking()) { //No moving while attacking
@@ -98,7 +104,6 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 
 void World::renderWorld(SDL_Renderer* renderer)
 {
-	SDL_RenderClear(renderer);
 	//-------------------------------------------- Render the actual level	
 
 	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &m_bounds_);

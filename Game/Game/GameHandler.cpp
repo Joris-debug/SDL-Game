@@ -5,7 +5,6 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "SDL_image.h"
-#include "Serial.h"
 int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0, attackTrigger = false;
@@ -147,12 +146,15 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	p_tmpSurface = IMG_Load(RSC_HEALTHBAR_CHECK);
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_WORLD_BACKGROUND);
+	m_miscTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
 }
 
 GameHandler::~GameHandler()
 {
 	int numberOfTextures = m_enemyTexturesIdle_.size();
-
 	for (int i = 0; i < numberOfTextures; i++) {
 		SDL_DestroyTexture(m_enemyTexturesIdle_.back());
 		m_enemyTexturesIdle_.pop_back();
@@ -163,10 +165,15 @@ GameHandler::~GameHandler()
 	}
 
 	numberOfTextures = m_hudTextures_.size();
-
 	for (int i = 0; i < numberOfTextures; i++) {
 		SDL_DestroyTexture(m_hudTextures_.back());
 		m_hudTextures_.pop_back();
+	}
+
+	numberOfTextures = m_miscTextures_.size();
+	for (int i = 0; i < numberOfTextures; i++) {
+		SDL_DestroyTexture(m_miscTextures_.back());
+		m_miscTextures_.pop_back();
 	}
 
 }
@@ -191,6 +198,11 @@ int GameHandler::initLevel1()
 
 
 	return gameLoop();
+}
+
+void GameHandler::renderWorldBackground()
+{
+	SDL_RenderCopyF(m_p_renderer_, m_miscTextures_[0], NULL, NULL);
 }
 
 void GameHandler::renderHud()
@@ -219,6 +231,7 @@ void GameHandler::renderHud()
 void GameHandler::renderEverything()
 {
 	SDL_RenderClear(m_p_renderer_);
+	renderWorldBackground();
 	m_p_currentWorld_->renderWorld(m_p_renderer_);
 	renderHud();
 	SDL_RenderPresent(m_p_renderer_);

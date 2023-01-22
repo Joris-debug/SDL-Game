@@ -21,7 +21,7 @@ public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_);
     ~World();
     walkingVector checkPlayerMove(float x, float y, float deltaTime);
-    void moveWorld(int x, int y, float deltaTime);
+    void moveWorld(float x, float y, float deltaTime);
     void renderWorld(SDL_Renderer* renderer);
     void triggerPlayerAttack();
     void damageEnemysInPlayerRadius();

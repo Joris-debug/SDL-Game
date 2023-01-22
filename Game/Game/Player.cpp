@@ -39,7 +39,7 @@ Player::~Player()
 	SDL_DestroyTexture(m_p_textureRun_);
 }
 
-bool Player::detectTurning(int x, int y)
+bool Player::detectTurning(float x, float y)
 {
 	if ((m_lastMove_.y == -1 || m_lastMove_.x == 1) && x == 0 && y == 0) {
 		return true;
@@ -98,13 +98,13 @@ void Player::animateBody(float x, float y)
 			break;
 		}
 
-		if (x == -1 || (y == 1 && x != 1)) {		//Walk right or upwards
+		if (x < 0 || (y > 0 && x <= 0)) {		//Walk right or upwards
 			totalSprites = 10;
 			m_currentMode_ = Mode::walk;
 			break;
 		}
 
-		if (x == 1 || (y == -1 && x != -1)) {		//Walk left or downwards
+		if (x > 0 || (y < 0 && x >= 0)) {		//Walk left or downwards
 			spriteLayer = 1;
 			totalSprites = 10;
 			m_currentMode_ = Mode::walk;
