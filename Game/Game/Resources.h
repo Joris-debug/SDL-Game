@@ -3,6 +3,7 @@
 #define STARTUP_SCREEN_HEIGHT 640
 #define ENEMY_SPEED 0.5
 #define PLAYER_ATTACK_COOLDOWN 5000.0;
+
 #define RSC_LEVEL_1 "./Sprites/Maps/firstMap.png"
 #define RSC_LEVEL_1_TOP "./Sprites/Maps/TopMap.png"
 #define RSC_WORLD_BACKGROUND "./Sprites/Misc/WorldBackground.png"
@@ -24,3 +25,6 @@
 #define RSC_HEALTHBAR_LIVES "./Sprites/Misc/HealthBarInside.png"
 #define RSC_HEALTHBAR_STAMINA "./Sprites/Misc/StaminaBarInside.png"
 #define RSC_HEALTHBAR_CHECK "./Sprites/Misc/CheckBarInside.png"
+#define RSC_WOODEN_BOARD "./Sprites/Misc/WoodSignTopRight.png"
+
+#define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"
