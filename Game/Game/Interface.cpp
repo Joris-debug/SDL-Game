@@ -96,7 +96,7 @@ void Interface::checkWindowProportions()
 void Interface::startGame()
 {
     m_p_GameHandler_ = new GameHandler(this, m_p_renderer_);
-    m_p_GameHandler_->initLevel1();
+    m_p_GameHandler_->initWorld();
 }
 
 

@@ -17,12 +17,15 @@ private:
 	std::vector<SDL_Texture*> m_enemyTexturesIdle_;
 	std::vector<SDL_Texture*> m_enemyTexturesHit_;
 	std::vector<SDL_Texture*> m_hudTextures_; //This vector stores every texture needed for printing the hud
-	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed
+	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed#
+	int m_waveCounter_;
 	int gameLoop();
 public:
 	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_);
 	~GameHandler();
-	int initLevel1();
+	int initWorld();
+	void checkCurrentWave(); //Checks if the current enemy-wave has been defeated and if thats the case, triggers a new one
+	bool trySpawningEnemy(); //Returns true on success and false if it fails
 	void renderWorldBackground();
 	void renderHud(); //This function will render healthbar, attack status, etc
 	void renderEverything();

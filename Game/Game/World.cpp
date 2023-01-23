@@ -169,8 +169,8 @@ void World::checkForDefeatedEnemies()
 
 SDL_FPoint World::getRandomCoordinate()
 {
-	int randomXCoordinate = getRandomNumber(m_bounds_.x, m_bounds_.x + m_bounds_.w);
-	int randomYCoordinate = getRandomNumber(m_bounds_.y, m_bounds_.x + m_bounds_.h);
+	int randomXCoordinate = getRandomNumber(m_bounds_.x + 32, m_bounds_.x + m_bounds_.w - 32);
+	int randomYCoordinate = getRandomNumber(m_bounds_.y + 32, m_bounds_.x + m_bounds_.h - 32);
 	return { float(randomXCoordinate), float(randomYCoordinate) };
 }
 

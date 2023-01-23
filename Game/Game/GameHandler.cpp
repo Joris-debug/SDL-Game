@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0, attackTrigger = false;
@@ -81,6 +82,8 @@ int GameHandler::gameLoop()
 
 				}
 			}
+			checkCurrentWave();
+
 			if (attackTrigger) {
 				m_p_currentWorld_->triggerPlayerAttack();
 				attackTrigger = false;
@@ -106,8 +109,10 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	this->m_p_interface_ = m_p_interface_;
 	this->m_p_renderer_ = m_p_renderer_;
 	this->m_deltaTime_ = 1;
+	m_waveCounter_ = 0;
 
 	SDL_Surface* p_tmpSurface;
+
 	//Load all Mantis Spritesheets
 	p_tmpSurface = IMG_Load(RSC_MANTIS_IDLE);
 	m_enemyTexturesIdle_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
@@ -147,6 +152,11 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_WOODEN_BOARD);
+	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	//Load misc textures
 	p_tmpSurface = IMG_Load(RSC_WORLD_BACKGROUND);
 	m_miscTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
@@ -178,7 +188,7 @@ GameHandler::~GameHandler()
 
 }
 
-int GameHandler::initLevel1()
+int GameHandler::initWorld()
 {
 	m_p_currentWorld_ = std::unique_ptr<World>(new World(IMG_Load(RSC_LEVEL_1), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer_, &m_randomNumberEngine_));
 	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_LEVEL_1_TOP), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer_));
@@ -192,12 +202,67 @@ int GameHandler::initLevel1()
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 608 * 2, 192, 64 })); //Holy statue
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
 
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 500, 500, 64, 64 }, { 500, 500, 64, 64 }, 2));
-	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
+	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[0], m_enemyTexturesWalk_[0], m_enemyTexturesHit_[0], { 800, 200, 64, 64 }, { 800, 200, 64, 64 }, 2));
+	//m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[1], m_enemyTexturesWalk_[1], m_enemyTexturesHit_[1], { -800, -68, 64, 32 }, { -800, -100, 64, 64 }, 1));
 
 
 	return gameLoop();
+}
+
+void GameHandler::checkCurrentWave()
+{
+	if (m_p_currentWorld_->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
+		return;
+	}
+
+	m_waveCounter_++;
+	short enemiesToSpawn = 5 + m_waveCounter_ * 5;
+
+	while (enemiesToSpawn > 0) {
+		if (trySpawningEnemy())
+			enemiesToSpawn--;
+	}
+
+}
+
+bool GameHandler::trySpawningEnemy()
+{
+	short enemyType = m_p_currentWorld_->getRandomNumber(0, 1);		//Calculating what kind of enemy will spawn
+	SDL_FPoint randomPosition = m_p_currentWorld_->getRandomCoordinate(); //Random positon for the new enemy
+	
+	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64, 64 };
+	SDL_FRect tmpRectSprite = tmpRectBounds;
+	short lives;
+
+	switch (enemyType) {
+		case 0:
+			lives = 2;
+			break;
+		case 1:
+			tmpRectBounds.h = 32;
+			tmpRectBounds.y += 32;
+			lives = 1;
+			break;
+	}
+
+	SDL_FRect windowRect = { 0, 0, 640, 800 };
+	if (SDL_HasIntersectionF(&windowRect, &tmpRectBounds))
+		return false;
+
+	for (auto const& cursor : *m_p_currentWorld_->getEnemyVector()) {
+		if (SDL_HasIntersectionF(&tmpRectBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	for (auto const& cursor : *m_p_currentWorld_->getEntityVector()) {
+		if (SDL_HasIntersectionF(&tmpRectBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	m_p_currentWorld_->addEnemyToMap(new Enemy(m_enemyTexturesIdle_[enemyType], m_enemyTexturesWalk_[enemyType], m_enemyTexturesHit_[enemyType], tmpRectBounds, tmpRectSprite, lives));
+	return true;
 }
 
 void GameHandler::renderWorldBackground()
@@ -226,6 +291,31 @@ void GameHandler::renderHud()
 	staminaRect.w = round(staminaRect.w * staminaPercent);
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[2], NULL, &staminaRect); //Stamina
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[0], NULL, &hudRect); //Border
+	//Render wave counter
+	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[4], NULL, NULL);
+
+	TTF_Font* bitFont = TTF_OpenFont(RSC_8BIT_FONT, 45); //Todo: Open font once
+	SDL_Color color = { 229, 229, 203 };
+
+	// as TTF_RenderText_Solid could only be used on
+	// SDL_Surface then you have to create the surface first
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(bitFont, "Wave 1", color);
+
+	// now you can convert it into a texture
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceMessage);
+
+	SDL_Rect Message_rect;
+	//659/44 is the center
+	Message_rect.x = 659 - surfaceMessage->w/2;  //controls the rect's x coordinate 
+	Message_rect.y = 44 - surfaceMessage->h / 2; // controls the rect's y coordinte
+	Message_rect.w = surfaceMessage->w; // controls the width of the rect
+	Message_rect.h = surfaceMessage->h; // controls the height of the rect
+
+	SDL_RenderCopy(m_p_renderer_, Message, NULL, &Message_rect);
+
+	// Don't forget to free your surface and texture
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(Message);
 }
 
 void GameHandler::renderEverything()
