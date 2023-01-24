@@ -1,15 +1,18 @@
 #include "SDL.h"
+#include "SDL_ttf.h"
 #include <iostream>
 #include <vector>
 #include <random>
 #pragma once
 class Interface;
 class World;
+
 class GameHandler	
 {
 private:
 	Interface *m_p_interface_;
 	float m_deltaTime_;
+	int m_waveCounter_;
 	std::unique_ptr<World> m_p_currentWorld_;
 	SDL_Renderer* m_p_renderer_;
 	std::mt19937 m_randomNumberEngine_; // Mersenne twister MT19937
@@ -18,7 +21,7 @@ private:
 	std::vector<SDL_Texture*> m_enemyTexturesHit_;
 	std::vector<SDL_Texture*> m_hudTextures_; //This vector stores every texture needed for printing the hud
 	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed#
-	int m_waveCounter_;
+	std::vector<TTF_Font*> m_gameFonts_; //This Vector stores every font the game needs
 	int gameLoop();
 public:
 	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_);

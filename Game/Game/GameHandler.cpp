@@ -5,7 +5,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <string>
 int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0, attackTrigger = false;
@@ -160,12 +160,15 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	p_tmpSurface = IMG_Load(RSC_WORLD_BACKGROUND);
 	m_miscTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
+
+	//Load all fonts
+	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
 }
 
 GameHandler::~GameHandler()
 {
-	int numberOfTextures = m_enemyTexturesIdle_.size();
-	for (int i = 0; i < numberOfTextures; i++) {
+	int numberOfElements = m_enemyTexturesIdle_.size();
+	for (int i = 0; i < numberOfElements; i++) {
 		SDL_DestroyTexture(m_enemyTexturesIdle_.back());
 		m_enemyTexturesIdle_.pop_back();
 		SDL_DestroyTexture(m_enemyTexturesWalk_.back());
@@ -174,18 +177,24 @@ GameHandler::~GameHandler()
 		m_enemyTexturesHit_.pop_back();
 	}
 
-	numberOfTextures = m_hudTextures_.size();
-	for (int i = 0; i < numberOfTextures; i++) {
+	numberOfElements = m_hudTextures_.size();
+	for (int i = 0; i < numberOfElements; i++) {
 		SDL_DestroyTexture(m_hudTextures_.back());
 		m_hudTextures_.pop_back();
 	}
 
-	numberOfTextures = m_miscTextures_.size();
-	for (int i = 0; i < numberOfTextures; i++) {
+	numberOfElements = m_miscTextures_.size();
+	for (int i = 0; i < numberOfElements; i++) {
 		SDL_DestroyTexture(m_miscTextures_.back());
 		m_miscTextures_.pop_back();
 	}
 
+	//Delete all fonts
+	numberOfElements = m_gameFonts_.size();
+	for (int i = 0; i < numberOfElements; i++) {
+		TTF_CloseFont(m_gameFonts_.back());
+		m_gameFonts_.pop_back();
+	}
 }
 
 int GameHandler::initWorld()
@@ -272,9 +281,9 @@ void GameHandler::renderWorldBackground()
 
 void GameHandler::renderHud()
 {
-	SDL_FRect hudRect = { 10, 10, 64 * 5, 10 * 5 };
-	SDL_FRect healthRect = { 10 + 5 * 5, 10 + 1 * 5, 58 * 5, 4 * 5 };
-	SDL_FRect staminaRect = { 20, 10 + 6 * 5, 56 * 5, 2 * 5 };
+	SDL_FRect hudRect = { 10, 10, 320, 50 };
+	SDL_FRect healthRect = { 35, 15, 290, 20 };
+	SDL_FRect staminaRect = { 20, 40, 280, 10 };
 
 	Player* p_player = m_p_currentWorld_->getPlayer()->get();
 	
@@ -291,31 +300,24 @@ void GameHandler::renderHud()
 	staminaRect.w = round(staminaRect.w * staminaPercent);
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[2], NULL, &staminaRect); //Stamina
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[0], NULL, &hudRect); //Border
-	//Render wave counter
+
+	//----------------------------------------------------------------- Render wave counter
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[4], NULL, NULL);
+	const SDL_Color colorWaCo = { 229, 229, 203 }; //Color for the wave counter
 
-	TTF_Font* bitFont = TTF_OpenFont(RSC_8BIT_FONT, 45); //Todo: Open font once
-	SDL_Color color = { 229, 229, 203 };
+	std::string displayText = "Wave " + std::to_string(m_waveCounter_);
+	SDL_Surface* surfaceWaCo = TTF_RenderText_Solid(m_gameFonts_[0], displayText.c_str(), colorWaCo);
+	SDL_Texture* textureWaCo = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceWaCo);
 
-	// as TTF_RenderText_Solid could only be used on
-	// SDL_Surface then you have to create the surface first
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(bitFont, "Wave 1", color);
+	SDL_Rect WaCoRect;
+	WaCoRect.x = 659 - surfaceWaCo->w / 2;
+	WaCoRect.y = 44 - surfaceWaCo->h / 2;
+	WaCoRect.w = surfaceWaCo->w;
+	WaCoRect.h = surfaceWaCo->h;
 
-	// now you can convert it into a texture
-	SDL_Texture* Message = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceMessage);
-
-	SDL_Rect Message_rect;
-	//659/44 is the center
-	Message_rect.x = 659 - surfaceMessage->w/2;  //controls the rect's x coordinate 
-	Message_rect.y = 44 - surfaceMessage->h / 2; // controls the rect's y coordinte
-	Message_rect.w = surfaceMessage->w; // controls the width of the rect
-	Message_rect.h = surfaceMessage->h; // controls the height of the rect
-
-	SDL_RenderCopy(m_p_renderer_, Message, NULL, &Message_rect);
-
-	// Don't forget to free your surface and texture
-	SDL_FreeSurface(surfaceMessage);
-	SDL_DestroyTexture(Message);
+	SDL_RenderCopy(m_p_renderer_, textureWaCo, NULL, &WaCoRect);
+	SDL_FreeSurface(surfaceWaCo);
+	SDL_DestroyTexture(textureWaCo);
 }
 
 void GameHandler::renderEverything()
