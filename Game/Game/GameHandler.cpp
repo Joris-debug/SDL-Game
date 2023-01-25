@@ -156,6 +156,18 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_BOTTOM_HUD);
+	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_ENEMYBAR);
+	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_ENEMYBAR_BORDER);
+	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 	//Load misc textures
 	p_tmpSurface = IMG_Load(RSC_WORLD_BACKGROUND);
 	m_miscTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
@@ -245,7 +257,7 @@ bool GameHandler::trySpawningEnemy()
 
 	switch (enemyType) {
 		case 0:
-			lives = 2;
+			lives = 1;
 			break;
 		case 1:
 			tmpRectBounds.h = 32;
@@ -276,12 +288,12 @@ bool GameHandler::trySpawningEnemy()
 
 void GameHandler::renderWorldBackground()
 {
-	SDL_RenderCopyF(m_p_renderer_, m_miscTextures_[0], NULL, NULL);
+	SDL_RenderCopy(m_p_renderer_, m_miscTextures_[0], NULL, NULL);
 }
 
 void GameHandler::renderHud()
 {
-	SDL_FRect hudRect = { 10, 10, 320, 50 };
+	const SDL_FRect hudRect = { 10, 10, 320, 50 };
 	SDL_FRect healthRect = { 35, 15, 290, 20 };
 	SDL_FRect staminaRect = { 20, 40, 280, 10 };
 
@@ -318,6 +330,16 @@ void GameHandler::renderHud()
 	SDL_RenderCopy(m_p_renderer_, textureWaCo, NULL, &WaCoRect);
 	SDL_FreeSurface(surfaceWaCo);
 	SDL_DestroyTexture(textureWaCo);
+
+	//----------------------------------------------------------------- Render bottom hud
+	
+	SDL_Rect enemyBarRect{ 234, 576, 333, 30 };
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[5], NULL, NULL);
+	float enemyPercent = m_p_currentWorld_->getEnemyVector()->size() / (m_waveCounter_ * 5.0 + 5.0);
+	enemyBarRect.w *= enemyPercent;
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[6], NULL, &enemyBarRect); // Enemy bar
+	enemyBarRect.w = 333;
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[7], NULL, &enemyBarRect); // Border of enemy bar
 }
 
 void GameHandler::renderEverything()

@@ -26,5 +26,8 @@
 #define RSC_HEALTHBAR_STAMINA "./Sprites/Misc/StaminaBarInside.png"
 #define RSC_HEALTHBAR_CHECK "./Sprites/Misc/CheckBarInside.png"
 #define RSC_WOODEN_BOARD "./Sprites/Misc/WoodSignTopRight.png"
+#define RSC_BOTTOM_HUD "./Sprites/Misc/HUD_Bottom.png"
+#define RSC_ENEMYBAR "./Sprites/Misc/EnemyBar.png"
+#define RSC_ENEMYBAR_BORDER "./Sprites/Misc/EnemyBarBorder.png"
 
 #define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"
