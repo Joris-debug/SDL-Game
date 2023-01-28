@@ -1,19 +1,7 @@
-﻿  GameHandler.cpp
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(17,31): warning C4244: "=": Konvertierung von "Uint32" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(93,64): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(93,42): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(93,33): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(182,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(192,42): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(198,43): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(205,40): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(304,41): warning C4838: Konvertierung von "float" zu "int" erfordert eine einschränkende Konvertierung
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(304,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(307,23): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(338,21): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(339,32): warning C4244: "*=": Konvertierung von "float" in "int", möglicher Datenverlust
+﻿  Player.cpp
   Code wird generiert.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 483 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  1 of 497 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\x64\Release\Game.exe

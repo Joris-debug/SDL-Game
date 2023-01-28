@@ -90,7 +90,7 @@ int GameHandler::gameLoop()
 			}
 
 			m_p_interface_->getPixelPerPixel();
-			m_p_currentWorld_->moveWorld(x_input, y_input, m_deltaTime_ * 0.2);
+			m_p_currentWorld_->moveWorld(x_input, y_input, 0.2f * m_deltaTime_ );
 			renderEverything();
 
 			if (!m_p_currentWorld_->getPlayer()->get()->getCurrentLives()) {
@@ -110,7 +110,7 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	this->m_p_renderer_ = m_p_renderer_;
 	this->m_deltaTime_ = 1;
 	m_waveCounter_ = 0;
-
+	m_waveTimer_ = 0;
 	SDL_Surface* p_tmpSurface;
 
 	//Load all Mantis Spritesheets
@@ -175,6 +175,7 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 
 	//Load all fonts
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
+	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 }
 
 GameHandler::~GameHandler()
@@ -235,10 +236,10 @@ void GameHandler::checkCurrentWave()
 	if (m_p_currentWorld_->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
 		return;
 	}
-
 	m_waveCounter_++;
 	short enemiesToSpawn = 5 + m_waveCounter_ * 5;
-
+	m_p_currentWorld_->getPlayer()->get()->updateCoinCounter(m_waveTimer_);
+	m_waveTimer_ = enemiesToSpawn * 10; //10 seconds to defeat each enemy
 	while (enemiesToSpawn > 0) {
 		if (trySpawningEnemy())
 			enemiesToSpawn--;
@@ -253,7 +254,7 @@ bool GameHandler::trySpawningEnemy()
 	
 	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64, 64 };
 	SDL_FRect tmpRectSprite = tmpRectBounds;
-	short lives;
+	short lives = 0;
 
 	switch (enemyType) {
 		case 0:
@@ -318,28 +319,44 @@ void GameHandler::renderHud()
 	const SDL_Color colorWaCo = { 229, 229, 203 }; //Color for the wave counter
 
 	std::string displayText = "Wave " + std::to_string(m_waveCounter_);
-	SDL_Surface* surfaceWaCo = TTF_RenderText_Solid(m_gameFonts_[0], displayText.c_str(), colorWaCo);
-	SDL_Texture* textureWaCo = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceWaCo);
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_gameFonts_[0], displayText.c_str(), colorWaCo);
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceText);
 
-	SDL_Rect WaCoRect;
-	WaCoRect.x = 659 - surfaceWaCo->w / 2;
-	WaCoRect.y = 44 - surfaceWaCo->h / 2;
-	WaCoRect.w = surfaceWaCo->w;
-	WaCoRect.h = surfaceWaCo->h;
+	SDL_Rect textRect;
+	textRect.x = 659 - surfaceText->w / 2;
+	textRect.y = 20;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
 
-	SDL_RenderCopy(m_p_renderer_, textureWaCo, NULL, &WaCoRect);
-	SDL_FreeSurface(surfaceWaCo);
-	SDL_DestroyTexture(textureWaCo);
+	SDL_RenderCopy(m_p_renderer_, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
 
 	//----------------------------------------------------------------- Render bottom hud
 	
 	SDL_Rect enemyBarRect{ 234, 576, 333, 30 };
 	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[5], NULL, NULL);
-	float enemyPercent = m_p_currentWorld_->getEnemyVector()->size() / (m_waveCounter_ * 5.0 + 5.0);
+	int numberOfEnemies = m_p_currentWorld_->getEnemyVector()->size();
+	float enemyPercent = numberOfEnemies / (m_waveCounter_ * 5.0 + 5.0);
 	enemyBarRect.w *= enemyPercent;
 	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[6], NULL, &enemyBarRect); // Enemy bar
 	enemyBarRect.w = 333;
 	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[7], NULL, &enemyBarRect); // Border of enemy bar
+
+	const SDL_Color colorEnCo = { 255, 181, 100 }; //Color for the enemy counter
+
+	displayText = std::to_string(numberOfEnemies) + ((numberOfEnemies == 1) ? " enemy" : " enemies") + " left";
+	surfaceText = TTF_RenderText_Solid(m_gameFonts_[1], displayText.c_str(), colorEnCo);
+	textureText = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceText);
+
+	textRect.x = 400 - surfaceText->w / 2;
+	textRect.y = 542;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+
+	SDL_RenderCopy(m_p_renderer_, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
 }
 
 void GameHandler::renderEverything()

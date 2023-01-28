@@ -27,7 +27,7 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_footSpace_ = { 378, 336, 42, 24}; //This area collides with obstacles 
 	m_isTurning_ = false;
 	m_isAttacking_ = false;
-
+	m_coinCounter_ = 0;
 	m_lastAttack_ = SDL_GetTicks();
 }
 
@@ -87,7 +87,7 @@ void Player::animateBody(float x, float y)
 			totalSprites = 3;
 			m_currentMode_ = Mode::turn;
 			m_isTurning_ = true;
-			m_lastFrame_ = SDL_GetTicks();
+			m_lastFrame_.setStartPoint(0);
 			m_currentSprite_ = 0;
 			break;
 		}
@@ -115,8 +115,7 @@ void Player::animateBody(float x, float y)
 	} while (false);
 
 
-	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {	//Next sprite
-		m_lastFrame_ = SDL_GetTicks();
+	if (m_lastFrame_ .checkClockState()) {	//Next sprite
 		m_currentSprite_++;
 	}
 	

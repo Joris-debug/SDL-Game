@@ -13,6 +13,7 @@ private:
 	Interface *m_p_interface_;
 	float m_deltaTime_;
 	int m_waveCounter_;
+	int m_waveTimer_; //Decreasing every second the wave is active
 	std::unique_ptr<World> m_p_currentWorld_;
 	SDL_Renderer* m_p_renderer_;
 	std::mt19937 m_randomNumberEngine_; // Mersenne twister MT19937

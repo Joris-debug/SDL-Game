@@ -76,7 +76,6 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 void Enemy::animateBody(float x, float y)
 {
 	int totalSprites = 1;
-	int delayPerFrame = 100;
 	int spriteLayer = 0;
 
  	do {
@@ -87,7 +86,6 @@ void Enemy::animateBody(float x, float y)
 		}
 
 		if (!x && !y) {
-			delayPerFrame = 6000;
 			m_currentMode_ = Mode::idle;
 			totalSprites = 4;
 			break;
@@ -128,8 +126,7 @@ void Enemy::animateBody(float x, float y)
 
 	} while (false);
 
-	if (m_lastFrame_ + delayPerFrame < SDL_GetTicks()) {	//Next sprite
-		m_lastFrame_ = SDL_GetTicks();
+	if (m_lastFrame_.checkClockState()) {	//Next sprite
 		m_currentSprite_++;
 	}
 

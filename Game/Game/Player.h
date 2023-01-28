@@ -14,6 +14,7 @@ private:
     SDL_Texture* m_p_textureAttack_;
     SDL_Texture* m_p_textureHit_;
     Uint32 m_lastAttack_;       // Timestamp of the last attack
+    int m_coinCounter_;
     bool m_isAttacking_;
     bool m_isTurning_;
 public:
@@ -22,6 +23,7 @@ public:
     bool detectTurning(float x, float y);
     void animateBody(float x, float y) override;
     void renderBody(SDL_Renderer *renderer) override;
+    inline void updateCoinCounter(int sum) { m_coinCounter_ += sum; }
     inline Uint32 getLastAttack() { return m_lastAttack_; }
     inline bool getIsAttacking() { return m_isAttacking_; }
     inline void setIsAttacking() { m_isAttacking_ = true; m_currentSprite_ = 0; m_lastAttack_ = SDL_GetTicks(); }

@@ -1,7 +1,7 @@
 #pragma once
 #include "SDL.h"
 #include "Entity.h"
-
+#include "Clock.h"
 enum class Mode{idle, walk, attack, turn, hit};	// 0: Idle, 1: Walk, 2: Attack, 3: Turn, 4: Hit, ...
 
 struct walkingVector {
@@ -32,7 +32,7 @@ protected:
 	SDL_Rect m_textureCoords_;
 	walkingVector m_lastMove_;
 	Uint32 m_lastDamageTaken_;	// Timestamp of the last time the Body took damage
-	Uint32 m_lastFrame_;		// Timestamp of the last frame
+	Clock m_lastFrame_;		// Timestamp of the last frame
 	Mode m_currentMode_;		
 	short m_currentSprite_;		// The current sprite of the animation that is playing
 	short m_currentLives_;		

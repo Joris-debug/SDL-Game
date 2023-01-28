@@ -19,7 +19,7 @@ void Body::damageBody(short damage)
 		m_currentLives_ = 0;
 	}
 	m_lastDamageTaken_ = SDL_GetTicks();
-	m_lastFrame_ = SDL_GetTicks();
+	m_lastFrame_.setStartPoint(0); //instantly print a new frame
 	m_currentSprite_ = 0;
 }
 
@@ -40,7 +40,8 @@ Body::Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : 
 	this->m_textureCoords_ = { 0, 0, int(m_spriteBounds_.h) / 2, int(m_spriteBounds_.w) / 2 };
 	this->m_maxLives_ = m_maxLives_;
 	m_currentLives_ = m_maxLives_;
-	m_lastFrame_ = 0; // trigger new frame
+	m_lastFrame_.setStartPoint(0); // trigger new frame
+	m_lastFrame_.setInterval(100);
 	m_currentMode_ = Mode::idle; //Player spawns in idle
 	m_currentSprite_ = 1; //The sprite that is currently playing
 	m_lastDamageTaken_ = 0; //Every spawned Body can take damage
