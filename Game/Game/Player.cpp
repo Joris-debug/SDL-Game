@@ -28,7 +28,8 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_isTurning_ = false;
 	m_isAttacking_ = false;
 	m_coinCounter_ = 0;
-	m_lastAttack_ = SDL_GetTicks();
+	int tmp = PLAYER_ATTACK_COOLDOWN;
+	m_p_lastAttack_ = new Clock(tmp, false);
 }
 
 Player::~Player()
@@ -148,6 +149,15 @@ void Player::renderBody(SDL_Renderer* renderer)
 		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &m_spriteBounds_);
 		break;
 	}
+}
+
+float Player::getAttackCooldownPercent()
+{
+	if (checkAttackCooldown())
+		return 1.0f;
+
+	Uint32 lastAttack = m_p_lastAttack_->getStartPoint();
+	return (SDL_GetTicks() - lastAttack) / PLAYER_ATTACK_COOLDOWN;
 }
 
 SDL_FPoint* Player::getPlayerTargets()

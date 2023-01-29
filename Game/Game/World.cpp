@@ -124,8 +124,7 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 void World::triggerPlayerAttack()
 {
-	const float playerAttackCooldown = PLAYER_ATTACK_COOLDOWN;
-	if (SDL_GetTicks() - m_p_player_->getLastAttack() < playerAttackCooldown || m_p_player_->isInvincible())  //Player is already attacking or Attacked less than 8 seconds ago
+	if (!m_p_player_->checkAttackCooldown() || m_p_player_->isInvincible())  //Player is already attacking or Attacked less than 8 seconds ago
 		return;	
 	else
 		m_p_player_->setIsAttacking();

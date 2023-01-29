@@ -111,6 +111,7 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	this->m_deltaTime_ = 1;
 	m_waveCounter_ = 0;
 	m_waveTimer_ = 0;
+	m_p_waveClock_ = new Clock(1000);
 	SDL_Surface* p_tmpSurface;
 
 	//Load all Mantis Spritesheets
@@ -152,7 +153,11 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
-	p_tmpSurface = IMG_Load(RSC_WOODEN_BOARD);
+	p_tmpSurface = IMG_Load(RSC_WOODEN_BOARD_RIGHT);
+	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_WOODEN_BOARD_LEFT);
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
@@ -176,10 +181,13 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	//Load all fonts
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
+	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
 }
 
 GameHandler::~GameHandler()
 {
+	delete m_p_waveClock_;
+
 	int numberOfElements = m_enemyTexturesIdle_.size();
 	for (int i = 0; i < numberOfElements; i++) {
 		SDL_DestroyTexture(m_enemyTexturesIdle_.back());
@@ -234,6 +242,9 @@ int GameHandler::initWorld()
 void GameHandler::checkCurrentWave()
 {
 	if (m_p_currentWorld_->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
+		if (m_p_waveClock_->checkClockState()) {
+			m_waveTimer_--;
+		}
 		return;
 	}
 	m_waveCounter_++;
@@ -294,9 +305,11 @@ void GameHandler::renderWorldBackground()
 
 void GameHandler::renderHud()
 {
-	const SDL_FRect hudRect = { 10, 10, 320, 50 };
-	SDL_FRect healthRect = { 35, 15, 290, 20 };
-	SDL_FRect staminaRect = { 20, 40, 280, 10 };
+	const SDL_FRect hudRect = { 10 + 30, 10 + 10, 320, 50 };
+	SDL_FRect healthRect = { 35 + 30, 15 + 10, 290, 20 };
+	SDL_FRect staminaRect = { 20 + 30, 40 + 10, 280, 10 };
+
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[5], NULL, NULL);	//Wood sign top left
 
 	Player* p_player = m_p_currentWorld_->getPlayer()->get();
 	
@@ -305,9 +318,8 @@ void GameHandler::renderHud()
 	SDL_Rect tmpTextureCoords = { 0, 0, 58 * healthPercent, 4 };
 	SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[1], &tmpTextureCoords, &healthRect); //Health
 
-	float staminaPercent = (SDL_GetTicks() - p_player->getLastAttack()) / PLAYER_ATTACK_COOLDOWN;
-	if (staminaPercent > 1) {
-		staminaPercent = 1;
+	float staminaPercent = p_player->getAttackCooldownPercent();
+	if (staminaPercent == 1) {
 		SDL_RenderCopyF(m_p_renderer_, m_hudTextures_[3], NULL, &hudRect); //Check
 	}
 	staminaRect.w = round(staminaRect.w * staminaPercent);
@@ -335,14 +347,15 @@ void GameHandler::renderHud()
 	//----------------------------------------------------------------- Render bottom hud
 	
 	SDL_Rect enemyBarRect{ 234, 576, 333, 30 };
-	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[5], NULL, NULL);
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[6], NULL, NULL);
 	int numberOfEnemies = m_p_currentWorld_->getEnemyVector()->size();
 	float enemyPercent = numberOfEnemies / (m_waveCounter_ * 5.0 + 5.0);
 	enemyBarRect.w *= enemyPercent;
-	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[6], NULL, &enemyBarRect); // Enemy bar
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[7], NULL, &enemyBarRect); // Enemy bar
 	enemyBarRect.w = 333;
-	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[7], NULL, &enemyBarRect); // Border of enemy bar
+	SDL_RenderCopy(m_p_renderer_, m_hudTextures_[8], NULL, &enemyBarRect); // Border of enemy bar
 
+	//----------------------------------------------------------------- Render enemy counter
 	const SDL_Color colorEnCo = { 255, 181, 100 }; //Color for the enemy counter
 
 	displayText = std::to_string(numberOfEnemies) + ((numberOfEnemies == 1) ? " enemy" : " enemies") + " left";
@@ -351,6 +364,38 @@ void GameHandler::renderHud()
 
 	textRect.x = 400 - surfaceText->w / 2;
 	textRect.y = 542;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+
+	SDL_RenderCopy(m_p_renderer_, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	//----------------------------------------------------------------- Render wave timer
+	const SDL_Color colorWaTi = { 240, 66, 66 }; //Color for the wave timer
+
+	displayText = std::to_string(m_waveTimer_);
+	surfaceText = TTF_RenderText_Solid(m_gameFonts_[2], displayText.c_str(), colorWaTi);
+	textureText = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceText);
+
+	textRect.x = 177 - surfaceText->w / 2;
+	textRect.y = 558;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+
+	SDL_RenderCopy(m_p_renderer_, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	//----------------------------------------------------------------- Render coin counter
+	const SDL_Color colorCoiCo = { 255, 195, 50 }; //Color for the wave timer
+
+	displayText = std::to_string(m_p_currentWorld_->getPlayer()->get()->getCoinCounter());
+	surfaceText = TTF_RenderText_Solid(m_gameFonts_[2], displayText.c_str(), colorCoiCo);
+	textureText = SDL_CreateTextureFromSurface(m_p_renderer_, surfaceText);
+
+	textRect.x = 623 - surfaceText->w / 2;
+	textRect.y = 558;
 	textRect.w = surfaceText->w;
 	textRect.h = surfaceText->h;
 
