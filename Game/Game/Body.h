@@ -31,8 +31,8 @@ protected:
 	SDL_FRect m_spriteBounds_;
 	SDL_Rect m_textureCoords_;
 	walkingVector m_lastMove_;
-	Uint32 m_lastDamageTaken_;	// Timestamp of the last time the Body took damage
-	Clock m_lastFrame_;		// Timestamp of the last frame
+	Clock* m_p_lastDamageTaken_;	// Timestamp of the last time the Body took damage
+	Clock* m_p_lastFrame_;		// Timestamp of the last frame
 	Mode m_currentMode_;		
 	short m_currentSprite_;		// The current sprite of the animation that is playing
 	short m_currentLives_;		

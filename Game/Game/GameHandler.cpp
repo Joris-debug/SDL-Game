@@ -112,6 +112,7 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	m_waveCounter_ = 0;
 	m_waveTimer_ = 0;
 	m_p_waveClock_ = new Clock(1000);
+
 	SDL_Surface* p_tmpSurface;
 
 	//Load all Mantis Spritesheets
@@ -242,7 +243,7 @@ int GameHandler::initWorld()
 void GameHandler::checkCurrentWave()
 {
 	if (m_p_currentWorld_->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
-		if (m_p_waveClock_->checkClockState()) {
+		if (m_p_waveClock_->checkClockState() && m_waveTimer_ > 0) {
 			m_waveTimer_--;
 		}
 		return;

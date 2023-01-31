@@ -7,7 +7,6 @@
 class Clock;
 class Interface;
 class World;
-
 class GameHandler	
 {
 private:

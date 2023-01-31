@@ -7,7 +7,8 @@ class Enemy :
     public Body
 {
 protected:
-    Uint32 m_lastTargetAssigned_;
+    Clock* m_p_lastTargetAssigned_;
+    Clock* m_p_timeSinceZeroMovement_;
     SDL_Texture* m_p_textureIdle_;
     SDL_Texture* m_p_textureRun_;
     SDL_Texture* m_p_textureHit_;

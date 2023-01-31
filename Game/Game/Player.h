@@ -17,6 +17,7 @@ private:
     int m_coinCounter_;
     bool m_isAttacking_;
     bool m_isTurning_;
+	float m_attackCooldown_;
 public:
     Player(SDL_Renderer *renderer);
     ~Player();

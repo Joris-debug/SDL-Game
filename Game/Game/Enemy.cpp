@@ -8,7 +8,9 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureRun_ = m_p_textureRun_;
 	this->m_p_textureHit_ = m_p_textureHit_;
 	m_factor_ = (Uint32)this % 5 + 3;	//Random number for certain calculations
-	m_lastTargetAssigned_ = 0;
+	m_p_lastTargetAssigned_ = new Clock(1000);
+	m_p_timeSinceZeroMovement_ = new Clock(60);
+	m_p_lastTargetAssigned_->setStartPoint(0);
 	m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
 }
 
@@ -18,10 +20,11 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		this->animateBody(0, 0);
 		return;
 	}
-		
+	
+
 	SDL_FPoint enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
 
-	if (SDL_GetTicks() - m_lastTargetAssigned_ > 1000) {
+	if (m_p_lastTargetAssigned_->checkClockState()) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
 		SDL_FPoint* p_playerTargets = p_world->getPlayer()->get()->getPlayerTargets();
 		bool playerSpotted = true;
@@ -48,11 +51,9 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		short margin = 8;
 		if (abs(enemyMiddle.x - m_enemyTarget_.x) < margin && abs(enemyMiddle.y - m_enemyTarget_.y) < margin) {		//New direction assigned if the old target is reached
 			m_enemyTarget_ = p_world->getRandomCoordinate();
-			m_lastTargetAssigned_ = SDL_GetTicks();
 		}
 		else if (p_world->getRandomNumber(0, 200) == Uint32(this) % 10 && !playerSpotted) {			//New direction assigned if a random check is hit
 			m_enemyTarget_ = p_world->getRandomCoordinate();
-			m_lastTargetAssigned_ = SDL_GetTicks();
 		}
 	}
 
@@ -64,10 +65,10 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	dirY /= hyp;
 
 	walkingVector legalMove = this->checkEnemyMove(p_world, dirX, dirY, deltaTime);
-	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1) {	//If the enemy stopped before reaching the target
-		std::cout << "0 movement\n";
+	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1 && m_p_timeSinceZeroMovement_->checkClockState()) {	//If the enemy stopped before reaching the target
+		//std::cout << "0 movement\n";
 		m_enemyTarget_ = p_world->getRandomCoordinate();
-		m_lastTargetAssigned_ = SDL_GetTicks();
+		m_p_lastTargetAssigned_->setStartPoint(SDL_GetTicks());
 	}
 	Body::moveEntity((legalMove.x * deltaTime) * ENEMY_SPEED, (deltaTime * legalMove.y) * ENEMY_SPEED); //This method does not move the enemy target
 	animateBody(dirX, dirY);
@@ -126,7 +127,7 @@ void Enemy::animateBody(float x, float y)
 
 	} while (false);
 
-	if (m_lastFrame_.checkClockState()) {	//Next sprite
+	if (m_p_lastFrame_->checkClockState()) {	//Next sprite
 		m_currentSprite_++;
 	}
 
@@ -251,5 +252,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 Enemy::~Enemy()
 {
-	std::cout << "Enemy deleted" << std::endl;
+	delete m_p_lastTargetAssigned_;
+	delete m_p_timeSinceZeroMovement_;
+	//std::cout << "Enemy deleted" << std::endl;
 }

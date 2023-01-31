@@ -5,11 +5,15 @@
 #include "SDL_image.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "TradingPost.h"
 
 World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_) : Vicinity(surface, m_bounds_, renderer)
 {
 	m_p_player_ = std::unique_ptr<Player>(new Player(renderer));
 	this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
+	m_merchantIsActive_ = false;
+	m_p_merchant_ = new TradingPost(renderer);
+	addEntityToMap(m_p_merchant_);
 }
 
 World::~World()
@@ -18,7 +22,6 @@ World::~World()
 
 void World::moveWorld(float x, float y, float deltaTime)
 {
-
 	if (x && y)	{ //If the player moves in 2 directions
 		x *= 0.707;
 		y *= 0.707;
@@ -107,6 +110,8 @@ void World::renderWorld(SDL_Renderer* renderer)
 	//-------------------------------------------- Render the actual level	
 
 	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &m_bounds_);
+
+	m_p_merchant_->renderTradingPost(renderer);
 
 	for (auto const& cursor : m_enemyVector_) {
 		cursor->renderBody(renderer);

@@ -153,6 +153,7 @@
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TradingPost.cpp" />
     <ClCompile Include="Vicinity.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
+    <ClInclude Include="TradingPost.h" />
     <ClInclude Include="Vicinity.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

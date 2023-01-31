@@ -8,11 +8,15 @@
 class Interface;
 class Player;
 class Enemy;
+class TradingPost;
+
 class World :
     public Vicinity
 {
 private:
     Vicinity* m_p_topMap_;
+    TradingPost* m_p_merchant_;
+    bool m_merchantIsActive_;
     std::unique_ptr<Player> m_p_player_;
     std::vector<std::unique_ptr<Enemy>> m_enemyVector_;
     std::vector<std::unique_ptr<Entity>> m_entityVector_;

@@ -88,7 +88,7 @@ void Player::animateBody(float x, float y)
 			totalSprites = 3;
 			m_currentMode_ = Mode::turn;
 			m_isTurning_ = true;
-			m_lastFrame_.setStartPoint(0);
+			m_p_lastFrame_->setStartPoint(0);
 			m_currentSprite_ = 0;
 			break;
 		}
@@ -116,7 +116,7 @@ void Player::animateBody(float x, float y)
 	} while (false);
 
 
-	if (m_lastFrame_ .checkClockState()) {	//Next sprite
+	if (m_p_lastFrame_->checkClockState()) {	//Next sprite
 		m_currentSprite_++;
 	}
 	

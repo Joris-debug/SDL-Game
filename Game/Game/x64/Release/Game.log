@@ -1,19 +1,35 @@
-﻿  GameHandler.cpp
+﻿  Enemy.cpp
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(10,27): warning C4311: "Typumwandlung": Zeigerverkürzung von "Enemy *" zu "Uint32"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(10,27): warning C4302: "Typumwandlung": Verkürzung von "Enemy *" in "Uint32"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(55,11): warning C4311: "<function-style-cast>": Zeigerverkürzung von "Enemy *" zu "Uint32"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(55,11): warning C4302: "<function-style-cast>": Verkürzung von "Enemy *" in "Uint32"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(73,86): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(73,45): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(173,18): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Enemy.cpp(173,61): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+  GameHandler.cpp
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(17,31): warning C4244: "=": Konvertierung von "Uint32" in "float", möglicher Datenverlust
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(93,42): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(93,33): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(191,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(201,42): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(207,43): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(214,40): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(318,41): warning C4838: Konvertierung von "float" zu "int" erfordert eine einschränkende Konvertierung
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(318,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(351,67): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(352,21): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(353,32): warning C4244: "*=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(192,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(202,42): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(208,43): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(215,40): warning C4267: "=": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(319,41): warning C4838: Konvertierung von "float" zu "int" erfordert eine einschränkende Konvertierung
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(319,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(352,67): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "int", Datenverlust möglich
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(353,21): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(354,32): warning C4244: "*=": Konvertierung von "float" in "int", möglicher Datenverlust
+  World.cpp
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(26,13): warning C4305: "*=": Verkürzung von "double" in "float"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(27,13): warning C4305: "*=": Verkürzung von "double" in "float"
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(176,86): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(176,54): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(177,86): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(177,54): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
   Code wird generiert.
-  1 of 502 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  35 of 504 functions ( 6.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    13 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\x64\Release\Game.exe
