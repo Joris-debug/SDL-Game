@@ -19,7 +19,7 @@ private:
     bool m_merchantIsActive_;
     std::unique_ptr<Player> m_p_player_;
     std::vector<std::unique_ptr<Enemy>> m_enemyVector_;
-    std::vector<std::unique_ptr<Entity>> m_entityVector_;
+    std::vector<Entity*> m_entityVector_;
     std::mt19937* m_p_randomNumberEngine_;
 public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_);
@@ -31,13 +31,18 @@ public:
     void damageEnemysInPlayerRadius();
     void checkIfPlayerHit();
     void checkForDefeatedEnemies();
+    void makeMerchantAppear();
+    bool trySpawningMerchantClose();
+    bool trySpawningMerchantFar();
+    void despawnMerchant();
     SDL_FPoint getRandomCoordinate();
     int getRandomNumber(int rangeBegin, int rangeEnde); //Used to generate random coordinate
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
-    inline void addEntityToMap(Entity* newEntity) { m_entityVector_.push_back(std::unique_ptr<Entity>(newEntity)); }
+    inline void addEntityToMap(Entity* newEntity) { m_entityVector_.push_back(newEntity); }
     inline void addEnemyToMap(Enemy* newEnemy) { m_enemyVector_.push_back(std::unique_ptr<Enemy>(newEnemy)); }
+    inline bool getMerchantIsActive() { return m_merchantIsActive_; }
     inline std::vector<std::unique_ptr<Enemy>>* getEnemyVector() { return &m_enemyVector_; }
-    inline std::vector<std::unique_ptr<Entity>>* getEntityVector() { return &m_entityVector_; }
+    inline std::vector<Entity*>* getEntityVector() { return &m_entityVector_; }
     inline std::unique_ptr<Player>* getPlayer() { return &m_p_player_; }
 };
 

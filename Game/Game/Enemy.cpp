@@ -9,7 +9,7 @@ Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Te
 	this->m_p_textureHit_ = m_p_textureHit_;
 	m_factor_ = (Uint32)this % 5 + 3;	//Random number for certain calculations
 	m_p_lastTargetAssigned_ = new Clock(1000);
-	m_p_timeSinceZeroMovement_ = new Clock(60);
+	m_p_timeSinceZeroMovement_ = new Clock(600);
 	m_p_lastTargetAssigned_->setStartPoint(0);
 	m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
 }
@@ -32,7 +32,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		for (short targetNr = 0; targetNr < 3; targetNr++) {				//Looping the three possible target options			
 			auto it = p_entityVector->begin();
 			while (it != p_entityVector->end()) {					//Looping for every entity on the map
-				if (SDL_IntersectFRectAndLine(it->get()->getBounds(), &p_playerTargets[targetNr].x, &p_playerTargets[targetNr].y, &enemyMiddle.x, &enemyMiddle.y)) {
+				if (SDL_IntersectFRectAndLine((*it)->getBounds(), &p_playerTargets[targetNr].x, &p_playerTargets[targetNr].y, &enemyMiddle.x, &enemyMiddle.y)) {
 					playerSpotted = false;
 					break;
 				}
@@ -59,11 +59,16 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 
 	float dirX = m_enemyTarget_.x - enemyMiddle.x;
 	float dirY = m_enemyTarget_.y - enemyMiddle.y;
-	float hyp = sqrt(dirX * dirX + dirY * dirY);
 
+	if (abs(dirX) < 8) 
+		dirX = 0;
+	if (abs(dirY) < 8)
+		dirY = 0;
+
+	float hyp = (dirX || dirY) ? sqrt(dirX * dirX + dirY * dirY) : 1;
 	dirX /= hyp;
 	dirY /= hyp;
-
+	
 	walkingVector legalMove = this->checkEnemyMove(p_world, dirX, dirY, deltaTime);
 	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1 && m_p_timeSinceZeroMovement_->checkClockState()) {	//If the enemy stopped before reaching the target
 		//std::cout << "0 movement\n";
@@ -90,6 +95,10 @@ void Enemy::animateBody(float x, float y)
 			m_currentMode_ = Mode::idle;
 			totalSprites = 4;
 			break;
+		}
+
+		if (abs(x) - abs(y) < 0.1f) {
+			x = 0.0f;
 		}
 
 		if (abs(x) > abs(y)) {
@@ -185,7 +194,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!xCollision) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
 					xCollision = true;
 					break;
 				}
@@ -207,7 +216,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!yCollision) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
 					yCollision = true;
 					break;
 				}
@@ -229,7 +238,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		}
 		if (!bothCollisons) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
 					bothCollisons = true;
 					break;
 				}

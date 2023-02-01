@@ -12,19 +12,25 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 	m_p_player_ = std::unique_ptr<Player>(new Player(renderer));
 	this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
 	m_merchantIsActive_ = false;
-	m_p_merchant_ = new TradingPost(renderer);
-	addEntityToMap(m_p_merchant_);
+	m_p_merchant_ = new TradingPost(renderer, m_p_randomNumberEngine_);
 }
 
 World::~World()
 {
+	delete m_p_merchant_;
+
+	int numberOfElements = m_entityVector_.size();
+	for (int i = 0; i < numberOfElements; i++) {
+		delete m_entityVector_.back();
+		m_entityVector_.pop_back();
+	}
 }
 
 void World::moveWorld(float x, float y, float deltaTime)
 {
 	if (x && y)	{ //If the player moves in 2 directions
-		x *= 0.707;
-		y *= 0.707;
+		x *= 0.707f;
+		y *= 0.707f;
 	}
 
 	m_p_player_->animateBody(x, y);
@@ -55,7 +61,7 @@ void World::moveWorld(float x, float y, float deltaTime)
 		cursor->moveEntity(x * deltaTime, y * deltaTime);
 	}
 
-	for (auto const& cursor : m_entityVector_) {
+	for (auto cursor : m_entityVector_) {
 		cursor->moveEntity(x * deltaTime, y * deltaTime);
 	}
 
@@ -74,7 +80,7 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 
 	m_p_player_->moveFootSpace(xMovement, 0);
 
-	for (auto const& cursor : m_entityVector_) {
+	for (auto cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 			xCollision = true;
 			break;
@@ -83,7 +89,7 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 	m_p_player_->moveFootSpace(-xMovement, 0);
 
 	m_p_player_->moveFootSpace(0, yMovement);
-	for (auto const& cursor : m_entityVector_) {
+	for (auto cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_playerBounds, cursor->getBounds())) {
 			yCollision = true;
 			break;
@@ -111,7 +117,8 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	SDL_RenderCopyF(renderer, m_p_texture_, NULL, &m_bounds_);
 
-	m_p_merchant_->renderTradingPost(renderer);
+	if(m_merchantIsActive_)
+		m_p_merchant_->renderTradingPost(renderer);
 
 	for (auto const& cursor : m_enemyVector_) {
 		cursor->renderBody(renderer);
@@ -120,6 +127,10 @@ void World::renderWorld(SDL_Renderer* renderer)
 	}  
 
 	m_p_player_->renderBody(renderer);
+
+	if(m_merchantIsActive_)
+		m_p_merchant_->renderTradingPostRoof(renderer);
+
 	m_p_topMap_->renderVicinity(renderer);	//Funktion to render top map
 	
 	//SDL_FRect* playerTextureCoords = m_entityVector_[0]->getBounds();
@@ -161,11 +172,102 @@ void World::checkIfPlayerHit()
 
 void World::checkForDefeatedEnemies()
 {
+	int enemyCount = m_enemyVector_.size();
+	if (!enemyCount)
+		return;
+
 	auto it = m_enemyVector_.begin();
 	while (it != m_enemyVector_.end()) {
 		if (it->get()->getCurrentLives() == 0 && !it->get()->isInvincible()) {
 			m_enemyVector_.erase(it);
 			it--;
+		}
+		it++;
+	}
+
+	if (enemyCount && m_enemyVector_.size() == 0)	//Enemys exist at the start of the function, but now the vector is empty
+		makeMerchantAppear();
+}
+
+void World::makeMerchantAppear()
+{
+	m_merchantIsActive_ = true;
+
+	bool successfullSpawn = false;
+
+	for (int i = 0; i < 30; i++) {
+		std::cout << "trying to spawn\n";
+		if (trySpawningMerchantClose()) {
+			successfullSpawn = true;
+			break;
+		}
+	}
+
+	while (!successfullSpawn) {
+		if (trySpawningMerchantFar())
+			successfullSpawn = true;
+	}
+
+	addEntityToMap(m_p_merchant_);
+}
+
+bool World::trySpawningMerchantClose()
+{
+	SDL_FRect* p_merchantBounds = m_p_merchant_->getBounds();
+	p_merchantBounds->x = getRandomNumber(0, 800);
+	p_merchantBounds->y = getRandomNumber(0, 640);
+
+	if (!SDL_HasIntersectionF(p_merchantBounds, &m_bounds_)) {
+		return false;
+	}
+
+	for (auto const& cursor : m_enemyVector_) {
+		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	for (auto cursor : m_entityVector_) {
+		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool World::trySpawningMerchantFar()
+{
+	SDL_FRect* p_merchantBounds = m_p_merchant_->getBounds();
+	SDL_FPoint randomPosition = getRandomCoordinate();
+
+	p_merchantBounds->x = randomPosition.x;
+	p_merchantBounds->y = randomPosition.y;
+
+	for (auto const& cursor : m_enemyVector_) {
+		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	for (auto cursor : m_entityVector_) {
+		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void World::despawnMerchant()
+{
+	m_merchantIsActive_ = false;
+
+	auto it = m_entityVector_.begin();
+	while (it != m_entityVector_.end()) {
+		if (typeid(**it) == typeid(TradingPost)) {
+			m_entityVector_.erase(it);
+			break;
 		}
 		it++;
 	}

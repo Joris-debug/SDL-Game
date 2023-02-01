@@ -8,7 +8,8 @@
 #include <string>
 int GameHandler::gameLoop()
 {
-	int x_input = 0, y_input = 0, attackTrigger = false;
+	int x_input = 0, y_input = 0;
+	bool attackTrigger = false, interactTrigger = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
 	Uint32 lastTime = currentTime;
 	while (true)
@@ -48,9 +49,9 @@ int GameHandler::gameLoop()
 						x_input = -1;
 						break;
 
-						//case SDLK_0:
-						//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
-						//	break;
+					case SDLK_e:
+						interactTrigger = true;
+						break;
 
 						//case SDLK_1:
 						//	SDL_SetWindowFullscreen(m_p_interface_->getWindow(), 0);
@@ -87,6 +88,12 @@ int GameHandler::gameLoop()
 			if (attackTrigger) {
 				m_p_currentWorld_->triggerPlayerAttack();
 				attackTrigger = false;
+			}
+
+			if (interactTrigger) {
+				if (m_p_currentWorld_->getMerchantIsActive())
+					m_p_currentWorld_->despawnMerchant();
+				interactTrigger = false;
 			}
 
 			m_p_interface_->getPixelPerPixel();
@@ -248,13 +255,20 @@ void GameHandler::checkCurrentWave()
 		}
 		return;
 	}
-	m_waveCounter_++;
-	short enemiesToSpawn = 5 + m_waveCounter_ * 5;
-	m_p_currentWorld_->getPlayer()->get()->updateCoinCounter(m_waveTimer_);
-	m_waveTimer_ = enemiesToSpawn * 10; //10 seconds to defeat each enemy
-	while (enemiesToSpawn > 0) {
-		if (trySpawningEnemy())
-			enemiesToSpawn--;
+
+	if (m_waveTimer_ > 0) {
+		m_p_currentWorld_->getPlayer()->get()->updateCoinCounter(m_waveTimer_);
+		m_waveTimer_ = 0;
+	}	
+
+	if (!m_p_currentWorld_->getMerchantIsActive()) {
+		m_waveCounter_++;
+		short enemiesToSpawn = 5 + m_waveCounter_ * 5;
+		m_waveTimer_ = enemiesToSpawn * 10; //10 seconds to defeat each enemy
+		while (enemiesToSpawn > 0) {
+			if (trySpawningEnemy())
+				enemiesToSpawn--;
+		}
 	}
 
 }
