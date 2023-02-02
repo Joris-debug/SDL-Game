@@ -9,7 +9,7 @@
 
 World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_) : Vicinity(surface, m_bounds_, renderer)
 {
-	m_p_player_ = std::unique_ptr<Player>(new Player(renderer));
+	m_p_player_ = new Player(renderer);
 	this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
 	m_merchantIsActive_ = false;
 	m_p_merchant_ = new TradingPost(renderer, m_p_randomNumberEngine_);
@@ -18,8 +18,8 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 World::~World()
 {
 	delete m_p_merchant_;
-
-	int numberOfElements = m_entityVector_.size();
+	delete m_p_player_;
+	int numberOfElements = int(m_entityVector_.size());
 	for (int i = 0; i < numberOfElements; i++) {
 		delete m_entityVector_.back();
 		m_entityVector_.pop_back();
@@ -172,7 +172,7 @@ void World::checkIfPlayerHit()
 
 void World::checkForDefeatedEnemies()
 {
-	int enemyCount = m_enemyVector_.size();
+	int enemyCount = int(m_enemyVector_.size());
 	if (!enemyCount)
 		return;
 

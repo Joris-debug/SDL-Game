@@ -17,11 +17,13 @@ private:
     int m_coinCounter_;
     bool m_isAttacking_;
     bool m_isTurning_;
+    bool m_currentDirection_; // 0: right, 1 = left
+    bool m_lastDirection_; // 0: right, 1 = left
 	float m_attackCooldown_;
 public:
     Player(SDL_Renderer *renderer);
     ~Player();
-    bool detectTurning(float x, float y);
+    bool detectTurning();
     void animateBody(float x, float y) override;
     void renderBody(SDL_Renderer *renderer) override;
     float getAttackCooldownPercent();

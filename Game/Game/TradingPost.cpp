@@ -55,7 +55,7 @@ TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberE
 
 TradingPost::~TradingPost()
 {
-    int numberOfElements = m_merchantTextures_.size();
+    int numberOfElements = int(m_merchantTextures_.size());
     for (int i = 0; i < numberOfElements; i++) {
         SDL_DestroyTexture(m_merchantTextures_.back());
         m_merchantTextures_.pop_back();

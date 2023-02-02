@@ -26,7 +26,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 
 	if (m_p_lastTargetAssigned_->checkClockState()) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
-		SDL_FPoint* p_playerTargets = p_world->getPlayer()->get()->getPlayerTargets();
+		SDL_FPoint* p_playerTargets = p_world->getPlayer()->getPlayerTargets();
 		bool playerSpotted = true;
 		auto p_entityVector = p_world->getEntityVector();
 		for (short targetNr = 0; targetNr < 3; targetNr++) {				//Looping the three possible target options			
@@ -144,8 +144,6 @@ void Enemy::animateBody(float x, float y)
 		m_currentSprite_ = 0;
 	}
 
-	m_lastMove_.x = x;
-	m_lastMove_.y = y;
 	m_textureCoords_.x = m_textureCoords_.w * m_currentSprite_;
 	m_textureCoords_.y = m_textureCoords_.h * spriteLayer;
 

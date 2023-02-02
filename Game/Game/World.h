@@ -17,7 +17,7 @@ private:
     Vicinity* m_p_topMap_;
     TradingPost* m_p_merchant_;
     bool m_merchantIsActive_;
-    std::unique_ptr<Player> m_p_player_;
+    Player* m_p_player_;
     std::vector<std::unique_ptr<Enemy>> m_enemyVector_;
     std::vector<Entity*> m_entityVector_;
     std::mt19937* m_p_randomNumberEngine_;
@@ -43,6 +43,6 @@ public:
     inline bool getMerchantIsActive() { return m_merchantIsActive_; }
     inline std::vector<std::unique_ptr<Enemy>>* getEnemyVector() { return &m_enemyVector_; }
     inline std::vector<Entity*>* getEntityVector() { return &m_entityVector_; }
-    inline std::unique_ptr<Player>* getPlayer() { return &m_p_player_; }
+    inline Player* getPlayer() { return m_p_player_; }
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #define STARTUP_SCREEN_WIDTH 800
 #define STARTUP_SCREEN_HEIGHT 640
-#define ENEMY_SPEED 0.5
+#define ENEMY_SPEED 0.5f
 #define PLAYER_ATTACK_COOLDOWN 5000.0;
 
 #define RSC_LEVEL_1 "./Sprites/Maps/firstMap.png"

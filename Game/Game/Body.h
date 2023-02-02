@@ -30,7 +30,6 @@ class Body :
 protected:
 	SDL_FRect m_spriteBounds_;
 	SDL_Rect m_textureCoords_;
-	walkingVector m_lastMove_;
 	Clock* m_p_lastDamageTaken_;	// Timestamp of the last time the Body took damage
 	Clock* m_p_lastFrame_;		// Timestamp of the last frame
 	Mode m_currentMode_;		
