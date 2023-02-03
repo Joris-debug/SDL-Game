@@ -5,14 +5,15 @@
 #include "SDL_image.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "Effect.h"
 #include "TradingPost.h"
 
-World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_) : Vicinity(surface, m_bounds_, renderer)
+World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_) : Vicinity(surface, m_bounds_, renderer)
 {
 	m_p_player_ = new Player(renderer);
 	this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
 	m_merchantIsActive_ = false;
-	m_p_merchant_ = new TradingPost(renderer, m_p_randomNumberEngine_);
+	m_p_merchant_ = new TradingPost(renderer, m_p_randomNumberEngine_, m_p_spawnEffect_);
 }
 
 World::~World()
@@ -48,6 +49,7 @@ void World::moveWorld(float x, float y, float deltaTime)
 
 	checkIfPlayerHit();
 	checkForDefeatedEnemies();
+	checkIfMerchantDespawned();
 
 	for (auto const& cursor : m_enemyVector_) {
 		cursor->enemyPathfinding(this, deltaTime);
@@ -149,7 +151,7 @@ void World::triggerPlayerAttack()
 void World::damageEnemysInPlayerRadius()
 {
 	SDL_FRect* playerTextureCoords = m_p_player_->getSpriteBounds();
-	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 40*2 };
+	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 41*2 };
 	auto it = m_enemyVector_.begin();
 	while (it != m_enemyVector_.end()) {
 		if (SDL_HasIntersectionF(&attackRadius, it->get()->getBounds())) {
@@ -185,7 +187,7 @@ void World::checkForDefeatedEnemies()
 		it++;
 	}
 
-	if (enemyCount && m_enemyVector_.size() == 0)	//Enemys exist at the start of the function, but now the vector is empty
+	if (enemyCount && m_enemyVector_.size() == 0)	//Enemys existed at the start of the function, but now the vector is empty
 		makeMerchantAppear();
 }
 
@@ -196,7 +198,6 @@ void World::makeMerchantAppear()
 	bool successfullSpawn = false;
 
 	for (int i = 0; i < 30; i++) {
-		std::cout << "trying to spawn\n";
 		if (trySpawningMerchantClose()) {
 			successfullSpawn = true;
 			break;
@@ -207,7 +208,8 @@ void World::makeMerchantAppear()
 		if (trySpawningMerchantFar())
 			successfullSpawn = true;
 	}
-
+	m_p_merchant_->setIsActive(true);
+	m_p_merchant_->getSpawnEffect()->setEffectIsDone(false); //Start the explosion again
 	addEntityToMap(m_p_merchant_);
 }
 
@@ -221,16 +223,14 @@ bool World::trySpawningMerchantClose()
 		return false;
 	}
 
-	for (auto const& cursor : m_enemyVector_) {
+	for (auto cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
 			return false;
 		}
 	}
 
-	for (auto cursor : m_entityVector_) {
-		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
-			return false;
-		}
+	if (SDL_HasIntersectionF(p_merchantBounds, m_p_player_->getBounds())) {
+		return false;
 	}
 
 	return true;
@@ -244,24 +244,36 @@ bool World::trySpawningMerchantFar()
 	p_merchantBounds->x = randomPosition.x;
 	p_merchantBounds->y = randomPosition.y;
 
-	for (auto const& cursor : m_enemyVector_) {
-		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
-			return false;
-		}
-	}
-
 	for (auto cursor : m_entityVector_) {
 		if (SDL_HasIntersectionF(p_merchantBounds, cursor->getBounds())) {
 			return false;
 		}
 	}
 
+	if (SDL_HasIntersectionF(p_merchantBounds, m_p_player_->getBounds())) {
+		return false;
+	}
+
 	return true;
 }
 
-void World::despawnMerchant()
+void World::sendMerchantAway()
 {
-	m_merchantIsActive_ = false;
+	if (!m_p_merchant_->getIsActive())
+		return;
+	m_p_merchant_->getSpawnEffect()->setEffectIsDone(false); //Start the explosion again
+	m_p_merchant_->setIsActive(false);	//This lets the merchant know that its being despawned
+}
+
+bool World::checkIfMerchantDespawned()
+{
+	if (!m_merchantIsActive_)	//There is no merchant
+		return false;
+
+	if (!m_p_merchant_->getSpawnEffect()->getEffectIsDone() || m_p_merchant_->getIsActive())	//If the animation is not done or if the merchant is still active
+		return false;
+
+	m_merchantIsActive_ = false;	//The merchant can now be 100% removed from the world, every animation has played
 
 	auto it = m_entityVector_.begin();
 	while (it != m_entityVector_.end()) {
@@ -271,6 +283,7 @@ void World::despawnMerchant()
 		}
 		it++;
 	}
+
 }
 
 SDL_FPoint World::getRandomCoordinate()

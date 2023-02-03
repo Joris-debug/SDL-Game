@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "SDL_image.h"
+#include "Effect.h"
 #include <string>
 int GameHandler::gameLoop()
 {
@@ -92,7 +93,7 @@ int GameHandler::gameLoop()
 
 			if (interactTrigger) {
 				if (m_p_currentWorld_->getMerchantIsActive())
-					m_p_currentWorld_->despawnMerchant();
+					m_p_currentWorld_->sendMerchantAway();
 				interactTrigger = false;
 			}
 
@@ -181,12 +182,17 @@ GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
 	m_hudTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
-	//Load misc textures
+	//---------------------------------------------------------------------------------- Load all effect textures
+	p_tmpSurface = IMG_Load(RSC_EFFECT_EXPLOSION1);
+	m_effectTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	//---------------------------------------------------------------------------------- Load misc textures
 	p_tmpSurface = IMG_Load(RSC_WORLD_BACKGROUND);
 	m_miscTextures_.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
-	//Load all fonts
+	//----------------------------------------------------------------------------------- Load all fonts
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 	m_gameFonts_.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
@@ -213,6 +219,12 @@ GameHandler::~GameHandler()
 		m_hudTextures_.pop_back();
 	}
 
+	numberOfElements = int(m_effectTextures_.size());
+	for (int i = 0; i < numberOfElements; i++) {
+		SDL_DestroyTexture(m_effectTextures_.back());
+		m_effectTextures_.pop_back();
+	}
+
 	numberOfElements = int(m_miscTextures_.size());
 	for (int i = 0; i < numberOfElements; i++) {
 		SDL_DestroyTexture(m_miscTextures_.back());
@@ -220,7 +232,7 @@ GameHandler::~GameHandler()
 	}
 
 	//Delete all fonts
-	numberOfElements = m_gameFonts_.size();
+	numberOfElements = int(m_gameFonts_.size());
 	for (int i = 0; i < numberOfElements; i++) {
 		TTF_CloseFont(m_gameFonts_.back());
 		m_gameFonts_.pop_back();
@@ -229,7 +241,7 @@ GameHandler::~GameHandler()
 
 int GameHandler::initWorld()
 {
-	m_p_currentWorld_ = new World(IMG_Load(RSC_LEVEL_1), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer_, &m_randomNumberEngine_);
+	m_p_currentWorld_ = new World(IMG_Load(RSC_LEVEL_1), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer_, &m_randomNumberEngine_, new Effect({0, 0, 256, 160}, m_effectTextures_[0]));
 	m_p_currentWorld_->addVinicityToMap(new Vicinity(IMG_Load(RSC_LEVEL_1_TOP), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer_));
 
 	m_p_currentWorld_->addEntityToMap(new Entity({ -1232, -1280, 3264, 32 })); // Border left
@@ -271,7 +283,7 @@ void GameHandler::checkCurrentWave()
 
 	if (!m_p_currentWorld_->getMerchantIsActive()) {
 		m_waveCounter_++;
-		short enemiesToSpawn = 5 + m_waveCounter_ * 5;
+		short enemiesToSpawn = 0 + m_waveCounter_ * 1;
 		m_waveTimer_ = enemiesToSpawn * 10; //10 seconds to defeat each enemy
 		while (enemiesToSpawn > 0) {
 			if (trySpawningEnemy())

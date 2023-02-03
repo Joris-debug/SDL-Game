@@ -41,4 +41,6 @@
 #define RSC_MERCHANT_WORK1 "./Sprites/Misc/Merchant/work_01.png"
 #define RSC_MERCHANT_WORK2 "./Sprites/Misc/Merchant/work_02.png"
 
+#define RSC_EFFECT_EXPLOSION1 "./Sprites/Misc/Effects/explosion1.png"
+
 #define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"

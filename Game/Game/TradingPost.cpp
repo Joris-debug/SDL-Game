@@ -1,20 +1,22 @@
 #include "TradingPost.h"
 #include "Resources.h"
+#include "Effect.h"
 #include "SDL_image.h"
 
-TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_) : Entity({ 100, 200, 56 * 2 , 41 * 2 })
+TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_) : Entity({ 100, 200, 56 * 2 , 41 * 2 })
 {
     this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
+    this-> m_p_spawnEffect_ = m_p_spawnEffect_;
     SDL_Surface* tmpSurface = IMG_Load(RSC_TRADING_POST_BACKGROUND);
-    m_TradingPostTextures_[0] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures_[0] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
     
     tmpSurface = IMG_Load(RSC_TRADING_POST_FOREGROUND);
-    m_TradingPostTextures_[1] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures_[1] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_TRADING_POST_ROOF);
-    m_TradingPostTextures_[2] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures_[2] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_IDLE);
@@ -45,6 +47,7 @@ TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberE
     memset(m_upgrade2Sold_, 0, 2);
     memset(m_upgrade3Sold_, 0, 2);
 
+    m_isActive_ = false;
     m_p_lastFrame_ = new Clock(167);
     m_currentMode_ = MerchantMode::idle;
     m_currentSprite_ = 0;
@@ -61,8 +64,15 @@ TradingPost::~TradingPost()
         m_merchantTextures_.pop_back();
     }
 
-    SDL_DestroyTexture(m_TradingPostTextures_[0]);
-    SDL_DestroyTexture(m_TradingPostTextures_[1]);
+    SDL_DestroyTexture(m_p_TradingPostTextures_[0]);
+    SDL_DestroyTexture(m_p_TradingPostTextures_[1]);
+}
+
+void TradingPost::positionExplosion()
+{
+    SDL_FRect* p_explosionBounds = m_p_spawnEffect_->getBounds();
+    p_explosionBounds->x = m_bounds_.x - 36 * 2;
+    p_explosionBounds->y = m_bounds_.y - 39 * 2;
 }
 
 void TradingPost::randomizeMode()
@@ -112,6 +122,15 @@ void TradingPost::animateMerchant()
 
 void TradingPost::renderTradingPost(SDL_Renderer* renderer)
 {
+
+    m_p_spawnEffect_->animateEffect(); // The current Frame needs to be up to date for the next check
+
+    if (m_isActive_ && m_p_spawnEffect_->getCurrentSprite() < 7)   //Merchant is not visible yet
+        return;
+    if (!m_isActive_ && m_p_spawnEffect_->getCurrentSprite() > 5)
+        return;
+
+
     animateMerchant();
     //The merchant is standing a bit offset
     SDL_FRect merchantRect = m_bounds_;
@@ -121,16 +140,28 @@ void TradingPost::renderTradingPost(SDL_Renderer* renderer)
     merchantRect.h = 64;
 
 
-    SDL_RenderCopyF(renderer, m_TradingPostTextures_[0], NULL, &m_bounds_);
+    SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[0], NULL, &m_bounds_);
     SDL_RenderCopyF(renderer, m_merchantTextures_[int(m_currentMode_)], &m_textureCoords_, &merchantRect);
-    SDL_RenderCopyF(renderer, m_TradingPostTextures_[1], NULL, &m_bounds_);
+    SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[1], NULL, &m_bounds_);
 }
 
 void TradingPost::renderTradingPostRoof(SDL_Renderer* renderer)
 {
-    SDL_FRect roofRect = m_bounds_;
-    roofRect.y -= 30;
-    roofRect.w = 112;
-    roofRect.h = 32;
-    SDL_RenderCopyF(renderer, m_TradingPostTextures_[2], NULL, &roofRect);
+    bool roofVisible = true;
+    if (m_isActive_ && m_p_spawnEffect_->getCurrentSprite() < 7)   //Merchant is not visible yet
+        roofVisible = false;
+    if (!m_isActive_ && m_p_spawnEffect_->getCurrentSprite() >= 7)
+        roofVisible = false;
+
+    if (roofVisible) {  //Merchant is not visible yet
+        SDL_FRect roofRect = m_bounds_;
+        roofRect.y -= 30;
+        roofRect.w = 112;
+        roofRect.h = 32;
+        SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[2], NULL, &roofRect);
+    }
+
+    positionExplosion();
+    m_p_spawnEffect_->renderEffect(renderer);
 }
+

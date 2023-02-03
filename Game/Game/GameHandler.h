@@ -7,6 +7,7 @@
 class Clock;
 class Interface;
 class World;
+
 class GameHandler	
 {
 private:
@@ -21,8 +22,9 @@ private:
 	std::vector<SDL_Texture*> m_enemyTexturesWalk_; //these textures are needed for creating Enemies
 	std::vector<SDL_Texture*> m_enemyTexturesIdle_;
 	std::vector<SDL_Texture*> m_enemyTexturesHit_;
+	std::vector<SDL_Texture*> m_effectTextures_; //This vector stores every texture needed showing effects
 	std::vector<SDL_Texture*> m_hudTextures_; //This vector stores every texture needed for printing the hud
-	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed#
+	std::vector<SDL_Texture*> m_miscTextures_; //This vector stores all leftover textures that are needed
 	std::vector<TTF_Font*> m_gameFonts_; //This Vector stores every font the game needs
 	int gameLoop();
 public:

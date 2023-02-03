@@ -9,6 +9,7 @@ class Interface;
 class Player;
 class Enemy;
 class TradingPost;
+class Effect;
 
 class World :
     public Vicinity
@@ -22,7 +23,7 @@ private:
     std::vector<Entity*> m_entityVector_;
     std::mt19937* m_p_randomNumberEngine_;
 public:
-    World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_);
+    World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_);
     ~World();
     walkingVector checkPlayerMove(float x, float y, float deltaTime);
     void moveWorld(float x, float y, float deltaTime);
@@ -34,7 +35,8 @@ public:
     void makeMerchantAppear();
     bool trySpawningMerchantClose();
     bool trySpawningMerchantFar();
-    void despawnMerchant();
+    void sendMerchantAway();
+    bool checkIfMerchantDespawned();
     SDL_FPoint getRandomCoordinate();
     int getRandomNumber(int rangeBegin, int rangeEnde); //Used to generate random coordinate
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
