@@ -34,5 +34,5 @@ void Effect::renderEffect(SDL_Renderer* renderer)
     if (m_effectIsDone_)
         return;
 
-    SDL_RenderCopyF(renderer, m_p_effectTextures_, &m_textureCoords_, &m_bounds_);
+    SDL_RenderCopyF(renderer, m_p_effectTextures_, &m_textureCoords_, &m_bounds);
 }

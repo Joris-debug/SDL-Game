@@ -5,51 +5,51 @@
 Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 }, 3)
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
-	m_p_textureIdle_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	m_p_textureIdle = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
 	tmpSurface = IMG_Load(RSC_PLAYER_RUN);
-	m_p_textureRun_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	m_p_textureRun = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
 	tmpSurface = IMG_Load(RSC_PLAYER_TURN);
-	m_p_textureTurn_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	m_p_textureTurn = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
 	tmpSurface = IMG_Load(RSC_PLAYER_ATTACK);
-	m_p_textureAttack_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	m_p_textureAttack = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
 	tmpSurface = IMG_Load(RSC_PLAYER_HIT);
-	m_p_textureHit_ = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+	m_p_textureHit = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
-	m_footSpace_ = { 378, 336, 42, 24}; //This area collides with obstacles 
+	m_footSpace = { 378, 336, 42, 24}; //This area collides with obstacles 
 
-	m_currentDirection_ = 0; //Player spawns looking right
-	m_lastDirection_ = 0;
+	m_currentDirection = 0; //Player spawns looking right
+	m_lastDirection = 0;
 
-	m_isTurning_ = false;
-	m_isAttacking_ = false;
-	m_coinCounter_ = 0;
-	m_attackCooldown_ = PLAYER_ATTACK_COOLDOWN;
-	m_p_lastAttack_ = new Clock(m_attackCooldown_, false);
+	m_isTurning = false;
+	m_isAttacking = false;
+	m_coinCounter = 0;
+	m_attackCooldown = PLAYER_ATTACK_COOLDOWN;
+	m_p_lastAttack = new Clock(m_attackCooldown, false);
 }
 
 Player::~Player()
 {
-	SDL_DestroyTexture(m_p_textureAttack_);
-	SDL_DestroyTexture(m_p_textureTurn_);
-	SDL_DestroyTexture(m_p_textureIdle_);
-	SDL_DestroyTexture(m_p_textureRun_);
+	SDL_DestroyTexture(m_p_textureAttack);
+	SDL_DestroyTexture(m_p_textureTurn);
+	SDL_DestroyTexture(m_p_textureIdle);
+	SDL_DestroyTexture(m_p_textureRun);
 }
 
 bool Player::detectTurning()
 {
 	//The player currently has to walk in a certain direction
-	if (m_currentMode_ != Mode::walk)
+	if (m_currentMode != Mode::walk)
 		return false;
-	if(m_lastDirection_ != m_currentDirection_) {
+	if(m_lastDirection != m_currentDirection) {
 		return true;
 	}
 
@@ -64,96 +64,103 @@ void Player::animateBody(float x, float y)
 
 	do {
 		if (isInvincible()) {
-			m_currentMode_ = Mode::hit;
+			m_currentMode = Mode::hit;
 			totalSprites = 2;
-			m_isAttacking_ = false;
+			m_isAttacking = false;
 			break;
 		}
 
-		if (m_isAttacking_) //An attack started
+		if (m_isAttacking) //An attack started
 		{
 			totalSprites = 10;
-			m_currentMode_ = Mode::attack;
+			m_currentMode = Mode::attack;
 
-			if (m_currentSprite_ >= 9) //Attack ends
-				m_isAttacking_ = false;
+			if (m_currentSprite >= 9) //Attack ends
+				m_isAttacking = false;
 
 			break;
 		}
-		if (m_isTurning_) //A turn started less than 3 frames ago
+		if (m_isTurning) //A turn started less than 3 frames ago
 		{
 			totalSprites = 3;
-			if (m_currentSprite_ >= 2)
-				m_isTurning_ = false;
+			if (m_currentSprite >= 2)
+				m_isTurning = false;
 			break;
 		}
 
 		if (!x && !y) {	//Idle
 			totalSprites = 10;
-			m_currentMode_ = Mode::idle;
+			m_currentMode = Mode::idle;
 			break;
 		}
 
-		m_currentDirection_ = (x > 0 || (y < 0 && x >= 0));
+		m_currentDirection = (x > 0 || (y < 0 && x >= 0));
 
 		if (detectTurning()) {	//A turn movement starts now
 			totalSprites = 3;
-			m_currentMode_ = Mode::turn;
-			m_isTurning_ = true;
-			m_p_lastFrame_->setStartPoint(0);
-			m_currentSprite_ = 0;
+			m_currentMode = Mode::turn;
+			m_isTurning = true;
+			m_p_lastFrame->setStartPoint(0);
+			m_currentSprite = 0;
 			break;
 		}
 
-		if (m_currentDirection_ == 0) {		//Walk right or upwards
+		if (m_currentDirection == 0) {		//Walk right or upwards
 			totalSprites = 10;
-			m_currentMode_ = Mode::walk;
+			m_currentMode = Mode::walk;
 			break;
 		}
 
-		if (m_currentDirection_ == 1) {		//Walk left or downwards
+		if (m_currentDirection == 1) {		//Walk left or downwards
 			totalSprites = 10;
-			m_currentMode_ = Mode::walk;
+			m_currentMode = Mode::walk;
 			break;
 		}
 
 	} while (false);
 
 
-	if (m_p_lastFrame_->checkClockState()) {	//Next sprite
-		m_currentSprite_++;
+	if (m_p_lastFrame->checkClockState()) {	//Next sprite
+		m_currentSprite++;
 	}
 	
-	if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
-		m_currentSprite_ = 0;
+	if (m_currentSprite >= totalSprites) {		//End of spritesheet
+		m_currentSprite = 0;
 	}
 
-	m_lastDirection_ = m_currentDirection_;
+	m_lastDirection = m_currentDirection;
 
-	m_textureCoords_ = { 120 * m_currentSprite_, 0, 120, 80 };
+	m_textureCoords = { 120 * m_currentSprite, 0, 120, 80 };
 }
 
 void Player::renderBody(SDL_Renderer* renderer)
 {
-	SDL_RendererFlip flip = (m_currentDirection_) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+	SDL_RendererFlip flip = (m_currentDirection) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
-	switch (m_currentMode_) {
+	if (m_currentDirection)		//Spritesheet has an offset
+		m_spriteBounds.x -= 20;
+
+	switch (m_currentMode) {
 	case Mode::idle:
-		SDL_RenderCopyExF(renderer, m_p_textureIdle_, &m_textureCoords_, &m_spriteBounds_, NULL, NULL, flip);
+		SDL_RenderCopyExF(renderer, m_p_textureIdle, &m_textureCoords, &m_spriteBounds, NULL, NULL, flip);
 		break;
 	case Mode::walk:
-		SDL_RenderCopyExF(renderer, m_p_textureRun_, &m_textureCoords_, &m_spriteBounds_, NULL, NULL, flip);
+		SDL_RenderCopyExF(renderer, m_p_textureRun, &m_textureCoords, &m_spriteBounds, NULL, NULL, flip);
 		break;
 	case Mode::attack:
-		SDL_RenderCopyExF(renderer, m_p_textureAttack_, &m_textureCoords_, &m_spriteBounds_, NULL, NULL, flip);
+		SDL_RenderCopyExF(renderer, m_p_textureAttack, &m_textureCoords, &m_spriteBounds, NULL, NULL, flip);
 		break;
 	case Mode::turn:
-		SDL_RenderCopyExF(renderer, m_p_textureTurn_, &m_textureCoords_, &m_spriteBounds_, NULL, NULL, flip);
+		SDL_RenderCopyExF(renderer, m_p_textureTurn, &m_textureCoords, &m_spriteBounds, NULL, NULL, flip);
 		break;
 	case Mode::hit:
-		SDL_RenderCopyExF(renderer, m_p_textureHit_, &m_textureCoords_, &m_spriteBounds_, NULL, NULL, flip);
+		SDL_RenderCopyExF(renderer, m_p_textureHit, &m_textureCoords, &m_spriteBounds, NULL, NULL, flip);
 		break;
 	}
+
+	if (m_currentDirection)
+		m_spriteBounds.x += 20;
+
 }
 
 float Player::getAttackCooldownPercent()
@@ -161,15 +168,15 @@ float Player::getAttackCooldownPercent()
 	if (checkAttackCooldown())
 		return 1.0f;
 
-	Uint32 lastAttack = m_p_lastAttack_->getStartPoint();
+	Uint32 lastAttack = m_p_lastAttack->getStartPoint();
 	return (SDL_GetTicks() - lastAttack) / PLAYER_ATTACK_COOLDOWN;
 }
 
 SDL_FPoint* Player::getPlayerTargets()
 {
 	static SDL_FPoint s_playerTargets[3];
-	s_playerTargets[0] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 }; //Middle of the Player
-	s_playerTargets[1] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y }; //Head of the Player
-	s_playerTargets[2] = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h }; //Feet of the Player
+	s_playerTargets[0] = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 }; //Middle of the Player
+	s_playerTargets[1] = { m_bounds.x + m_bounds.w / 2, m_bounds.y }; //Head of the Player
+	s_playerTargets[2] = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h }; //Feet of the Player
 	return s_playerTargets;
 }

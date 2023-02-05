@@ -153,6 +153,7 @@
     <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TradingPost.cpp" />
     <ClCompile Include="Vicinity.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameHandler.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="MenuManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="TradingPost.h" />

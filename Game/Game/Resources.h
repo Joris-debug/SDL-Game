@@ -43,4 +43,6 @@
 
 #define RSC_EFFECT_EXPLOSION1 "./Sprites/Misc/Effects/explosion1.png"
 
+#define RSC_SHOP_MENU "./Sprites/Misc/Menus/Shop.png"
+
 #define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"

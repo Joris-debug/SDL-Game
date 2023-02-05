@@ -51,6 +51,9 @@
     <ClCompile Include="Effect.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MenuManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h">
@@ -87,6 +90,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Effect.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

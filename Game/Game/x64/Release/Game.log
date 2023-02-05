@@ -1,13 +1,22 @@
-﻿  World.cpp
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(219,39): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+﻿  GameHandler.cpp
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(107,41): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(107,32): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(286,38): warning C4244: "-=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(287,65): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(365,41): warning C4838: Konvertierung von "float" zu "int" erfordert eine einschränkende Konvertierung
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(365,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(400,32): warning C4244: "*=": Konvertierung von "float" in "int", möglicher Datenverlust
+  MenuManager.cpp
+  World.cpp
 C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(220,39): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(291,86): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(291,54): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(292,86): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(292,54): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(221,39): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(303,83): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(303,53): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(304,83): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\World.cpp(304,53): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
   Code wird generiert.
-  2 of 476 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  3 of 489 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.
   Game.vcxproj -> C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\x64\Release\Game.exe

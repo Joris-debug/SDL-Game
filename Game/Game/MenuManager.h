@@ -1,0 +1,27 @@
+#pragma once
+#include "GameHandler.h"
+enum class Menus { none, start, pause, shop };		//These are the types of menus that can be opened
+
+class TradingPost;
+class World;
+class MenuManager
+{
+private:
+	Menus m_currentMenu;
+	GameHandler* m_p_gameHandler;
+	World* m_p_currenWorld;	//Needed for the shop menu
+	std::vector<SDL_Texture*> m_menuTextures;
+	MenuManager();
+public:
+	static MenuManager& getInstance();
+	void createTextures(SDL_Renderer* renderer);
+	void deleteTextures();
+	inline bool checkIfMenuOpen() { return (m_currentMenu == Menus::none) ? false : true; }
+	inline void setGameHandler(GameHandler* m_p_gameHandler) { this->m_p_gameHandler = m_p_gameHandler; };
+	inline void setCurrentWorld(World* m_p_currenWorld) { this->m_p_currenWorld = m_p_currenWorld; };
+	void interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
+	MenuManager(const MenuManager& obj)	= delete;
+	inline void closeMenu() { m_currentMenu = Menus::none; }
+	bool openShop();	//Returns true if the window can be opened
+};
+

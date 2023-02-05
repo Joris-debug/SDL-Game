@@ -15,13 +15,13 @@ class World :
     public Vicinity
 {
 private:
-    Vicinity* m_p_topMap_;
-    TradingPost* m_p_merchant_;
-    bool m_merchantIsActive_;
-    Player* m_p_player_;
-    std::vector<std::unique_ptr<Enemy>> m_enemyVector_;
-    std::vector<Entity*> m_entityVector_;
-    std::mt19937* m_p_randomNumberEngine_;
+    Vicinity* m_p_topMap;
+    TradingPost* m_p_merchant;
+    bool m_merchantIsActive;
+    Player* m_p_player;
+    std::vector<std::unique_ptr<Enemy>> m_enemyVector;
+    std::vector<Entity*> m_entityVector;
+    std::mt19937* m_p_randomNumberEngine;
 public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_);
     ~World();
@@ -35,16 +35,17 @@ public:
     void makeMerchantAppear();
     bool trySpawningMerchantClose();
     bool trySpawningMerchantFar();
+    bool talkToMerchant(); // Returns true if the player was able to talk to the merchant
     void sendMerchantAway();
     bool checkIfMerchantDespawned();
     SDL_FPoint getRandomCoordinate();
     int getRandomNumber(int rangeBegin, int rangeEnde); //Used to generate random coordinate
-    inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap_ = newVinicity; }
-    inline void addEntityToMap(Entity* newEntity) { m_entityVector_.push_back(newEntity); }
-    inline void addEnemyToMap(Enemy* newEnemy) { m_enemyVector_.push_back(std::unique_ptr<Enemy>(newEnemy)); }
-    inline bool getMerchantIsActive() { return m_merchantIsActive_; }
-    inline std::vector<std::unique_ptr<Enemy>>* getEnemyVector() { return &m_enemyVector_; }
-    inline std::vector<Entity*>* getEntityVector() { return &m_entityVector_; }
-    inline Player* getPlayer() { return m_p_player_; }
+    inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap = newVinicity; }
+    inline void addEntityToMap(Entity* newEntity) { m_entityVector.push_back(newEntity); }
+    inline void addEnemyToMap(Enemy* newEnemy) { m_enemyVector.push_back(std::unique_ptr<Enemy>(newEnemy)); }
+    inline bool getMerchantIsActive() { return m_merchantIsActive; }
+    inline std::vector<std::unique_ptr<Enemy>>* getEnemyVector() { return &m_enemyVector; }
+    inline std::vector<Entity*>* getEntityVector() { return &m_entityVector; }
+    inline Player* getPlayer() { return m_p_player; }
 };
 

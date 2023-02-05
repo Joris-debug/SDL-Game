@@ -5,93 +5,93 @@
 
 TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_) : Entity({ 100, 200, 56 * 2 , 41 * 2 })
 {
-    this->m_p_randomNumberEngine_ = m_p_randomNumberEngine_;
-    this-> m_p_spawnEffect_ = m_p_spawnEffect_;
+    this->m_p_randomNumberEngine = m_p_randomNumberEngine_;
+    this-> m_p_spawnEffect = m_p_spawnEffect_;
     SDL_Surface* tmpSurface = IMG_Load(RSC_TRADING_POST_BACKGROUND);
-    m_p_TradingPostTextures_[0] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures[0] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
     
     tmpSurface = IMG_Load(RSC_TRADING_POST_FOREGROUND);
-    m_p_TradingPostTextures_[1] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures[1] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_TRADING_POST_ROOF);
-    m_p_TradingPostTextures_[2] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    m_p_TradingPostTextures[2] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_IDLE);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_GREETING);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_BORED1);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_BORED2);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_WORK1);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
     tmpSurface = IMG_Load(RSC_MERCHANT_WORK2);
-    m_merchantTextures_.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
+    m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
-    memset(m_upgrade1Sold_, 0, 2);
-    memset(m_upgrade2Sold_, 0, 2);
-    memset(m_upgrade3Sold_, 0, 2);
+    memset(m_upgrade1Sold, 0, 2);
+    memset(m_upgrade2Sold, 0, 2);
+    memset(m_upgrade3Sold, 0, 2);
 
-    m_isActive_ = false;
-    m_p_lastFrame_ = new Clock(167);
-    m_currentMode_ = MerchantMode::idle;
-    m_currentSprite_ = 0;
-    m_textureCoords_ = { 0, 0, 32, 32 };
+    m_isActive = false;
+    m_p_lastFrame = new Clock(167);
+    m_currentMode = MerchantMode::idle;
+    m_currentSprite = 0;
+    m_textureCoords = { 0, 0, 32, 32 };
     animateMerchant();
 
 }
 
 TradingPost::~TradingPost()
 {
-    int numberOfElements = int(m_merchantTextures_.size());
+    int numberOfElements = int(m_merchantTextures.size());
     for (int i = 0; i < numberOfElements; i++) {
-        SDL_DestroyTexture(m_merchantTextures_.back());
-        m_merchantTextures_.pop_back();
+        SDL_DestroyTexture(m_merchantTextures.back());
+        m_merchantTextures.pop_back();
     }
 
-    SDL_DestroyTexture(m_p_TradingPostTextures_[0]);
-    SDL_DestroyTexture(m_p_TradingPostTextures_[1]);
+    SDL_DestroyTexture(m_p_TradingPostTextures[0]);
+    SDL_DestroyTexture(m_p_TradingPostTextures[1]);
 }
 
 void TradingPost::positionExplosion()
 {
-    SDL_FRect* p_explosionBounds = m_p_spawnEffect_->getBounds();
-    p_explosionBounds->x = m_bounds_.x - 36 * 2;
-    p_explosionBounds->y = m_bounds_.y - 39 * 2;
+    SDL_FRect* p_explosionBounds = m_p_spawnEffect->getBounds();
+    p_explosionBounds->x = m_bounds.x - 36 * 2;
+    p_explosionBounds->y = m_bounds.y - 39 * 2;
 }
 
 void TradingPost::randomizeMode()
 {
     std::uniform_int_distribution<int> distribution(-15, 5);
-    int tmpMode = distribution(*m_p_randomNumberEngine_);
+    int tmpMode = distribution(*m_p_randomNumberEngine);
     if (tmpMode <= 0) {
-        m_currentMode_ = MerchantMode::idle;
+        m_currentMode = MerchantMode::idle;
         return;
     }
-    m_currentMode_ = MerchantMode(tmpMode);
+    m_currentMode = MerchantMode(tmpMode);
 }
 
 void TradingPost::animateMerchant()
 {
-    m_textureCoords_ = { 0, 0, 32, 32 };
+    m_textureCoords = { 0, 0, 32, 32 };
     int totalSprites = 4;
 
-    switch (m_currentMode_)
+    switch (m_currentMode)
     {
     case MerchantMode::idle:
     case MerchantMode::greeting:
@@ -108,60 +108,60 @@ void TradingPost::animateMerchant()
     }
 
 
-    if (m_p_lastFrame_->checkClockState()) {	//Next sprite
-        m_currentSprite_++;
+    if (m_p_lastFrame->checkClockState()) {	//Next sprite
+        m_currentSprite++;
     }
 
-    if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
-        m_currentSprite_ = 0;
+    if (m_currentSprite >= totalSprites) {		//End of spritesheet
+        m_currentSprite = 0;
         randomizeMode();
     }
 
-    m_textureCoords_.x = m_textureCoords_.w * m_currentSprite_;
+    m_textureCoords.x = m_textureCoords.w * m_currentSprite;
 }
 
 void TradingPost::renderTradingPost(SDL_Renderer* renderer)
 {
 
-    m_p_spawnEffect_->animateEffect(); // The current Frame needs to be up to date for the next check
+    m_p_spawnEffect->animateEffect(); // The current Frame needs to be up to date for the next check
 
-    if (m_isActive_ && m_p_spawnEffect_->getCurrentSprite() < 7)   //Merchant is not visible yet
+    if (m_isActive && m_p_spawnEffect->getCurrentSprite() < 7)   //Merchant is not visible yet
         return;
-    if (!m_isActive_ && m_p_spawnEffect_->getCurrentSprite() > 5)
+    if (!m_isActive && m_p_spawnEffect->getCurrentSprite() > 5)
         return;
 
 
     animateMerchant();
     //The merchant is standing a bit offset
-    SDL_FRect merchantRect = m_bounds_;
+    SDL_FRect merchantRect = m_bounds;
     merchantRect.x += 26;
     merchantRect.y += 10;
     merchantRect.w = 64;
     merchantRect.h = 64;
 
 
-    SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[0], NULL, &m_bounds_);
-    SDL_RenderCopyF(renderer, m_merchantTextures_[int(m_currentMode_)], &m_textureCoords_, &merchantRect);
-    SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[1], NULL, &m_bounds_);
+    SDL_RenderCopyF(renderer, m_p_TradingPostTextures[0], NULL, &m_bounds);
+    SDL_RenderCopyF(renderer, m_merchantTextures[int(m_currentMode)], &m_textureCoords, &merchantRect);
+    SDL_RenderCopyF(renderer, m_p_TradingPostTextures[1], NULL, &m_bounds);
 }
 
 void TradingPost::renderTradingPostRoof(SDL_Renderer* renderer)
 {
     bool roofVisible = true;
-    if (m_isActive_ && m_p_spawnEffect_->getCurrentSprite() < 7)   //Merchant is not visible yet
+    if (m_isActive && m_p_spawnEffect->getCurrentSprite() < 7)   //Merchant is not visible yet
         roofVisible = false;
-    if (!m_isActive_ && m_p_spawnEffect_->getCurrentSprite() >= 7)
+    if (!m_isActive && m_p_spawnEffect->getCurrentSprite() >= 7)
         roofVisible = false;
 
     if (roofVisible) {  //Merchant is not visible yet
-        SDL_FRect roofRect = m_bounds_;
+        SDL_FRect roofRect = m_bounds;
         roofRect.y -= 30;
         roofRect.w = 112;
         roofRect.h = 32;
-        SDL_RenderCopyF(renderer, m_p_TradingPostTextures_[2], NULL, &roofRect);
+        SDL_RenderCopyF(renderer, m_p_TradingPostTextures[2], NULL, &roofRect);
     }
 
     positionExplosion();
-    m_p_spawnEffect_->renderEffect(renderer);
+    m_p_spawnEffect->renderEffect(renderer);
 }
 

@@ -22,7 +22,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	}
 	
 
-	SDL_FPoint enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
+	SDL_FPoint enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
 
 	if (m_p_lastTargetAssigned_->checkClockState()) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
@@ -44,7 +44,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 			}
 			else if (targetNr < 3) {		//Im reseting the variables for the next run
 				playerSpotted = true;
-				enemyMiddle = { m_bounds_.x + m_bounds_.w / 2, m_bounds_.y + m_bounds_.h / 2 };
+				enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
 			}
 		}
 
@@ -86,13 +86,13 @@ void Enemy::animateBody(float x, float y)
 
  	do {
 		if (isInvincible()) {
-			m_currentMode_ = Mode::hit;
+			m_currentMode = Mode::hit;
 			totalSprites = 6;
 			break;
 		}
 
 		if (!x && !y) {
-			m_currentMode_ = Mode::idle;
+			m_currentMode = Mode::idle;
 			totalSprites = 4;
 			break;
 		}
@@ -104,14 +104,14 @@ void Enemy::animateBody(float x, float y)
 		if (abs(x) > abs(y)) {
 
 			if (x > 0) {
-				m_currentMode_ = Mode::walk;
+				m_currentMode = Mode::walk;
 				totalSprites = 4;
 				spriteLayer = 1;
 				break;
 			}
 
 			if (x < 0) {
-				m_currentMode_ = Mode::walk;
+				m_currentMode = Mode::walk;
 				totalSprites = 4;
 				spriteLayer = 2;
 				break;
@@ -120,14 +120,14 @@ void Enemy::animateBody(float x, float y)
 		else {
 
 			if (y > 0) {
-				m_currentMode_ = Mode::walk;
+				m_currentMode = Mode::walk;
 				totalSprites = 4;
 				spriteLayer = 0;
 				break;
 			}
 
 			if (y < 0) {
-				m_currentMode_ = Mode::walk;
+				m_currentMode = Mode::walk;
 				totalSprites = 4;
 				spriteLayer = 3;
 				break;
@@ -136,16 +136,16 @@ void Enemy::animateBody(float x, float y)
 
 	} while (false);
 
-	if (m_p_lastFrame_->checkClockState()) {	//Next sprite
-		m_currentSprite_++;
+	if (m_p_lastFrame->checkClockState()) {	//Next sprite
+		m_currentSprite++;
 	}
 
-	if (m_currentSprite_ >= totalSprites) {		//End of spritesheet
-		m_currentSprite_ = 0;
+	if (m_currentSprite >= totalSprites) {		//End of spritesheet
+		m_currentSprite = 0;
 	}
 
-	m_textureCoords_.x = m_textureCoords_.w * m_currentSprite_;
-	m_textureCoords_.y = m_textureCoords_.h * spriteLayer;
+	m_textureCoords.x = m_textureCoords.w * m_currentSprite;
+	m_textureCoords.y = m_textureCoords.h * spriteLayer;
 
 }
 
@@ -158,15 +158,15 @@ void Enemy::moveEntity(float x, float y)
 
 void Enemy::renderBody(SDL_Renderer* renderer)
 {
-	switch (m_currentMode_) {
+	switch (m_currentMode) {
 	case Mode::idle:
-		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords_, &m_spriteBounds_);
+		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords, &m_spriteBounds);
 		break;
 	case Mode::walk:
-		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords_, &m_spriteBounds_);
+		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords, &m_spriteBounds);
 		break;
 	case Mode::hit:
-		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords_, &m_spriteBounds_);
+		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords, &m_spriteBounds);
 		break;
 	}
 }
@@ -184,7 +184,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		this->moveEntity(xMovement, 0);
 
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
 				xCollision = true;
 				break;
 			}
@@ -192,7 +192,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!xCollision) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 					xCollision = true;
 					break;
 				}
@@ -206,7 +206,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	if (y != 0) {
 		this->moveEntity(0, yMovement);
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
 				yCollision = true;
 				break;
 			}
@@ -214,7 +214,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!yCollision) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 					yCollision = true;
 					break;
 				}
@@ -229,14 +229,14 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		bool bothCollisons = false;
 		this->moveEntity(xMovement, yMovement);
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
 				bothCollisons = true;
 				break;
 			}
 		}
 		if (!bothCollisons) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds_, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 					bothCollisons = true;
 					break;
 				}
