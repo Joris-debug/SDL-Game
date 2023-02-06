@@ -85,17 +85,22 @@ int GameHandler::gameLoop()
 			}
 			checkCurrentWave();
 
-			if (leftMouseButtonPressed) {
-				if (!MenuManager::getInstance().checkIfMenuOpen()) {		//No window is open
+			if (!MenuManager::getInstance().checkIfMenuOpen()) {		//No window is open
+
+				if (leftMouseButtonPressed) {
 					m_p_currentWorld->triggerPlayerAttack();
 					leftMouseButtonPressed = false;
 				}
+				if (eKeyPressed) {
+					m_p_currentWorld->talkToMerchant();
+					eKeyPressed = false;
+				}
+			}
+			else {	//Player doesnt move when a window is open
+				x_input = 0;
+				y_input = 0;
 			}
 
-			if (eKeyPressed) {
-				std::cout << m_p_currentWorld->talkToMerchant() << std::endl;
-				eKeyPressed = false;
-			}
 
 			if (fKeyPressed) {
 				MenuManager::getInstance().closeMenu();
@@ -106,9 +111,8 @@ int GameHandler::gameLoop()
 			m_p_interface->getPixelPerPixel();
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
-			renderEverything();
-
-			MenuManager::getInstance().interactWithMenu(leftMouseButtonPressed, m_p_renderer);		//This function also renders the menu
+			renderEverything(leftMouseButtonPressed);
+			leftMouseButtonPressed = false;
 
 			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 				break;
@@ -295,8 +299,8 @@ void GameHandler::checkCurrentWave()
 
 	if (!m_p_currentWorld->getMerchantIsActive()) {
 		m_waveCounter++;
-		short enemiesToSpawn = 0 + m_waveCounter * 1;
-		m_waveTimer = enemiesToSpawn * 10; //10 seconds to defeat each enemy
+		short enemiesToSpawn = 1 + m_waveCounter * 0;
+		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 		while (enemiesToSpawn > 0) {
 			if (trySpawningEnemy())
 				enemiesToSpawn--;
@@ -325,7 +329,7 @@ bool GameHandler::trySpawningEnemy()
 			break;
 	}
 
-	SDL_FRect windowRect = { 0, 0, 640, 800 };
+	SDL_FRect windowRect = { 0, 0, 800, 640 };
 	if (SDL_HasIntersectionF(&windowRect, &tmpRectBounds))
 		return false;
 
@@ -451,11 +455,12 @@ void GameHandler::renderHud()
 	SDL_DestroyTexture(textureText);
 }
 
-void GameHandler::renderEverything()
+void GameHandler::renderEverything(bool leftMouseButtonPressed)
 {
 	SDL_RenderClear(m_p_renderer);
 	renderWorldBackground();
 	m_p_currentWorld->renderWorld(m_p_renderer);
 	renderHud();
+	MenuManager::getInstance().interactWithMenu(leftMouseButtonPressed, m_p_renderer);		//This function also renders the menu
 	SDL_RenderPresent(m_p_renderer);
 }

@@ -35,6 +35,6 @@ public:
 	bool trySpawningEnemy(); //Returns true on success and false if it fails
 	void renderWorldBackground();
 	void renderHud(); //This function will render healthbar, attack status, etc
-	void renderEverything();
+	void renderEverything(bool leftMouseButtonPressed);
 };
 
