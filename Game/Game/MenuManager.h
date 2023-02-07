@@ -2,8 +2,6 @@
 #include "GameHandler.h"
 enum class Menus { none, start, pause, shop };		//These are the types of menus that can be opened
 
-class TradingPost;
-class World;
 class MenuManager
 {
 private:
@@ -21,6 +19,7 @@ public:
 	inline void setCurrentWorld(World* m_p_currenWorld) { this->m_p_currenWorld = m_p_currenWorld; };
 	void interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void renderShop(bool mouseButtonPressed, SDL_Renderer* renderer);
+	void renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Renderer* renderer);
 	MenuManager(const MenuManager& obj)	= delete;
 	inline void closeMenu() { m_currentMenu = Menus::none; }
 	bool openShop();	//Returns true if the window can be opened

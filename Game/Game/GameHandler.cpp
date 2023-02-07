@@ -89,11 +89,9 @@ int GameHandler::gameLoop()
 
 				if (leftMouseButtonPressed) {
 					m_p_currentWorld->triggerPlayerAttack();
-					leftMouseButtonPressed = false;
 				}
 				if (eKeyPressed) {
 					m_p_currentWorld->talkToMerchant();
-					eKeyPressed = false;
 				}
 			}
 			else {	//Player doesnt move when a window is open
@@ -101,18 +99,12 @@ int GameHandler::gameLoop()
 				y_input = 0;
 			}
 
-
-			if (fKeyPressed) {
-				MenuManager::getInstance().closeMenu();
-				m_p_currentWorld->sendMerchantAway();
-				fKeyPressed = false;
-			}
-
 			m_p_interface->getPixelPerPixel();
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
+			eKeyPressed = false;
 
 			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 				break;
@@ -276,6 +268,22 @@ int GameHandler::initWorld()
 	return gameLoop();
 }
 
+TTF_Font* GameHandler::getFont(int fontSize)
+{
+	switch (fontSize) {
+		case 45:
+			return m_gameFonts[0];
+			break;
+		case 30:
+			return m_gameFonts[1];
+			break;
+		case 34:
+			return m_gameFonts[2];
+			break;
+	}
+	return nullptr;
+}
+
 void GameHandler::checkCurrentWave()
 {
 	if (m_p_currentWorld->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
@@ -382,7 +390,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorWaCo = { 229, 229, 203 }; //Color for the wave counter
 
 	std::string displayText = "Wave " + std::to_string(m_waveCounter);
-	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_gameFonts[0], displayText.c_str(), colorWaCo);
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(getFont(45), displayText.c_str(), colorWaCo);
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	SDL_Rect textRect;
@@ -410,7 +418,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorEnCo = { 255, 181, 100 }; //Color for the enemy counter
 
 	displayText = std::to_string(numberOfEnemies) + ((numberOfEnemies == 1) ? " enemy" : " enemies") + " left";
-	surfaceText = TTF_RenderText_Solid(m_gameFonts[1], displayText.c_str(), colorEnCo);
+	surfaceText = TTF_RenderText_Solid(getFont(30), displayText.c_str(), colorEnCo);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 400 - surfaceText->w / 2;
@@ -426,7 +434,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorWaTi = { 240, 66, 66 }; //Color for the wave timer
 
 	displayText = std::to_string(m_waveTimer);
-	surfaceText = TTF_RenderText_Solid(m_gameFonts[2], displayText.c_str(), colorWaTi);
+	surfaceText = TTF_RenderText_Solid(getFont(34), displayText.c_str(), colorWaTi);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 177 - surfaceText->w / 2;
@@ -442,7 +450,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorCoiCo = { 255, 195, 50 }; //Color for the wave timer
 
 	displayText = std::to_string(m_p_currentWorld->getPlayer()->getCoinCounter());
-	surfaceText = TTF_RenderText_Solid(m_gameFonts[2], displayText.c_str(), colorCoiCo);
+	surfaceText = TTF_RenderText_Solid(getFont(34), displayText.c_str(), colorCoiCo);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 623 - surfaceText->w / 2;

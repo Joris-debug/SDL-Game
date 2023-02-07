@@ -31,6 +31,7 @@ public:
 	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_);
 	~GameHandler();
 	int initWorld();
+	TTF_Font* getFont(int fontSize);
 	void checkCurrentWave(); //Checks if the current enemy-wave has been defeated and if thats the case, triggers a new one
 	bool trySpawningEnemy(); //Returns true on success and false if it fails
 	void renderWorldBackground();
