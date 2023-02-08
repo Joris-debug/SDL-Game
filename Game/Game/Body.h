@@ -43,7 +43,9 @@ public:
 	void damageBody(short damage);
 	inline short getCurrentLives() { return m_currentLives; }
 	inline short getMaxLives() { return m_maxLives; }
+	inline void healBody() { m_currentLives = m_maxLives; }
 	inline SDL_FRect* getSpriteBounds() { return &m_spriteBounds; }
+	inline void updateMaxLives(int sum) { m_maxLives += sum; }
 	bool isInvincible();
 	Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_);
 	~Body();

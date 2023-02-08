@@ -294,9 +294,9 @@ void GameHandler::checkCurrentWave()
 	}
 
 	if (m_waveTimer > 0) {
-		if (m_waveTimer > m_deltaTime / 10.0f) {
-			m_waveTimer -= m_deltaTime / 10.0f;
-			m_p_currentWorld->getPlayer()->updateCoinCounter(m_deltaTime / 10.0f);
+		if (m_waveTimer > int(m_deltaTime / 10.0f)) {
+			m_waveTimer -= int(m_deltaTime / 10.0f);
+			m_p_currentWorld->getPlayer()->updateCoinCounter(int(m_deltaTime / 10.0f));
 		}
 		else {
 			m_p_currentWorld->getPlayer()->updateCoinCounter(m_waveTimer);
@@ -307,7 +307,7 @@ void GameHandler::checkCurrentWave()
 
 	if (!m_p_currentWorld->getMerchantIsActive()) {
 		m_waveCounter++;
-		short enemiesToSpawn = 1 + m_waveCounter * 0;
+		short enemiesToSpawn = 1 + m_waveCounter * 5;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 		while (enemiesToSpawn > 0) {
 			if (trySpawningEnemy())

@@ -3,6 +3,9 @@
 #include "SDL_image.h"
 #include "World.h"
 #include "Enemy.h"
+#include "Player.h"
+#include "TradingPost.h"
+#include <string>
 
 MenuManager::MenuManager()
 {
@@ -49,27 +52,33 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 {
 
 	int mousePosX, mousePosY;
+	float renderScale, tmp;
+	SDL_RenderGetScale(renderer, &renderScale, &tmp);
 	SDL_GetMouseState(&mousePosX, &mousePosY);
-	SDL_Rect mouseBounds = { mousePosX, mousePosY, 10, 10 };
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
 	SDL_RenderCopy(renderer, m_menuTextures[0], NULL, NULL);
+
+	//----------------------------------------------------------------------------------------------- Render "close" and "next wave" buttons
 
 	SDL_Color buttonBorder = { 229, 229, 203 };
 	SDL_Color buttonInside = { 27, 18, 15 };
-	SDL_Rect closeRect = { 82, 127, 175, 45 };
-	SDL_Rect nextWaveRect = { 800 - 82 - 175, 127, 175, 45 };
+	SDL_Rect buttonRect = { 82, 127, 175, 45 };
 
-	if (SDL_HasIntersection(&mouseBounds, &closeRect)) {	//Mouse hovered over button
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
 			m_currentMenu = Menus::none;
 		}
 	}
-	renderButton(closeRect, m_p_gameHandler->getFont(30), "Close Shop", buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(30), "Close Shop", buttonInside, buttonBorder, renderer);
 
+	buttonRect = { 800 - 82 - 175, 127, 175, 45 };
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	if (SDL_HasIntersection(&mouseBounds, &nextWaveRect)) {	//Mouse hovered over button
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
@@ -77,7 +86,45 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			m_p_currenWorld->sendMerchantAway();
 		}
 	}
-	renderButton(nextWaveRect, m_p_gameHandler->getFont(30), "Next Wave", buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(30), "Next Wave", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "buy health potion" button
+
+	TradingPost* p_merchant = m_p_currenWorld->getMerchant();
+	int* upgradesCounter = p_merchant->getUpgrade1Sold();
+	int price = 30 + upgradesCounter[0] * 30;
+	std::string displayText = std::to_string(price) + "C";
+
+	buttonBorder = { 255, 191, 0 };
+	buttonInside = { 255, 112, 0 };
+	buttonRect = { 98, 440, 145, 45 };
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 255, 201, 10 };
+		buttonInside = { 235, 92, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			buyHealthPotion(upgradesCounter, price);
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "buy another heart" button
+
+	upgradesCounter = p_merchant->getUpgrade2Sold();
+	price = 40 + upgradesCounter[0] * 40;
+	displayText = std::to_string(price) + "C";
+
+	buttonBorder = { 255, 191, 0 };
+	buttonInside = { 255, 112, 0 };
+	buttonRect = { 328, 440, 145, 45 };
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 255, 201, 10 };
+		buttonInside = { 235, 92, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			buyMoreHealth(upgradesCounter, price);
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+
 }
 
 void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Renderer* renderer)
@@ -101,13 +148,32 @@ void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::strin
 	SDL_Rect textRect = buttonBounds;
 	textRect.x += textRect.w / 2 - surfaceText->w / 2;
 	textRect.y += textRect.h / 2 - surfaceText->h / 2;
-	textRect.y += 2;
 	textRect.w = surfaceText->w;
 	textRect.h = surfaceText->h;
 
 	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
 	SDL_FreeSurface(surfaceText);
 	SDL_DestroyTexture(textureText);
+}
+
+void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)
+{
+	Player* p_player = m_p_currenWorld->getPlayer();
+	if (p_player->getCoinCounter() < price || p_player->getCurrentLives() == p_player->getMaxLives())
+		return;
+	p_player->updateCoinCounter(price * (-1));
+	p_player->healBody();
+	(*itemBoughtCounter)++;	//Items has been bought one more time
+}
+
+void MenuManager::buyMoreHealth(int* itemBoughtCounter, int price)
+{
+	Player* p_player = m_p_currenWorld->getPlayer();
+	if (p_player->getCoinCounter() < price)
+		return;
+	p_player->updateCoinCounter(price * (-1));
+	p_player->updateMaxLives(1);
+	(*itemBoughtCounter)++;	//Items has been bought one more time
 }
 
 bool MenuManager::openShop()

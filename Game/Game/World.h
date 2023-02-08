@@ -40,6 +40,7 @@ public:
     bool checkIfMerchantDespawned();
     SDL_FPoint getRandomCoordinate();
     int getRandomNumber(int rangeBegin, int rangeEnde); //Used to generate random coordinate
+    inline TradingPost* getMerchant() { return m_p_merchant; }
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap = newVinicity; }
     inline void addEntityToMap(Entity* newEntity) { m_entityVector.push_back(newEntity); }
     inline void addEnemyToMap(Enemy* newEnemy) { m_enemyVector.push_back(std::unique_ptr<Enemy>(newEnemy)); }

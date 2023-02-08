@@ -30,6 +30,9 @@ public:
     inline Effect* getSpawnEffect() { return m_p_spawnEffect; }
     inline void setIsActive(bool m_isActive_) { this->m_isActive = m_isActive_; }
     inline bool getIsActive() { return m_isActive; }
+    inline int* getUpgrade1Sold() { return m_upgrade1Sold; }
+    inline int* getUpgrade2Sold() { return m_upgrade2Sold; }
+    inline int* getUpgrade3Sold() { return m_upgrade3Sold; }
     void positionExplosion();
     void randomizeMode();
     void animateMerchant();
