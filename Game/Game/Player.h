@@ -19,7 +19,7 @@ private:
     bool m_isTurning;
     bool m_currentDirection; // 0: right, 1 = left
     bool m_lastDirection; // 0: right, 1 = left
-	float m_attackCooldown;
+	int m_attackCooldown;
 public:
     Player(SDL_Renderer *renderer);
     ~Player();
@@ -28,6 +28,7 @@ public:
     void renderBody(SDL_Renderer *renderer) override;
     float getAttackCooldownPercent();
     SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
+    inline void updateAttackCooldown(int sum) { m_attackCooldown += sum; m_p_lastAttack->setInterval(m_attackCooldown); };
     inline int getCoinCounter() { return m_coinCounter; }
     inline void updateCoinCounter(int sum) { m_coinCounter += sum; }
     inline bool checkAttackCooldown() { return m_p_lastAttack->checkClockState(); }

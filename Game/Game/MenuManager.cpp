@@ -97,7 +97,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 
 	buttonBorder = { 255, 191, 0 };
 	buttonInside = { 255, 112, 0 };
-	buttonRect = { 98, 440, 145, 45 };
+	buttonRect = { 98, 435, 145, 45 };
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 255, 201, 10 };
 		buttonInside = { 235, 92, 0 };
@@ -115,12 +115,30 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 
 	buttonBorder = { 255, 191, 0 };
 	buttonInside = { 255, 112, 0 };
-	buttonRect = { 328, 440, 145, 45 };
+	buttonRect = { 328, 435, 145, 45 };
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 255, 201, 10 };
 		buttonInside = { 235, 92, 0 };
 		if (mouseButtonPressed) {			//Button pressed
 			buyMoreHealth(upgradesCounter, price);
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "increase stamina" button
+
+	upgradesCounter = p_merchant->getUpgrade3Sold();
+	price = 60 + upgradesCounter[0] * 60;
+	displayText = (upgradesCounter[0] < 15) ? std::to_string(price) + "C" : "Max";
+
+	buttonBorder = { 255, 191, 0 };
+	buttonInside = { 255, 112, 0 };
+	buttonRect = { 557, 435, 145, 45 };
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 255, 201, 10 };
+		buttonInside = { 235, 92, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			buyMoreStamina(upgradesCounter, upgradesCounter[0]);
 		}
 	}
 	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
@@ -173,6 +191,16 @@ void MenuManager::buyMoreHealth(int* itemBoughtCounter, int price)
 		return;
 	p_player->updateCoinCounter(price * (-1));
 	p_player->updateMaxLives(1);
+	(*itemBoughtCounter)++;	//Items has been bought one more time
+}
+
+void MenuManager::buyMoreStamina(int* itemBoughtCounter, int price)
+{
+	Player* p_player = m_p_currenWorld->getPlayer();
+	if (p_player->getCoinCounter() < price || *itemBoughtCounter > 15)	//Item cant be bought more than 16 times
+		return;
+	p_player->updateCoinCounter(price * (-1));
+	p_player->updateAttackCooldown(-250);
 	(*itemBoughtCounter)++;	//Items has been bought one more time
 }
 

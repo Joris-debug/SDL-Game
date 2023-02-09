@@ -296,6 +296,7 @@ bool World::checkIfMerchantDespawned()
 		it++;
 	}
 
+	return true;
 }
 
 SDL_FPoint World::getRandomCoordinate()

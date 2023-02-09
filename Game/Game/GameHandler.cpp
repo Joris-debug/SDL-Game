@@ -19,7 +19,7 @@ int GameHandler::gameLoop()
 		currentTime = SDL_GetTicks();
 		m_deltaTime = float(currentTime - lastTime);
 
-		if (m_deltaTime > float(1000 / 60)) //Limit FPS auf 60
+		if (m_deltaTime >= 1000.0f / 60.0f) //Limit FPS auf 60
 		{
 			lastTime = currentTime;
 			while (SDL_PollEvent(m_p_interface->getInputQueue()) != 0)
@@ -99,13 +99,14 @@ int GameHandler::gameLoop()
 				y_input = 0;
 			}
 
-			m_p_interface->getPixelPerPixel();
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
 
+			m_p_interface->getPixelPerPixel();
+			m_p_interface->displayFPS(m_deltaTime);
 			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 				break;
 			}

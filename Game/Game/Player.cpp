@@ -169,7 +169,7 @@ float Player::getAttackCooldownPercent()
 		return 1.0f;
 
 	Uint32 lastAttack = m_p_lastAttack->getStartPoint();
-	return (SDL_GetTicks() - lastAttack) / m_attackCooldown;
+	return (SDL_GetTicks() - lastAttack) / float(m_attackCooldown);
 }
 
 SDL_FPoint* Player::getPlayerTargets()

@@ -22,6 +22,7 @@ public:
 	void renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Renderer* renderer);
 	void buyHealthPotion(int* itemBoughtCounter, int price);
 	void buyMoreHealth(int* itemBoughtCounter, int price);
+	void buyMoreStamina(int* itemBoughtCounter, int price);
 	MenuManager(const MenuManager& obj)	= delete;
 	inline void closeMenu() { m_currentMenu = Menus::none; }
 	bool openShop();	//Returns true if the window can be opened

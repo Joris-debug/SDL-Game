@@ -1,9 +1,11 @@
 #include "Interface.h"
+#include "Resources.h"
+#include "GameHandler.h"
+#include "Clock.h"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <iostream>
-#include "Resources.h"
-#include "GameHandler.h"
+#include <string>
 
 Interface::Interface()
 {
@@ -18,9 +20,10 @@ Interface::Interface()
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
     }
 
-    m_p_window = SDL_CreateWindow("Part Time Knight", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
-    m_p_renderer = SDL_CreateRenderer(m_p_window, -1, 0);
+    m_p_lastDisplayedFPS = new Clock(1000);
 
+    m_p_window = SDL_CreateWindow("Medieval Debugger", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, STARTUP_SCREEN_WIDTH, STARTUP_SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+    m_p_renderer = SDL_CreateRenderer(m_p_window, -1, 0);
     m_windowDimensions.width = 800;
     m_windowDimensions.height = 640;
 
@@ -97,6 +100,15 @@ void Interface::startGame()
 {
     m_p_GameHandler = new GameHandler(this, m_p_renderer);
     m_p_GameHandler->initWorld();
+}
+
+void Interface::displayFPS(double deltaTime)
+{
+    if (m_p_lastDisplayedFPS->checkClockState()) {
+        int fps = round(1000.0f / deltaTime);
+        std::string windowTitle = "Medieval Debugger FPS:" + std::to_string(fps);
+        SDL_SetWindowTitle(m_p_window, windowTitle.c_str());
+    }
 }
 
 

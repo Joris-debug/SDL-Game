@@ -1,7 +1,8 @@
 #pragma once
 #include "SDL.h"
-class GameHandler;
 
+class GameHandler;
+class Clock;
 struct windowDimensions {
 	int width;
 	int height;
@@ -10,6 +11,7 @@ struct windowDimensions {
 class Interface
 {
 private:
+	Clock* m_p_lastDisplayedFPS;
 	windowDimensions m_windowDimensions;
 	GameHandler *m_p_GameHandler;
 	SDL_Window *m_p_window;
@@ -26,6 +28,7 @@ public:
 	void getPixelPerPixel();
 	void checkWindowProportions();
 	void startGame();
+	void displayFPS(double deltaTime);
 	Interface(const Interface& obj) = delete;
 };
 
