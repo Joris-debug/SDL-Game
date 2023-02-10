@@ -101,15 +101,18 @@ int GameHandler::gameLoop()
 
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
+			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
+				MenuManager::getInstance().openGameOver();
+				renderEverything(leftMouseButtonPressed);
+				break;
+			}
+			m_p_interface->getPixelPerPixel();
+			m_p_interface->displayFPS(m_deltaTime);
+
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
 
-			m_p_interface->getPixelPerPixel();
-			m_p_interface->displayFPS(m_deltaTime);
-			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
-				break;
-			}
 		}
 
 	}

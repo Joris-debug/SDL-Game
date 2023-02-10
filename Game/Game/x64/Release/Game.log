@@ -1,11 +1,11 @@
-﻿  Interface.cpp
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(73,57): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(73,38): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(86,46): warning C4244: "=": Konvertierung von "double" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(93,46): warning C4244: "=": Konvertierung von "double" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(108,17): warning C4244: "Initialisierung": Konvertierung von "double" in "int", möglicher Datenverlust
+﻿  GameHandler.cpp
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(102,41): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(102,32): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(381,41): warning C4838: Konvertierung von "float" zu "int" erfordert eine einschränkende Konvertierung
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(381,41): warning C4244: "Initialisierung": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\GameHandler.cpp(416,32): warning C4244: "*=": Konvertierung von "float" in "int", möglicher Datenverlust
   Code wird generiert.
-  1 of 509 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  2 of 511 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.

@@ -54,6 +54,9 @@
     <ClCompile Include="MenuManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h">
@@ -93,6 +96,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MenuManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
