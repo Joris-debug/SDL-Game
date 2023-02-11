@@ -1,3 +1,3 @@
-#MEDIEVAL DEBUGGER
-#A game written in C++
-#and created with the use of SDL2
+#MEDIEVAL DEBUGGER <br>
+A game written in C++ <br>
+and created with the use of SDL2
