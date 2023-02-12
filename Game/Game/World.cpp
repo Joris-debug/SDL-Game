@@ -19,12 +19,20 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 
 World::~World()
 {
+	delete m_p_topMap;
 	delete m_p_merchant;
 	delete m_p_player;
+
 	int numberOfElements = int(m_entityVector.size());
 	for (int i = 0; i < numberOfElements; i++) {
 		delete m_entityVector.back();
 		m_entityVector.pop_back();
+	}
+
+	numberOfElements = int(m_enemyVector.size());
+	for (int i = 0; i < numberOfElements; i++) {
+		delete m_enemyVector.back();
+		m_enemyVector.pop_back();
 	}
 }
 
@@ -155,8 +163,8 @@ void World::damageEnemysInPlayerRadius()
 	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 41*2 };
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
-		if (SDL_HasIntersectionF(&attackRadius, it->get()->getBounds())) {
-			it->get()->damageBody(1);			
+		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds())) {
+			(*it)->damageBody(1);
 		}
 		it++;		
 	}
@@ -166,7 +174,7 @@ void World::checkIfPlayerHit()
 {
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
-		if (SDL_HasIntersectionF(m_p_player->getBounds(), it->get()->getBounds())) {
+		if (SDL_HasIntersectionF(m_p_player->getBounds(), (*it)->getBounds())) {
 			m_p_player->damageBody(1);
 		}
 		it++;
@@ -181,7 +189,8 @@ void World::checkForDefeatedEnemies()
 
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
-		if (it->get()->getCurrentLives() == 0 && !it->get()->isInvincible()) {
+		if ((*it)->getCurrentLives() == 0 && !(*it)->isInvincible()) {
+			delete *it;
 			m_enemyVector.erase(it);
 			it--;
 		}
@@ -264,7 +273,7 @@ bool World::talkToMerchant()
 		return false;
 	
 	if (SDL_HasIntersectionF(m_p_merchant->getBounds(), m_p_player->getSpriteBounds())) {
-		return MenuManager::getInstance().openShop();
+		return true;
 	}		
 	return false;
 }

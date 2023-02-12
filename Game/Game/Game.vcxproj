@@ -155,7 +155,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="SoundHandler.cpp" />
     <ClCompile Include="TradingPost.cpp" />
     <ClCompile Include="Vicinity.cpp" />
     <ClCompile Include="World.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="MenuManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
-    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SoundHandler.h" />
     <ClInclude Include="TradingPost.h" />
     <ClInclude Include="Vicinity.h" />
     <ClInclude Include="World.h" />

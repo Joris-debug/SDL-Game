@@ -184,7 +184,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		this->moveEntity(xMovement, 0);
 
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 				xCollision = true;
 				break;
 			}
@@ -206,7 +206,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	if (y != 0) {
 		this->moveEntity(0, yMovement);
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 				yCollision = true;
 				break;
 			}
@@ -229,7 +229,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		bool bothCollisons = false;
 		this->moveEntity(xMovement, yMovement);
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor.get()) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 				bothCollisons = true;
 				break;
 			}

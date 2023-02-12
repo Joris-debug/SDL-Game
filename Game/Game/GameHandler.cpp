@@ -22,10 +22,10 @@ int GameHandler::gameLoop()
 		if (m_deltaTime >= 1000.0f / 60.0f) //Limit FPS auf 60
 		{
 			lastTime = currentTime;
-			while (SDL_PollEvent(m_p_interface->getInputQueue()) != 0)
+			while (SDL_PollEvent(Interface::getInstance().getInputQueue()) != 0)
 			{
 
-				switch (m_p_interface->getInputQueue()->type)
+				switch (Interface::getInstance().getInputQueue()->type)
 				{
 				case SDL_QUIT:
 					exit(1);
@@ -36,7 +36,7 @@ int GameHandler::gameLoop()
 					break;
 
 				case SDL_KEYDOWN:
-					switch (m_p_interface->getInputQueue()->key.keysym.sym)
+					switch (Interface::getInstance().getInputQueue()->key.keysym.sym)
 					{
 
 					case SDLK_w:
@@ -67,7 +67,7 @@ int GameHandler::gameLoop()
 
 				case SDL_KEYUP:
 
-					switch (m_p_interface->getInputQueue()->key.keysym.sym)
+					switch (Interface::getInstance().getInputQueue()->key.keysym.sym)
 					{
 					case SDLK_w:
 					case SDLK_s:
@@ -85,13 +85,13 @@ int GameHandler::gameLoop()
 			}
 			checkCurrentWave();
 
-			if (!MenuManager::getInstance().checkIfMenuOpen()) {		//No window is open
+			if (!m_p_menuManager->checkIfMenuOpen()) {		//No window is open
 
 				if (leftMouseButtonPressed) {
 					m_p_currentWorld->triggerPlayerAttack();
 				}
-				if (eKeyPressed) {
-					m_p_currentWorld->talkToMerchant();
+				if (eKeyPressed && m_p_currentWorld->talkToMerchant()) {
+					m_p_menuManager->openShop();
 				}
 			}
 			else {	//Player doesnt move when a window is open
@@ -102,12 +102,12 @@ int GameHandler::gameLoop()
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
 			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
-				MenuManager::getInstance().openGameOver();
+				m_p_menuManager->openGameOver();
 				renderEverything(leftMouseButtonPressed);
 				break;
 			}
-			m_p_interface->getPixelPerPixel();
-			m_p_interface->displayFPS(m_deltaTime);
+			Interface::getInstance().getPixelPerPixel();
+			Interface::getInstance().displayFPS(m_deltaTime);
 
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
@@ -117,21 +117,21 @@ int GameHandler::gameLoop()
 
 	}
 
-	m_p_interface->waitForInput(1000);
+	Interface::getInstance().waitForInput(1000);
 	return 0;
 }
 
-GameHandler::GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_)
+GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 {
-	this->m_p_interface = m_p_interface_;
 	this->m_p_renderer = m_p_renderer_;
 	this->m_deltaTime = 1;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
 	m_p_waveClock = new Clock(1000);
 	m_p_currentWorld = nullptr;
-	MenuManager::getInstance().createTextures(m_p_renderer);
+	m_p_menuManager = nullptr;
 
+	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
 	SDL_Surface* p_tmpSurface;
 
 	//Load all Mantis Spritesheets
@@ -213,7 +213,7 @@ GameHandler::~GameHandler()
 {
 	delete m_p_waveClock;
 	delete m_p_currentWorld;
-	MenuManager::getInstance().deleteTextures();
+	delete m_p_menuManager;
 
 	int numberOfElements = int(m_enemyTexturesIdle.size());
 	for (int i = 0; i < numberOfElements; i++) {
@@ -254,7 +254,7 @@ GameHandler::~GameHandler()
 
 int GameHandler::initWorld()
 {
-	m_p_currentWorld = new World(IMG_Load(RSC_LEVEL_1), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer, &m_randomNumberEngine, new Effect({0, 0, 256, 160}, m_effectTextures[0]));
+	m_p_currentWorld = new World(IMG_Load(RSC_LEVEL_1), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer, m_p_randomNumberEngine, new Effect({0, 0, 256, 160}, m_effectTextures[0]));
 	m_p_currentWorld->addVinicityToMap(new Vicinity(IMG_Load(RSC_LEVEL_1_TOP), { -1232,-1280,1632 * 2,1632 * 2 }, m_p_renderer));
 
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232, -1280, 3264, 32 })); // Border left
@@ -266,10 +266,17 @@ int GameHandler::initWorld()
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 608 * 2, 192, 64 })); //Holy statue
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
 
-	MenuManager::getInstance().setGameHandler(this);
-	MenuManager::getInstance().setCurrentWorld(m_p_currentWorld);
+	m_p_menuManager = new MenuManager(m_p_renderer, this, m_p_currentWorld);
 
 	return gameLoop();
+}
+
+void GameHandler::resetWorld()
+{
+	delete m_p_currentWorld;
+	delete m_p_menuManager;
+	m_waveCounter = 0;
+	m_waveTimer = 0;
 }
 
 TTF_Font* GameHandler::getFont(int fontSize)
@@ -473,6 +480,6 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	renderWorldBackground();
 	m_p_currentWorld->renderWorld(m_p_renderer);
 	renderHud();
-	MenuManager::getInstance().interactWithMenu(leftMouseButtonPressed, m_p_renderer);		//This function also renders the menu
+	m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer);		//This function also renders the menu
 	SDL_RenderPresent(m_p_renderer);
 }

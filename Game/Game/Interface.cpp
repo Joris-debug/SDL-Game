@@ -98,8 +98,11 @@ void Interface::checkWindowProportions()
 
 void Interface::startGame()
 {
-    m_p_GameHandler = new GameHandler(this, m_p_renderer);
-    m_p_GameHandler->initWorld();
+    m_p_GameHandler = new GameHandler(m_p_renderer);
+    while (true) {
+        m_p_GameHandler->initWorld();
+        m_p_GameHandler->resetWorld();
+    }
 }
 
 void Interface::displayFPS(double deltaTime)

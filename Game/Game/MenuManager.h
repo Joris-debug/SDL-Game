@@ -9,14 +9,10 @@ private:
 	GameHandler* m_p_gameHandler;
 	World* m_p_currenWorld;	//Needed for the shop menu
 	std::vector<SDL_Texture*> m_menuTextures;
-	MenuManager();
 public:
-	static MenuManager& getInstance();
-	void createTextures(SDL_Renderer* renderer);
-	void deleteTextures();
+	MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld);
+	~MenuManager();
 	inline bool checkIfMenuOpen() { return (m_currentMenu == Menus::none) ? false : true; }
-	inline void setGameHandler(GameHandler* m_p_gameHandler) { this->m_p_gameHandler = m_p_gameHandler; };
-	inline void setCurrentWorld(World* m_p_currenWorld) { this->m_p_currenWorld = m_p_currenWorld; };
 	void interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void renderGameOver(SDL_Renderer* renderer);
 	void renderShop(bool mouseButtonPressed, SDL_Renderer* renderer);

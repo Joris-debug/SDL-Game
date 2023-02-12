@@ -4,21 +4,23 @@
 #include <vector>
 #include <random>
 #pragma once
+
 class Clock;
 class Interface;
 class World;
+class MenuManager;
 
 class GameHandler	
 {
 private:
-	Interface *m_p_interface;
+	MenuManager* m_p_menuManager;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
 	Clock* m_p_waveClock; //Used to detect whenever a second passes
 	World* m_p_currentWorld;
 	SDL_Renderer* m_p_renderer;
-	std::mt19937 m_randomNumberEngine; // Mersenne twister MT19937
+	std::mt19937* m_p_randomNumberEngine; // Mersenne twister MT19937
 	std::vector<SDL_Texture*> m_enemyTexturesWalk; //these textures are needed for creating Enemies
 	std::vector<SDL_Texture*> m_enemyTexturesIdle;
 	std::vector<SDL_Texture*> m_enemyTexturesHit;
@@ -28,9 +30,10 @@ private:
 	std::vector<TTF_Font*> m_gameFonts; //This Vector stores every font the game needs
 	int gameLoop();
 public:
-	GameHandler(Interface* m_p_interface_, SDL_Renderer* m_p_renderer_);
+	GameHandler(SDL_Renderer* m_p_renderer_);
 	~GameHandler();
 	int initWorld();
+	void resetWorld();
 	TTF_Font* getFont(int fontSize);
 	void checkCurrentWave(); //Checks if the current enemy-wave has been defeated and if thats the case, triggers a new one
 	bool trySpawningEnemy(); //Returns true on success and false if it fails

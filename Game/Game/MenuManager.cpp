@@ -7,21 +7,13 @@
 #include "TradingPost.h"
 #include <string>
 
-MenuManager::MenuManager()
+
+MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld)
 {
 	m_currentMenu = Menus::none;
-	m_p_gameHandler = nullptr;
-	m_p_currenWorld = nullptr;
-}
+	this->m_p_gameHandler = m_p_gameHandler;
+	this->m_p_currenWorld = m_p_currenWorld;
 
-MenuManager& MenuManager::getInstance()
-{
-	static MenuManager instance;
-	return instance;
-}
-
-void MenuManager::createTextures(SDL_Renderer* renderer)
-{
 	SDL_Surface* p_tmpSurface = IMG_Load(RSC_SHOP_MENU);
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
@@ -31,7 +23,7 @@ void MenuManager::createTextures(SDL_Renderer* renderer)
 	SDL_FreeSurface(p_tmpSurface);
 }
 
-void MenuManager::deleteTextures()
+MenuManager::~MenuManager()
 {
 	int numberOfElements = int(m_menuTextures.size());
 	for (int i = 0; i < numberOfElements; i++) {
