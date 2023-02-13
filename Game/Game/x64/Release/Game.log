@@ -1,11 +1,13 @@
-﻿  Interface.cpp
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(73,57): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(73,38): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(86,46): warning C4244: "=": Konvertierung von "double" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(93,46): warning C4244: "=": Konvertierung von "double" in "int", möglicher Datenverlust
-C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\Interface.cpp(111,17): warning C4244: "Initialisierung": Konvertierung von "double" in "int", möglicher Datenverlust
+﻿  Beetle.cpp
+  MenuManager.cpp
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(27,44): warning C4244: "Argument": Konvertierung von "short" in "Uint8", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(61,44): warning C4244: "Argument": Konvertierung von "short" in "Uint8", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(68,38): warning C4244: "Argument": Konvertierung von "short" in "Uint8", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(84,20): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(86,26): warning C4244: "/=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\joris\Documents\GitHub\Knight-SDL-Game\Game\Game\MenuManager.cpp(87,26): warning C4244: "/=": Konvertierung von "float" in "int", möglicher Datenverlust
   Code wird generiert.
-  48 of 510 functions ( 9.4%) were compiled, the rest were copied from previous compilation.
+  4 of 517 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   Codegenerierung ist abgeschlossen.

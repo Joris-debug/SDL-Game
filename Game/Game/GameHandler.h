@@ -14,6 +14,7 @@ class GameHandler
 {
 private:
 	MenuManager* m_p_menuManager;
+	bool m_gameIsRunning;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
@@ -40,5 +41,6 @@ public:
 	void renderWorldBackground();
 	void renderHud(); //This function will render healthbar, attack status, etc
 	void renderEverything(bool leftMouseButtonPressed);
+	inline int getWaveCounter() { return m_waveCounter; }
 };
 

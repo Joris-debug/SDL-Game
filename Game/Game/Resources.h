@@ -17,9 +17,15 @@
 #define RSC_MANTIS_IDLE "./Sprites/Enemies/Mantis/_Idle.png"
 #define RSC_MANTIS_WALK "./Sprites/Enemies/Mantis/_Walk.png"
 #define RSC_MANTIS_HIT "./Sprites/Enemies/Mantis/_Hit.png"
+
 #define RSC_MAGGOT_IDLE "./Sprites/Enemies/Maggot/_Idle.png"
 #define RSC_MAGGOT_WALK "./Sprites/Enemies/Maggot/_Walk.png"
 #define RSC_MAGGOT_HIT "./Sprites/Enemies/Maggot/_Hit.png"
+
+#define RSC_BEETLE_IDLE "./Sprites/Enemies/Beetle/_Idle.png"
+#define RSC_BEETLE_WALK "./Sprites/Enemies/Beetle/_Walk.png"
+#define RSC_BEETLE_HIT "./Sprites/Enemies/Beetle/_Hit.png"
+
 
 #define RSC_HEALTHBAR_BORDER "./Sprites/Misc/HUD/HealthBarBorder.png"
 #define RSC_HEALTHBAR_LIVES "./Sprites/Misc/HUD/HealthBarInside.png"

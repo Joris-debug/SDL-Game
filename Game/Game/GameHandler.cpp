@@ -2,7 +2,7 @@
 #include "Interface.h"
 #include "World.h"
 #include "Resources.h"
-#include "Enemy.h"
+#include "Beetle.h"
 #include "Player.h"
 #include "SDL_image.h"
 #include "Effect.h"
@@ -99,19 +99,24 @@ int GameHandler::gameLoop()
 				y_input = 0;
 			}
 
+			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
+				x_input = 0;
+				y_input = 0;
+				m_p_menuManager->openGameOver();
+			}
+
 			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
-			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
-				m_p_menuManager->openGameOver();
-				renderEverything(leftMouseButtonPressed);
-				break;
-			}
-			Interface::getInstance().getPixelPerPixel();
+			Interface::getInstance().calculatePixelPerPixel();
 			Interface::getInstance().displayFPS(m_deltaTime);
 
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
+
+			if (!m_gameIsRunning) {
+				break;
+			}
 
 		}
 
@@ -130,6 +135,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_waveClock = new Clock(1000);
 	m_p_currentWorld = nullptr;
 	m_p_menuManager = nullptr;
+	m_gameIsRunning = true;
 
 	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
 	SDL_Surface* p_tmpSurface;
@@ -153,6 +159,17 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_enemyTexturesWalk.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 	p_tmpSurface = IMG_Load(RSC_MAGGOT_HIT);
+	m_enemyTexturesHit.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	//Load all Beetle Spritesheets
+	p_tmpSurface = IMG_Load(RSC_BEETLE_IDLE);
+	m_enemyTexturesIdle.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_BEETLE_WALK);
+	m_enemyTexturesWalk.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+	p_tmpSurface = IMG_Load(RSC_BEETLE_HIT);
 	m_enemyTexturesHit.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
@@ -207,6 +224,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
+	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 75));	//Font used for tombstone
 }
 
 GameHandler::~GameHandler()
@@ -277,6 +295,7 @@ void GameHandler::resetWorld()
 	delete m_p_menuManager;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
+	m_gameIsRunning = true;
 }
 
 TTF_Font* GameHandler::getFont(int fontSize)
@@ -290,6 +309,9 @@ TTF_Font* GameHandler::getFont(int fontSize)
 			break;
 		case 34:
 			return m_gameFonts[2];
+			break;
+		case 75:
+			return m_gameFonts[3];
 			break;
 	}
 	return nullptr;
@@ -318,7 +340,7 @@ void GameHandler::checkCurrentWave()
 
 	if (!m_p_currentWorld->getMerchantIsActive()) {
 		m_waveCounter++;
-		short enemiesToSpawn = 1 + m_waveCounter * 5;
+		short enemiesToSpawn = 5 + m_waveCounter * 5;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 		while (enemiesToSpawn > 0) {
 			if (trySpawningEnemy())
@@ -330,7 +352,7 @@ void GameHandler::checkCurrentWave()
 
 bool GameHandler::trySpawningEnemy()
 {
-	short enemyType = m_p_currentWorld->getRandomNumber(0, 1);		//Calculating what kind of enemy will spawn
+	short enemyType = m_p_currentWorld->getRandomNumber(0, 2);		//Calculating what kind of enemy will spawn
 	SDL_FPoint randomPosition = m_p_currentWorld->getRandomCoordinate(); //Random positon for the new enemy
 	
 	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64, 64 };
@@ -344,6 +366,9 @@ bool GameHandler::trySpawningEnemy()
 		case 1:
 			tmpRectBounds.h = 32;
 			tmpRectBounds.y += 32;
+			lives = 1;
+			break;
+		case 2:
 			lives = 1;
 			break;
 	}
@@ -364,7 +389,16 @@ bool GameHandler::trySpawningEnemy()
 		}
 	}
 
-	m_p_currentWorld->addEnemyToMap(new Enemy(m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives));
+	Enemy* p_enemy;
+
+	if (enemyType == 2) {
+		p_enemy = new Beetle(m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
+	}
+	else {
+		p_enemy = new Enemy(m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
+	}
+
+	m_p_currentWorld->addEnemyToMap(p_enemy);
 	return true;
 }
 
@@ -480,6 +514,8 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	renderWorldBackground();
 	m_p_currentWorld->renderWorld(m_p_renderer);
 	renderHud();
-	m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer);		//This function also renders the menu
+	if(m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime))		//This function also renders the menu
+		m_gameIsRunning = false;
+
 	SDL_RenderPresent(m_p_renderer);
 }

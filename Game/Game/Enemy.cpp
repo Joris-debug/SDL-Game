@@ -19,8 +19,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	if (isInvincible()) {	//Hurt Enemies don't move
 		this->animateBody(0, 0);
 		return;
-	}
-	
+	}	
 
 	SDL_FPoint enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
 
@@ -205,7 +204,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	//------------------------------------------------------------------------------------------- Detect collision on y-axis
 	if (y != 0) {
 		this->moveEntity(0, yMovement);
-		for (auto const& cursor : *p_world->getEnemyVector()) {
+		for (auto cursor : *p_world->getEnemyVector()) {
 			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 				yCollision = true;
 				break;
@@ -213,7 +212,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		}
 
 		if (!yCollision) {
-			for (auto const& cursor : *p_world->getEntityVector()) {
+			for (auto cursor : *p_world->getEntityVector()) {
 				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 					yCollision = true;
 					break;
@@ -228,14 +227,14 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	if (!xCollision && !yCollision && x != 0 && y != 0) {
 		bool bothCollisons = false;
 		this->moveEntity(xMovement, yMovement);
-		for (auto const& cursor : *p_world->getEnemyVector()) {
+		for (auto cursor : *p_world->getEnemyVector()) {
 			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 				bothCollisons = true;
 				break;
 			}
 		}
 		if (!bothCollisons) {
-			for (auto const& cursor : *p_world->getEntityVector()) {
+			for (auto cursor : *p_world->getEntityVector()) {
 				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
 					bothCollisons = true;
 					break;

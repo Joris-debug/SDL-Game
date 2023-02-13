@@ -43,9 +43,9 @@ TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberE
     m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
     SDL_FreeSurface(tmpSurface);
 
-    memset(m_upgrade1Sold, 0, 2);
-    memset(m_upgrade2Sold, 0, 2);
-    memset(m_upgrade3Sold, 0, 2);
+	m_upgrade1Sold = 0;
+	m_upgrade2Sold = 0; 
+	m_upgrade3Sold = 0;
 
     m_isActive = false;
     m_p_lastFrame = new Clock(167);

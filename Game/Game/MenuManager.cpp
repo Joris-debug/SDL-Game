@@ -1,6 +1,7 @@
 #include "MenuManager.h"
 #include "Resources.h"
 #include "SDL_image.h"
+#include "Interface.h"
 #include "World.h"
 #include "Enemy.h"
 #include "Player.h"
@@ -21,6 +22,9 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	p_tmpSurface = IMG_Load(RSC_GAME_OVER);
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
+
+	m_menuOpacity = 0;
+	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);	//Texture is now transparent (so we can make an blend effect later on)
 }
 
 MenuManager::~MenuManager()
@@ -32,32 +36,52 @@ MenuManager::~MenuManager()
 	}
 }
 
-void MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer)
+bool MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
 {
 	switch (m_currentMenu) {
 		case Menus::none:
-			return;
 			break;
 		case Menus::shop:
 			renderShop(mouseButtonPressed, renderer);
 			break;
 		case Menus::gameOver:
-			renderGameOver(renderer);
+			return renderGameOver(renderer, deltaTime);
 			break;
 	}
+	return false;
 }
 
-void MenuManager::renderGameOver(SDL_Renderer* renderer)
+bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
 {
+	m_menuOpacity += short(deltaTime / 2.0);
+
+	if (m_menuOpacity >= 255) {
+		m_menuOpacity = 255;
+	}
+	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);
 	SDL_RenderCopy(renderer, m_menuTextures[1], NULL, NULL);
+
+
+	std::string displayText = std::to_string(m_p_gameHandler->getWaveCounter());
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(75), displayText.c_str(), {38, 38, 44});
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+	SDL_SetTextureAlphaMod(textureText, m_menuOpacity);
+
+	SDL_Rect textRect = {400, 370, surfaceText->w, surfaceText->h };
+	textRect.x -= surfaceText->w / 2;
+	textRect.y -= surfaceText->h / 2;
+
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	return (m_menuOpacity == 255);
 }
 
 void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 {
-
 	int mousePosX, mousePosY;
-	float renderScale, tmp;
-	SDL_RenderGetScale(renderer, &renderScale, &tmp);
+	float renderScale = Interface::getInstance().getPixelPerPixel();
 	SDL_GetMouseState(&mousePosX, &mousePosY);
 	mousePosX /= renderScale;
 	mousePosY /= renderScale;
@@ -142,7 +166,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 		buttonBorder = { 255, 201, 10 };
 		buttonInside = { 235, 92, 0 };
 		if (mouseButtonPressed) {			//Button pressed
-			buyMoreStamina(upgradesCounter, upgradesCounter[0]);
+			buyMoreStamina(upgradesCounter, price);
 		}
 	}
 	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);

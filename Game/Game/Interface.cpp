@@ -27,7 +27,7 @@ Interface::Interface()
     m_windowDimensions.width = 800;
     m_windowDimensions.height = 640;
 
-    getPixelPerPixel();
+    calculatePixelPerPixel();
 }
 
 Interface& Interface::getInstance()
@@ -66,7 +66,7 @@ void Interface::waitForInput(Uint32 ticksToWait)
     }
 }
 
-void Interface::getPixelPerPixel()
+void Interface::calculatePixelPerPixel()
 {
     checkWindowProportions();
     m_pixel_per_pixel = double(m_windowDimensions.height) / 640.0; // The window should always show 640 pixels on the y-axis

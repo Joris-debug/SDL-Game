@@ -3,7 +3,7 @@
 #include "Interface.h"
 #include "Resources.h"
 #include "SDL_image.h"
-#include "Enemy.h"
+#include "Beetle.h"
 #include "Player.h"
 #include "Effect.h"
 #include "MenuManager.h"
@@ -131,10 +131,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 	if(m_merchantIsActive)
 		m_p_merchant->renderTradingPost(renderer);
 
-	for (auto const& cursor : m_enemyVector) {
-		cursor->renderBody(renderer);
-		//SDL_FRect* playerTextureCoords = cursor->getBounds();
-		//SDL_RenderDrawRectF(renderer, playerTextureCoords);
+	for (auto cursor : m_enemyVector) {
+		if(typeid(*cursor) != typeid(Beetle))
+			cursor->renderBody(renderer);
 	}  
 
 	m_p_player->renderBody(renderer);
@@ -144,6 +143,11 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	m_p_topMap->renderVicinity(renderer);	//Funktion to render top map
 	
+	for (auto cursor : m_enemyVector) {
+		if (typeid(*cursor) == typeid(Beetle))
+			cursor->renderBody(renderer);
+	}
+
 	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
 	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
 

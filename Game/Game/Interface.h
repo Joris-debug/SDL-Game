@@ -25,10 +25,11 @@ public:
 	void waitForInput(Uint32 ticksToWait);
 	inline SDL_Window* getWindow() { return m_p_window; }
 	inline SDL_Event* getInputQueue() {	return &m_inputQueue; }
-	void getPixelPerPixel();
+	void calculatePixelPerPixel();
 	void checkWindowProportions();
 	void startGame();
 	void displayFPS(double deltaTime);
+	inline double getPixelPerPixel() { return m_pixel_per_pixel; }
 	Interface(const Interface& obj) = delete;
 };
 
