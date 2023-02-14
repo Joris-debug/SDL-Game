@@ -26,7 +26,6 @@
 #define RSC_BEETLE_WALK "./Sprites/Enemies/Beetle/_Walk.png"
 #define RSC_BEETLE_HIT "./Sprites/Enemies/Beetle/_Hit.png"
 
-
 #define RSC_HEALTHBAR_BORDER "./Sprites/Misc/HUD/HealthBarBorder.png"
 #define RSC_HEALTHBAR_LIVES "./Sprites/Misc/HUD/HealthBarInside.png"
 #define RSC_HEALTHBAR_STAMINA "./Sprites/Misc/HUD/StaminaBarInside.png"
@@ -49,6 +48,8 @@
 
 #define RSC_EFFECT_EXPLOSION1 "./Sprites/Misc/Effects/explosion1.png"
 
+#define RSC_START_LOGO "./Sprites/Misc/Menus/StartLogo.png"
+#define RSC_START_TEXT "./Sprites/Misc/Menus/StartText.png"
 #define RSC_SHOP_MENU "./Sprites/Misc/Menus/Shop.png"
 #define RSC_GAME_OVER "./Sprites/Misc/Menus/GameOver.png"
 

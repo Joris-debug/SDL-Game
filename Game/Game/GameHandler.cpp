@@ -11,7 +11,7 @@
 int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0;
-	bool leftMouseButtonPressed = false, eKeyPressed = false, fKeyPressed = false;
+	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
 	Uint32 lastTime = currentTime;
 	while (true)
@@ -36,6 +36,7 @@ int GameHandler::gameLoop()
 					break;
 
 				case SDL_KEYDOWN:
+					keyPressed = true;
 					switch (Interface::getInstance().getInputQueue()->key.keysym.sym)
 					{
 
@@ -83,29 +84,42 @@ int GameHandler::gameLoop()
 
 				}
 			}
-			checkCurrentWave();
 
-			if (!m_p_menuManager->checkIfMenuOpen()) {		//No window is open
+			switch (m_gameState) {
+				case gameStates::hasEnded:
+					goto exit_loop;	//Cant break out of loop inside a switch
+					break;
 
-				if (leftMouseButtonPressed) {
-					m_p_currentWorld->triggerPlayerAttack();
-				}
-				if (eKeyPressed && m_p_currentWorld->talkToMerchant()) {
-					m_p_menuManager->openShop();
-				}
+				case gameStates::isRunning:
+					checkCurrentWave();
+					if (!m_p_menuManager->checkIfMenuOpen()) {		//No window is open
+
+						if (leftMouseButtonPressed) {
+							m_p_currentWorld->triggerPlayerAttack();
+						}
+						if (eKeyPressed && m_p_currentWorld->talkToMerchant()) {
+							m_p_menuManager->openShop();
+						}
+					}
+					else {	//Player doesnt move when a window is open
+						x_input = 0;
+						y_input = 0;
+					}
+
+					if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
+						x_input = 0;
+						y_input = 0;
+						m_p_menuManager->openGameOver();
+					}
+
+					m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime);
+					break;
+
+				case gameStates::isStarting:
+					if (keyPressed)
+						m_p_menuManager->closeMenu();
+					break;
 			}
-			else {	//Player doesnt move when a window is open
-				x_input = 0;
-				y_input = 0;
-			}
-
-			if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
-				x_input = 0;
-				y_input = 0;
-				m_p_menuManager->openGameOver();
-			}
-
-			m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime );
 
 			Interface::getInstance().calculatePixelPerPixel();
 			Interface::getInstance().displayFPS(m_deltaTime);
@@ -113,15 +127,11 @@ int GameHandler::gameLoop()
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
-
-			if (!m_gameIsRunning) {
-				break;
-			}
-
+			keyPressed = false;
 		}
 
 	}
-
+	exit_loop:;
 	Interface::getInstance().waitForInput(1000);
 	return 0;
 }
@@ -135,7 +145,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_waveClock = new Clock(1000);
 	m_p_currentWorld = nullptr;
 	m_p_menuManager = nullptr;
-	m_gameIsRunning = true;
+	m_gameState = gameStates::isStarting;
 
 	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
 	SDL_Surface* p_tmpSurface;
@@ -286,6 +296,8 @@ int GameHandler::initWorld()
 
 	m_p_menuManager = new MenuManager(m_p_renderer, this, m_p_currentWorld);
 
+
+
 	return gameLoop();
 }
 
@@ -295,7 +307,7 @@ void GameHandler::resetWorld()
 	delete m_p_menuManager;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
-	m_gameIsRunning = true;
+	m_gameState = gameStates::isStarting;
 }
 
 TTF_Font* GameHandler::getFont(int fontSize)
@@ -513,9 +525,11 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	SDL_RenderClear(m_p_renderer);
 	renderWorldBackground();
 	m_p_currentWorld->renderWorld(m_p_renderer);
-	renderHud();
-	if(m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime))		//This function also renders the menu
-		m_gameIsRunning = false;
+	
+	if (m_gameState == gameStates::isRunning)
+		renderHud();
 
+	m_gameState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu
+	
 	SDL_RenderPresent(m_p_renderer);
 }

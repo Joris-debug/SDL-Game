@@ -45,7 +45,7 @@ Body::Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : 
 	m_p_lastFrame = new Clock(100);
 	m_p_lastFrame->setStartPoint(0); // trigger new frame
 	m_p_lastDamageTaken = new Clock(1000, false); //Every spawned Body can take damage
-	m_p_lastDamageTaken->setStartPoint(0);
+	m_p_lastDamageTaken->setStartPoint(-1000);
 }
 
 Body::~Body()

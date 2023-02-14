@@ -58,7 +58,6 @@ void Interface::waitForInput(Uint32 ticksToWait)
             break;
 
         case SDL_KEYDOWN:
-        case SDL_MOUSEBUTTONDOWN:
             if (SDL_GetTicks() > ticksToWait)
                 return;
         }

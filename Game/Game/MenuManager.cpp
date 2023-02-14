@@ -6,12 +6,13 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "TradingPost.h"
+#include <math.h>
 #include <string>
 
 
 MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld)
 {
-	m_currentMenu = Menus::none;
+	m_currentMenu = Menus::start;
 	this->m_p_gameHandler = m_p_gameHandler;
 	this->m_p_currenWorld = m_p_currenWorld;
 
@@ -20,6 +21,14 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	SDL_FreeSurface(p_tmpSurface);
 
 	p_tmpSurface = IMG_Load(RSC_GAME_OVER);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_START_LOGO);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_START_TEXT);
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
@@ -36,7 +45,7 @@ MenuManager::~MenuManager()
 	}
 }
 
-bool MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
+gameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
 {
 	switch (m_currentMenu) {
 		case Menus::none:
@@ -45,10 +54,14 @@ bool MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* render
 			renderShop(mouseButtonPressed, renderer);
 			break;
 		case Menus::gameOver:
-			return renderGameOver(renderer, deltaTime);
+			if (renderGameOver(renderer, deltaTime))
+				return gameStates::hasEnded;
 			break;
+		case Menus::start:
+			renderStartMenu(mouseButtonPressed, renderer, deltaTime);
+			return gameStates::isStarting;
 	}
-	return false;
+	return gameStates::isRunning;
 }
 
 bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
@@ -200,6 +213,19 @@ void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::strin
 	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
 	SDL_FreeSurface(surfaceText);
 	SDL_DestroyTexture(textureText);
+}
+
+void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
+{
+	SDL_FRect startMenuRect = { 50, -80, 800, 640 };
+	startMenuRect.y += 50.0f * sin(SDL_GetTicks() / 1000.0f);		//Formula for an oscillation
+	SDL_RenderCopyF(renderer, m_menuTextures[2], NULL, &startMenuRect);
+
+	startMenuRect = { 179, 520, 442, 39 };
+	startMenuRect.y += 5.0f * sin(SDL_GetTicks() / 200.0f);
+	SDL_RenderCopyF(renderer, m_menuTextures[3], NULL, &startMenuRect);
+
+	return;
 }
 
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)

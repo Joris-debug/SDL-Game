@@ -9,12 +9,13 @@ class Clock;
 class Interface;
 class World;
 class MenuManager;
+enum class gameStates {isStarting, isRunning, hasEnded};
 
 class GameHandler	
 {
 private:
 	MenuManager* m_p_menuManager;
-	bool m_gameIsRunning;
+	gameStates m_gameState;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active

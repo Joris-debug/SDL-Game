@@ -34,6 +34,8 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_coinCounter = 0;
 	m_attackCooldown = PLAYER_ATTACK_COOLDOWN;
 	m_p_lastAttack = new Clock(m_attackCooldown, false);
+	m_p_lastAttack->setStartPoint(-6000);
+	animateBody(0, 0);
 }
 
 Player::~Player()
