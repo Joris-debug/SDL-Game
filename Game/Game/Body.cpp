@@ -1,5 +1,8 @@
 #include "Body.h"
+#include "Enemy.h"
+#include "SoundHandler.h"
 #include <iostream>
+
 void Body::moveEntity(float x, float y)
 {
 	Entity::moveEntity(x, y);
@@ -7,10 +10,10 @@ void Body::moveEntity(float x, float y)
 	m_spriteBounds.y += y;
 }
 
-void Body::damageBody(short damage)
+bool Body::damageBody(short damage)
 {
 	if (isInvincible())
-		return;
+		return false;
 
 	if (m_currentLives > damage) {
 		m_currentLives -= damage;
@@ -18,9 +21,11 @@ void Body::damageBody(short damage)
 	else {
 		m_currentLives = 0;
 	}
+
 	m_p_lastDamageTaken->setStartPoint(SDL_GetTicks());
 	m_p_lastFrame->setStartPoint(0); //instantly print a new frame
 	m_currentSprite = 0;
+	return true;
 }
 
 bool Body::isInvincible()

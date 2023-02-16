@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "GameHandler.h"
 #include "Clock.h"
+#include "SoundHandler.h"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -97,6 +98,7 @@ void Interface::checkWindowProportions()
 
 void Interface::startGame()
 {
+    SoundHandler::getInstance();    //This will create the SoundHandler
     m_p_GameHandler = new GameHandler(m_p_renderer);
     while (true) {
         m_p_GameHandler->initWorld();

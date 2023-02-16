@@ -53,4 +53,10 @@
 #define RSC_SHOP_MENU "./Sprites/Misc/Menus/Shop.png"
 #define RSC_GAME_OVER "./Sprites/Misc/Menus/GameOver.png"
 
+#define RSC_SOUND_SWORD "./Audio/Effects/Sword.wav"
+#define RSC_SOUND_ENEMY_HIT "./Audio/Effects/EnemyHit.wav"
+#define RSC_SOUND_EXPLOSION "./Audio/Effects/Explosion.wav"
+
+#define RSC_SOUNDTRACK "./Audio/Music/FantasySoundtrack.wav"
+
 #define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"

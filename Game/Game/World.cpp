@@ -8,6 +8,7 @@
 #include "Effect.h"
 #include "MenuManager.h"
 #include "TradingPost.h"
+#include "SoundHandler.h"
 
 World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_) : Vicinity(surface, m_bounds_, renderer)
 {
@@ -156,9 +157,10 @@ void World::renderWorld(SDL_Renderer* renderer)
 void World::triggerPlayerAttack()
 {
 	if (!m_p_player->checkAttackCooldown() || m_p_player->isInvincible())  //Player is already attacking or Attacked less than 8 seconds ago
-		return;	
-	else
-		m_p_player->setIsAttacking();
+		return;
+
+	SoundHandler::getInstance().playSwordSound();
+	m_p_player->setIsAttacking();
 }
 
 void World::damageEnemysInPlayerRadius()
@@ -168,7 +170,8 @@ void World::damageEnemysInPlayerRadius()
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
 		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds())) {
-			(*it)->damageBody(1);
+			if((*it)->damageBody(1))
+				SoundHandler::getInstance().playEnemyHitSound();
 		}
 		it++;		
 	}
@@ -224,6 +227,7 @@ void World::makeMerchantAppear()
 	}
 	m_p_merchant->setIsActive(true);
 	m_p_merchant->getSpawnEffect()->setEffectIsDone(false); //Start the explosion again
+	SoundHandler::getInstance().playExplosionSound();
 	addEntityToMap(m_p_merchant);
 }
 
@@ -287,6 +291,7 @@ void World::sendMerchantAway()
 	if (!m_p_merchant->getIsActive())
 		return;
 	m_p_merchant->getSpawnEffect()->setEffectIsDone(false); //Start the explosion again
+	SoundHandler::getInstance().playExplosionSound();
 	m_p_merchant->setIsActive(false);	//This lets the merchant know that its being despawned
 }
 

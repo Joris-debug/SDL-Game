@@ -2,16 +2,21 @@
 #include "World.h"
 #include "Player.h"
 #include "Resources.h"
+int Enemy::m_s_enemyCount = 0;
+
 Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : Body(m_bounds_, m_spriteBounds_, m_maxLives_)
 {
-	this->m_p_textureIdle_ = m_p_textureIdle_;
-	this->m_p_textureRun_ = m_p_textureRun_;
-	this->m_p_textureHit_ = m_p_textureHit_;
-	m_factor_ = (Uint32)this % 5 + 3;	//Random number for certain calculations
-	m_p_lastTargetAssigned_ = new Clock(1000);
-	m_p_timeSinceZeroMovement_ = new Clock(600);
-	m_p_lastTargetAssigned_->setStartPoint(0);
-	m_enemyTarget_ = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
+	this->m_p_textureIdle = m_p_textureIdle_;
+	this->m_p_textureRun = m_p_textureRun_;
+	this->m_p_textureHit = m_p_textureHit_;
+
+	m_enemyId = m_s_enemyCount;
+	m_s_enemyCount++;
+
+	m_p_lastTargetAssigned = new Clock(1000);
+	m_p_timeSinceZeroMovement = new Clock(600);
+	m_p_lastTargetAssigned->setStartPoint(0);
+	m_enemyTarget = { m_bounds_.x + m_bounds_.w / 2 , m_bounds_.y + m_bounds_.h / 2 }; //His first target is himself, on the next run of the enemyPathfinding method, a new target should be assigned
 }
 
 void Enemy::enemyPathfinding(World* p_world, float deltaTime)
@@ -23,7 +28,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 
 	SDL_FPoint enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
 
-	if (m_p_lastTargetAssigned_->checkClockState()) {
+	if (m_p_lastTargetAssigned->checkClockState()) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
 		SDL_FPoint* p_playerTargets = p_world->getPlayer()->getPlayerTargets();
 		bool playerSpotted = true;
@@ -38,7 +43,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 				it++;
 			}
 			if (playerSpotted) {
-				m_enemyTarget_ = p_playerTargets[targetNr];
+				m_enemyTarget = p_playerTargets[targetNr];
 				break;
 			}
 			else if (targetNr < 3) {		//Im reseting the variables for the next run
@@ -48,16 +53,16 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		}
 
 		short margin = 8;
-		if (abs(enemyMiddle.x - m_enemyTarget_.x) < margin && abs(enemyMiddle.y - m_enemyTarget_.y) < margin) {		//New direction assigned if the old target is reached
-			m_enemyTarget_ = p_world->getRandomCoordinate();
+		if (abs(enemyMiddle.x - m_enemyTarget.x) < margin && abs(enemyMiddle.y - m_enemyTarget.y) < margin) {		//New direction assigned if the old target is reached
+			m_enemyTarget = p_world->getRandomCoordinate();
 		}
 		else if (p_world->getRandomNumber(0, 200) == Uint32(this) % 10 && !playerSpotted) {			//New direction assigned if a random check is hit
-			m_enemyTarget_ = p_world->getRandomCoordinate();
+			m_enemyTarget = p_world->getRandomCoordinate();
 		}
 	}
 
-	float dirX = m_enemyTarget_.x - enemyMiddle.x;
-	float dirY = m_enemyTarget_.y - enemyMiddle.y;
+	float dirX = m_enemyTarget.x - enemyMiddle.x;
+	float dirY = m_enemyTarget.y - enemyMiddle.y;
 
 	if (abs(dirX) < 8) 
 		dirX = 0;
@@ -69,10 +74,10 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 	dirY /= hyp;
 	
 	walkingVector legalMove = this->checkEnemyMove(p_world, dirX, dirY, deltaTime);
-	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1 && m_p_timeSinceZeroMovement_->checkClockState()) {	//If the enemy stopped before reaching the target
+	if (abs(legalMove.x) < 0.1 && abs(legalMove.y) < 0.1 && m_p_timeSinceZeroMovement->checkClockState()) {	//If the enemy stopped before reaching the target
 		//std::cout << "0 movement\n";
-		m_enemyTarget_ = p_world->getRandomCoordinate();
-		m_p_lastTargetAssigned_->setStartPoint(SDL_GetTicks());
+		m_enemyTarget = p_world->getRandomCoordinate();
+		m_p_lastTargetAssigned->setStartPoint(SDL_GetTicks());
 	}
 	Body::moveEntity((legalMove.x * deltaTime) * ENEMY_SPEED, (deltaTime * legalMove.y) * ENEMY_SPEED); //This method does not move the enemy target
 	animateBody(dirX, dirY);
@@ -151,21 +156,21 @@ void Enemy::animateBody(float x, float y)
 void Enemy::moveEntity(float x, float y)
 {
 	Body::moveEntity(x, y);
-	m_enemyTarget_.x += x;
-	m_enemyTarget_.y += y;
+	m_enemyTarget.x += x;
+	m_enemyTarget.y += y;
 }
 
 void Enemy::renderBody(SDL_Renderer* renderer)
 {
 	switch (m_currentMode) {
 	case Mode::idle:
-		SDL_RenderCopyF(renderer, m_p_textureIdle_, &m_textureCoords, &m_spriteBounds);
+		SDL_RenderCopyF(renderer, m_p_textureIdle, &m_textureCoords, &m_spriteBounds);
 		break;
 	case Mode::walk:
-		SDL_RenderCopyF(renderer, m_p_textureRun_, &m_textureCoords, &m_spriteBounds);
+		SDL_RenderCopyF(renderer, m_p_textureRun, &m_textureCoords, &m_spriteBounds);
 		break;
 	case Mode::hit:
-		SDL_RenderCopyF(renderer, m_p_textureHit_, &m_textureCoords, &m_spriteBounds);
+		SDL_RenderCopyF(renderer, m_p_textureHit, &m_textureCoords, &m_spriteBounds);
 		break;
 	}
 }
@@ -258,7 +263,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 Enemy::~Enemy()
 {
-	delete m_p_lastTargetAssigned_;
-	delete m_p_timeSinceZeroMovement_;
+	delete m_p_lastTargetAssigned;
+	delete m_p_timeSinceZeroMovement;
 	//std::cout << "Enemy deleted" << std::endl;
 }
