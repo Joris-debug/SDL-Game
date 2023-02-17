@@ -7,11 +7,12 @@
 #include "SDL_image.h"
 #include "Effect.h"
 #include "MenuManager.h"
+#include "SoundHandler.h"
 #include <string>
 int GameHandler::gameLoop()
 {
 	int x_input = 0, y_input = 0;
-	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false;
+	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false, escKeyPressed = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
 	Uint32 lastTime = currentTime;
 	while (true)
@@ -63,6 +64,10 @@ int GameHandler::gameLoop()
 					case SDLK_f:
 						fKeyPressed = true;
 						break;
+
+					case SDLK_ESCAPE:
+						escKeyPressed = true;
+						break;
 					}
 					break;
 
@@ -88,7 +93,6 @@ int GameHandler::gameLoop()
 			switch (m_gameState) {
 				case gameStates::hasEnded:
 					goto exit_loop;	//Cant break out of loop inside a switch
-					break;
 
 				case gameStates::isRunning:
 					checkCurrentWave();
@@ -98,7 +102,7 @@ int GameHandler::gameLoop()
 							m_p_currentWorld->triggerPlayerAttack();
 						}
 						if (eKeyPressed && m_p_currentWorld->talkToMerchant()) {
-							m_p_menuManager->openShop();
+							m_p_menuManager->openMenu(Menus::shop);
 						}
 					}
 					else {	//Player doesnt move when a window is open
@@ -106,18 +110,24 @@ int GameHandler::gameLoop()
 						y_input = 0;
 					}
 
+					if (escKeyPressed) {
+						m_p_menuManager->openMenu(Menus::pause);
+					}
+
 					if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 						x_input = 0;
 						y_input = 0;
-						m_p_menuManager->openGameOver();
+						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
 					m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime);
 					break;
 
 				case gameStates::isStarting:
-					if (keyPressed)
+					if (keyPressed) {
 						m_p_menuManager->closeMenu();
+						SoundHandler::getInstance().playClickSound();
+					}
 					break;
 			}
 
@@ -128,11 +138,13 @@ int GameHandler::gameLoop()
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
 			keyPressed = false;
+			escKeyPressed = false;
 		}
 
 	}
+
 	exit_loop:;
-	Interface::getInstance().waitForInput(1000);
+	SoundHandler::getInstance().playClickSound();
 	return 0;
 }
 

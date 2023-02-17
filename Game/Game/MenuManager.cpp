@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "TradingPost.h"
+#include "SoundHandler.h"
 #include <math.h>
 #include <string>
 
@@ -32,6 +33,10 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_PAUSE_MENU);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 	m_menuOpacity = 0;
 	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);	//Texture is now transparent (so we can make an blend effect later on)
 }
@@ -50,16 +55,25 @@ gameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* 
 	switch (m_currentMenu) {
 		case Menus::none:
 			break;
+
 		case Menus::shop:
 			renderShop(mouseButtonPressed, renderer);
 			break;
+
 		case Menus::gameOver:
 			if (renderGameOver(renderer, deltaTime))
 				return gameStates::hasEnded;
 			break;
+
 		case Menus::start:
 			renderStartMenu(mouseButtonPressed, renderer, deltaTime);
 			return gameStates::isStarting;
+
+		case Menus::pause:
+			if (renderPauseMenu(mouseButtonPressed, renderer))
+				return gameStates::hasEnded;
+			break;
+			
 	}
 	return gameStates::isRunning;
 }
@@ -87,8 +101,12 @@ bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
 	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
 	SDL_FreeSurface(surfaceText);
 	SDL_DestroyTexture(textureText);
-
-	return (m_menuOpacity == 255);
+	if (m_menuOpacity == 255) {			//Animation is done playing, i render the menu one last time and wait for input before returning true and reseting the game
+		SDL_RenderPresent(renderer);
+		Interface::getInstance().waitForInput(1000);
+		return true;
+	}
+	return false;
 }
 
 void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
@@ -112,6 +130,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
 			m_currentMenu = Menus::none;
+			SoundHandler::getInstance().playClickSound();
 		}
 	}
 	renderButton(buttonRect, m_p_gameHandler->getFont(30), "Close Shop", buttonInside, buttonBorder, renderer);
@@ -228,11 +247,23 @@ void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	return;
 }
 
+bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* renderer)
+{
+	SDL_RenderCopy(renderer, m_menuTextures[4], NULL, NULL);
+
+	if (mouseButtonPressed) {
+		return true;
+	}
+
+	return false;
+}
+
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)
 {
 	Player* p_player = m_p_currenWorld->getPlayer();
 	if (p_player->getCoinCounter() < price || p_player->getCurrentLives() == p_player->getMaxLives())
 		return;
+	SoundHandler::getInstance().playClickSound();
 	p_player->updateCoinCounter(price * (-1));
 	p_player->healBody();
 	(*itemBoughtCounter)++;	//Items has been bought one more time
@@ -243,6 +274,8 @@ void MenuManager::buyMoreHealth(int* itemBoughtCounter, int price)
 	Player* p_player = m_p_currenWorld->getPlayer();
 	if (p_player->getCoinCounter() < price)
 		return;
+
+	SoundHandler::getInstance().playClickSound();
 	p_player->updateCoinCounter(price * (-1));
 	p_player->updateMaxLives(1);
 	(*itemBoughtCounter)++;	//Items has been bought one more time
@@ -253,16 +286,22 @@ void MenuManager::buyMoreStamina(int* itemBoughtCounter, int price)
 	Player* p_player = m_p_currenWorld->getPlayer();
 	if (p_player->getCoinCounter() < price || *itemBoughtCounter > 15)	//Item cant be bought more than 16 times
 		return;
+
+	SoundHandler::getInstance().playClickSound();
 	p_player->updateCoinCounter(price * (-1));
 	p_player->updateAttackCooldown(-250);
 	(*itemBoughtCounter)++;	//Items has been bought one more time
 }
 
-bool MenuManager::openShop()
+bool MenuManager::openMenu(Menus newMenu)
 {
-	if (m_currentMenu == Menus::none) {
-		m_currentMenu = Menus::shop;
+	if (m_currentMenu == newMenu)
+		return true;
+
+	if (m_currentMenu == Menus::none || newMenu == Menus::gameOver) {
+		m_currentMenu = newMenu;
 		return true;
 	}
+
 	return false;
 }

@@ -19,12 +19,13 @@ public:
 	void renderShop(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Renderer* renderer);
 	void renderStartMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime);	//Returns true if the game starts
+	bool renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void buyHealthPotion(int* itemBoughtCounter, int price);
 	void buyMoreHealth(int* itemBoughtCounter, int price);
 	void buyMoreStamina(int* itemBoughtCounter, int price);
 	MenuManager(const MenuManager& obj)	= delete;
 	inline void closeMenu() { m_currentMenu = Menus::none; }
-	bool openShop();	//Returns true if the window can be opened
-	inline void openGameOver() { m_currentMenu = Menus::gameOver; }	//Nothing stops the Game Over screen
+	bool openMenu(Menus newMenu);	//Returns true if the window can be opened
+
 };
 

@@ -169,9 +169,8 @@ void World::damageEnemysInPlayerRadius()
 	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 41*2 };
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
-		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds())) {
-			if((*it)->damageBody(1))
-				SoundHandler::getInstance().playEnemyHitSound();
+		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds()) && (*it)->damageBody(1)) {
+			SoundHandler::getInstance().playEnemyHitSound();
 		}
 		it++;		
 	}
@@ -181,8 +180,8 @@ void World::checkIfPlayerHit()
 {
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
-		if (SDL_HasIntersectionF(m_p_player->getBounds(), (*it)->getBounds())) {
-			m_p_player->damageBody(1);
+		if (SDL_HasIntersectionF(m_p_player->getBounds(), (*it)->getBounds()) && m_p_player->damageBody(1)) {
+			SoundHandler::getInstance().playPlayerHitSound();
 		}
 		it++;
 	}
@@ -290,6 +289,7 @@ void World::sendMerchantAway()
 {
 	if (!m_p_merchant->getIsActive())
 		return;
+	SoundHandler::getInstance().playClickSound();
 	m_p_merchant->getSpawnEffect()->setEffectIsDone(false); //Start the explosion again
 	SoundHandler::getInstance().playExplosionSound();
 	m_p_merchant->setIsActive(false);	//This lets the merchant know that its being despawned

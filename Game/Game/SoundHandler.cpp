@@ -16,7 +16,9 @@ SoundHandler::SoundHandler()
 
     m_p_swordSound = Mix_LoadWAV(RSC_SOUND_SWORD);
     m_p_enemyHitSound = Mix_LoadWAV(RSC_SOUND_ENEMY_HIT);
+    m_p_playerHitSound = Mix_LoadWAV(RSC_SOUND_PLAYER_HIT);
     m_p_explosionSound = Mix_LoadWAV(RSC_SOUND_EXPLOSION);
+    m_p_clickSound = Mix_LoadWAV(RSC_SOUND_CLICK);
 }
 
 SoundHandler& SoundHandler::getInstance()
@@ -29,5 +31,9 @@ SoundHandler::~SoundHandler()
 {
     Mix_FreeChunk(m_p_swordSound);
     Mix_FreeChunk(m_p_enemyHitSound);
+    Mix_FreeChunk(m_p_playerHitSound);
+    Mix_FreeChunk(m_p_explosionSound);
+    Mix_FreeChunk(m_p_clickSound);
+    Mix_FreeMusic(m_p_gameMusic);
     Mix_Quit();
 }
