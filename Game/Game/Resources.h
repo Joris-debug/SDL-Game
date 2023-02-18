@@ -39,6 +39,7 @@
 #define RSC_TRADING_POST_BACKGROUND "./Sprites/Misc/Merchant/Background.png"
 #define RSC_TRADING_POST_FOREGROUND "./Sprites/Misc/Merchant/Foreground.png"
 #define RSC_TRADING_POST_ROOF "./Sprites/Misc/Merchant/Roof.png"
+#define RSC_TRADING_POST_ALERT "./Sprites/Misc/Merchant/E.png"
 #define RSC_MERCHANT_IDLE "./Sprites/Misc/Merchant/idle.png"
 #define RSC_MERCHANT_GREETING "./Sprites/Misc/Merchant/greeting.png"
 #define RSC_MERCHANT_BORED1 "./Sprites/Misc/Merchant/bored_01.png"
@@ -63,3 +64,4 @@
 #define RSC_SOUNDTRACK "./Audio/Music/FantasySoundtrack.wav"
 
 #define RSC_8BIT_FONT "./Fonts/8bitlim.ttf"
+#define RSC_PIXELSPLITTER_FONT "./Fonts/PixelSplitter.ttf"

@@ -50,7 +50,21 @@ MenuManager::~MenuManager()
 	}
 }
 
-gameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
+bool MenuManager::tryClosingMenu()
+{
+	switch (m_currentMenu) {
+	case Menus::none:
+	case Menus::pause:
+	case Menus::shop:
+	case Menus::start:
+		m_currentMenu = Menus::none;
+		return true;
+	default:
+		return false;
+	}
+}
+
+GameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
 {
 	switch (m_currentMenu) {
 		case Menus::none:
@@ -62,20 +76,20 @@ gameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* 
 
 		case Menus::gameOver:
 			if (renderGameOver(renderer, deltaTime))
-				return gameStates::hasEnded;
+				return GameStates::hasEnded;
 			break;
 
 		case Menus::start:
 			renderStartMenu(mouseButtonPressed, renderer, deltaTime);
-			return gameStates::isStarting;
+			return GameStates::isStarting;
 
 		case Menus::pause:
 			if (renderPauseMenu(mouseButtonPressed, renderer))
-				return gameStates::hasEnded;
+				return GameStates::hasEnded;
 			break;
 			
 	}
-	return gameStates::isRunning;
+	return GameStates::isRunning;
 }
 
 bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
@@ -90,7 +104,7 @@ bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
 
 
 	std::string displayText = std::to_string(m_p_gameHandler->getWaveCounter());
-	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(75), displayText.c_str(), {38, 38, 44});
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 75), displayText.c_str(), {38, 38, 44});
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
 	SDL_SetTextureAlphaMod(textureText, m_menuOpacity);
 
@@ -104,6 +118,7 @@ bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
 	if (m_menuOpacity == 255) {			//Animation is done playing, i render the menu one last time and wait for input before returning true and reseting the game
 		SDL_RenderPresent(renderer);
 		Interface::getInstance().waitForInput(1000);
+		SoundHandler::getInstance().playClickSound();
 		return true;
 	}
 	return false;
@@ -133,7 +148,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			SoundHandler::getInstance().playClickSound();
 		}
 	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(30), "Close Shop", buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), "Close Shop", buttonInside, buttonBorder, renderer);
 
 	buttonRect = { 800 - 82 - 175, 127, 175, 45 };
 	buttonBorder = { 229, 229, 203 };
@@ -146,7 +161,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			m_p_currenWorld->sendMerchantAway();
 		}
 	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(30), "Next Wave", buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), "Next Wave", buttonInside, buttonBorder, renderer);
 
 	//----------------------------------------------------------------------------------------------- Render "buy health potion" button
 
@@ -165,7 +180,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			buyHealthPotion(upgradesCounter, price);
 		}
 	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText, buttonInside, buttonBorder, renderer);
 
 	//----------------------------------------------------------------------------------------------- Render "buy another heart" button
 
@@ -183,7 +198,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			buyMoreHealth(upgradesCounter, price);
 		}
 	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText, buttonInside, buttonBorder, renderer);
 
 	//----------------------------------------------------------------------------------------------- Render "increase stamina" button
 
@@ -201,7 +216,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 			buyMoreStamina(upgradesCounter, price);
 		}
 	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(30), displayText, buttonInside, buttonBorder, renderer);
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText, buttonInside, buttonBorder, renderer);
 
 }
 
@@ -218,9 +233,9 @@ void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::strin
 	SDL_SetRenderDrawColor(renderer, buttonColor.r, buttonColor.g, buttonColor.b, 255);
 	SDL_RenderFillRect(renderer, &buttonBounds);
 
-	//---------------------------------------------------------------------------------------------- Text on the close button
+	//---------------------------------------------------------------------------------------------- Text on the button
 
-	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(30), displayText.c_str(), borderColor);
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(font, displayText.c_str(), borderColor);
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
 
 	SDL_Rect textRect = buttonBounds;
@@ -249,13 +264,149 @@ void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 
 bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* renderer)
 {
+	bool returnValue = false;
+	int mousePosX, mousePosY;
+	float renderScale = Interface::getInstance().getPixelPerPixel();
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
+
 	SDL_RenderCopy(renderer, m_menuTextures[4], NULL, NULL);
 
-	if (mouseButtonPressed) {
-		return true;
-	}
+	//----------------------------------------------------------------------------------------------- Render "close" button
 
-	return false;
+	SDL_Color buttonBorder = { 229, 229, 203 };
+	SDL_Color buttonInside = { 27, 18, 15 };
+	SDL_Rect buttonRect = { 245, 190, 150, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			m_currentMenu = Menus::none;
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 34), "Resume", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "restart" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 255 + 150, 190, 150, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			m_currentMenu = Menus::none;
+			SoundHandler::getInstance().playClickSound();
+			returnValue = true;
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 34), "Restart", buttonInside, buttonBorder, renderer);
+
+
+	//----------------------------------------------------------------------------------------------- Render "music +" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 472, 292, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "music -" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 264, 292, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(-1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "audio +" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 472, 413, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateAudioVolume(1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "audio -" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 264, 413, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateAudioVolume(-1);
+			SoundHandler::getInstance().playClickSound();
+
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
+
+
+
+	//---------------------------------------------------------------------------------------------- Displaying volume
+	std::string displayText = std::to_string(SoundHandler::getInstance().getMusicVolumePercent());
+	SDL_Color textColor = { 27, 18, 15 };
+
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	SDL_Rect textRect = { 361, 273, 78, 32 };
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.y += textRect.h / 2 - surfaceText->h / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	displayText = std::to_string(SoundHandler::getInstance().getAudioVolumePercent());
+	textColor = { 27, 18, 15 };
+
+	surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
+	textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	textRect = { 361, 394, 78, 32 };
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.y += textRect.h / 2 - surfaceText->h / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	return returnValue;
 }
 
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)

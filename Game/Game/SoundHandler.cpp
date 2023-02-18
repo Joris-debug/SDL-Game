@@ -11,7 +11,6 @@ SoundHandler::SoundHandler()
     }
 
     m_p_gameMusic = Mix_LoadMUS(RSC_SOUNDTRACK);
-    Mix_VolumeMusic(16);
     Mix_PlayMusic(m_p_gameMusic, -1);
 
     m_p_swordSound = Mix_LoadWAV(RSC_SOUND_SWORD);
@@ -19,12 +18,54 @@ SoundHandler::SoundHandler()
     m_p_playerHitSound = Mix_LoadWAV(RSC_SOUND_PLAYER_HIT);
     m_p_explosionSound = Mix_LoadWAV(RSC_SOUND_EXPLOSION);
     m_p_clickSound = Mix_LoadWAV(RSC_SOUND_CLICK);
+
+    m_musicVolume = 2;
+    Mix_VolumeMusic(13);
+
+    m_audioVolume = 10;
+    Mix_VolumeMusic(64);
 }
 
 SoundHandler& SoundHandler::getInstance()
 {
 	static SoundHandler instance;
 	return instance;
+}
+
+void SoundHandler::updateMusicVolume(__int8 value)
+{
+    if (int(m_musicVolume + value > 20)) {
+        m_musicVolume = 20;
+        goto change_volume;
+    }
+
+    if (int(m_musicVolume + value < 0)) {
+        m_musicVolume = 0;
+        goto change_volume;
+    }
+
+    m_musicVolume += value;
+
+    change_volume:
+    Mix_VolumeMusic(round(6.4f * m_musicVolume));
+}
+
+void SoundHandler::updateAudioVolume(__int8 value)
+{
+    if (int(m_audioVolume + value > 20)) {
+        m_audioVolume = 20;
+        goto change_volume;
+    }
+
+    if (int(m_audioVolume + value < 0)) {
+        m_audioVolume = 0;
+        goto change_volume;
+    }
+
+    m_audioVolume += value;
+
+    change_volume:
+    Mix_Volume(-1, round(6.4f * m_audioVolume));
 }
 
 SoundHandler::~SoundHandler()

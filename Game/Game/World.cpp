@@ -20,13 +20,11 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 
 World::~World()
 {
-	delete m_p_topMap;
-	delete m_p_merchant;
-	delete m_p_player;
 
 	int numberOfElements = int(m_entityVector.size());
 	for (int i = 0; i < numberOfElements; i++) {
-		delete m_entityVector.back();
+		if(m_entityVector.back() != m_p_merchant)	//The merchant can be inside this list
+			delete m_entityVector.back();
 		m_entityVector.pop_back();
 	}
 
@@ -35,6 +33,13 @@ World::~World()
 		delete m_enemyVector.back();
 		m_enemyVector.pop_back();
 	}
+
+	delete m_p_topMap;
+	m_p_topMap = nullptr;
+	delete m_p_merchant;
+	m_p_merchant = nullptr;
+	delete m_p_player;
+	m_p_player = nullptr;
 }
 
 void World::moveWorld(float x, float y, float deltaTime)
@@ -144,6 +149,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	m_p_topMap->renderVicinity(renderer);	//Funktion to render top map
 	
+	if (talkToMerchant())
+		m_p_merchant->renderAlert(renderer);
+
 	for (auto cursor : m_enemyVector) {
 		if (typeid(*cursor) == typeid(Beetle))
 			cursor->renderBody(renderer);
@@ -151,6 +159,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
 	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
+	for (auto cursor : m_entityVector) {
+		SDL_RenderDrawRectF( renderer, cursor->getBounds());
+	}
 
 }
 

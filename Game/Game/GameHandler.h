@@ -9,13 +9,14 @@ class Clock;
 class Interface;
 class World;
 class MenuManager;
-enum class gameStates {isStarting, isRunning, hasEnded};
+enum class GameStates {isStarting, isRunning, hasEnded};
+enum class Fonts { eightBit, pixelSplitter};
 
 class GameHandler	
 {
 private:
 	MenuManager* m_p_menuManager;
-	gameStates m_gameState;
+	GameStates m_gameState;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
@@ -36,7 +37,7 @@ public:
 	~GameHandler();
 	int initWorld();
 	void resetWorld();
-	TTF_Font* getFont(int fontSize);
+	TTF_Font* getFont(Fonts font, int fontSize);
 	void checkCurrentWave(); //Checks if the current enemy-wave has been defeated and if thats the case, triggers a new one
 	bool trySpawningEnemy(); //Returns true on success and false if it fails
 	void renderWorldBackground();

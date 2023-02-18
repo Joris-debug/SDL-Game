@@ -91,10 +91,10 @@ int GameHandler::gameLoop()
 			}
 
 			switch (m_gameState) {
-				case gameStates::hasEnded:
+				case GameStates::hasEnded:
 					goto exit_loop;	//Cant break out of loop inside a switch
 
-				case gameStates::isRunning:
+				case GameStates::isRunning:
 					checkCurrentWave();
 					if (!m_p_menuManager->checkIfMenuOpen()) {		//No window is open
 
@@ -104,15 +104,19 @@ int GameHandler::gameLoop()
 						if (eKeyPressed && m_p_currentWorld->talkToMerchant()) {
 							m_p_menuManager->openMenu(Menus::shop);
 						}
+						if (escKeyPressed) {
+							m_p_menuManager->openMenu(Menus::pause);
+						}
 					}
 					else {	//Player doesnt move when a window is open
 						x_input = 0;
 						y_input = 0;
+						if (escKeyPressed) {
+							 m_p_menuManager->tryClosingMenu();							
+						}
 					}
 
-					if (escKeyPressed) {
-						m_p_menuManager->openMenu(Menus::pause);
-					}
+
 
 					if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 						x_input = 0;
@@ -123,7 +127,7 @@ int GameHandler::gameLoop()
 					m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime);
 					break;
 
-				case gameStates::isStarting:
+				case GameStates::isStarting:
 					if (keyPressed) {
 						m_p_menuManager->closeMenu();
 						SoundHandler::getInstance().playClickSound();
@@ -144,7 +148,6 @@ int GameHandler::gameLoop()
 	}
 
 	exit_loop:;
-	SoundHandler::getInstance().playClickSound();
 	return 0;
 }
 
@@ -157,7 +160,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_waveClock = new Clock(1000);
 	m_p_currentWorld = nullptr;
 	m_p_menuManager = nullptr;
-	m_gameState = gameStates::isStarting;
+	m_gameState = GameStates::isStarting;
 
 	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
 	SDL_Surface* p_tmpSurface;
@@ -247,6 +250,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 75));	//Font used for tombstone
+	m_gameFonts.push_back(TTF_OpenFont(RSC_PIXELSPLITTER_FONT, 40));	//Font used for pause menu volume buttons
 }
 
 GameHandler::~GameHandler()
@@ -305,6 +309,33 @@ int GameHandler::initWorld()
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 835 * 2, -1280 + 1088 * 2, 55, 64 })); //First sign on the bottom from spawn
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 608 * 2, 192, 64 })); //Holy statue
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 624 * 2, 64, 64 })); //Shrine right from spawn
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 288 * 2, -1280 + 224 * 2, 32, 64 })); //First tree top left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 400 * 2, -1280 + 144 * 2, 128, 64 })); //Chest an vase
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 640 * 2, -1280 + 112 * 2, 32, 54 })); //Second tree top left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 736 * 2, -1280 + 112 * 2, 54, 96 })); //Left bench
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 788 * 2, -1280 + 80 * 2, 112, 62 })); //Top bench
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 869 * 2, -1280 + 112 * 2, 54, 96 })); //Right bench
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1568 * 2, -1280 + 112 * 2, 32, 56 })); //Last tree top right
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 176 * 2, -1280 + 400 * 2, 32, 60 })); //First tree second row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 512 * 2, -1280 + 320 * 2, 32, 62 })); //Second tree second row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1040 * 2, -1280 + 256 * 2, 32, 60 })); //Third tree second row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 288 * 2, 32, 62 })); //Fourth tree second row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1392 * 2, -1280 + 288 * 2, 32, 62 })); //Fifth tree second row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 336 * 2, -1280 + 528 * 2, 32, 60 })); //First tree third row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 592 * 2, -1280 + 464 * 2, 32, 54 })); //Second tree third row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1104 * 2, -1280 + 448 * 2, 32, 62 })); //Third tree third row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1360 * 2, -1280 + 400 * 2, 64, 64 })); //First crate left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1440 * 2, -1280 + 352 * 2, 64, 64 })); //Top crate
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1440 * 2, -1280 + 416 * 2, 64, 64 })); //Left barrel
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1504 * 2, -1280 + 368 * 2, 64, 64 })); //Right barrel
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1504 * 2, -1280 + 448 * 2, 64, 64 })); //Right crate
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1392 * 2, -1280 + 463 * 2, 64, 38 })); //Stone pile top left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 144 * 2, -1280 + 592 * 2, 32, 54 })); //First tree fourth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 720 * 2, -1280 + 592 * 2, 32, 60 })); //Second tree fourth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 640 * 2, 32, 62 })); //Third tree fourth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1472 * 2, -1280 + 736 * 2, 32, 60 })); //Fourth tree fourth row
+
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 752 * 2, -1280 + 1378 * 2, 128, 94 })); //Brocken well at the bottom
 
 	m_p_menuManager = new MenuManager(m_p_renderer, this, m_p_currentWorld);
 
@@ -319,12 +350,14 @@ void GameHandler::resetWorld()
 	delete m_p_menuManager;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
-	m_gameState = gameStates::isStarting;
+	m_gameState = GameStates::isStarting;
 }
 
-TTF_Font* GameHandler::getFont(int fontSize)
+TTF_Font* GameHandler::getFont(Fonts font, int fontSize)
 {
-	switch (fontSize) {
+	switch (font) {
+	case Fonts::eightBit:
+		switch (fontSize) {
 		case 45:
 			return m_gameFonts[0];
 			break;
@@ -337,7 +370,18 @@ TTF_Font* GameHandler::getFont(int fontSize)
 		case 75:
 			return m_gameFonts[3];
 			break;
+		}
+		break;
+
+	case Fonts::pixelSplitter:
+		switch (fontSize) {
+		case 40:
+			return m_gameFonts[4];
+			break;
+		}
+		break;
 	}
+
 	return nullptr;
 }
 
@@ -459,7 +503,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorWaCo = { 229, 229, 203 }; //Color for the wave counter
 
 	std::string displayText = "Wave " + std::to_string(m_waveCounter);
-	SDL_Surface* surfaceText = TTF_RenderText_Solid(getFont(45), displayText.c_str(), colorWaCo);
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(getFont(Fonts::eightBit, 45), displayText.c_str(), colorWaCo);
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	SDL_Rect textRect;
@@ -487,7 +531,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorEnCo = { 255, 181, 100 }; //Color for the enemy counter
 
 	displayText = std::to_string(numberOfEnemies) + ((numberOfEnemies == 1) ? " enemy" : " enemies") + " left";
-	surfaceText = TTF_RenderText_Solid(getFont(30), displayText.c_str(), colorEnCo);
+	surfaceText = TTF_RenderText_Solid(getFont(Fonts::eightBit, 30), displayText.c_str(), colorEnCo);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 400 - surfaceText->w / 2;
@@ -503,7 +547,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorWaTi = { 240, 66, 66 }; //Color for the wave timer
 
 	displayText = std::to_string(m_waveTimer);
-	surfaceText = TTF_RenderText_Solid(getFont(34), displayText.c_str(), colorWaTi);
+	surfaceText = TTF_RenderText_Solid(getFont(Fonts::eightBit, 34), displayText.c_str(), colorWaTi);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 177 - surfaceText->w / 2;
@@ -519,7 +563,7 @@ void GameHandler::renderHud()
 	const SDL_Color colorCoiCo = { 255, 195, 50 }; //Color for the wave timer
 
 	displayText = std::to_string(m_p_currentWorld->getPlayer()->getCoinCounter());
-	surfaceText = TTF_RenderText_Solid(getFont(34), displayText.c_str(), colorCoiCo);
+	surfaceText = TTF_RenderText_Solid(getFont(Fonts::eightBit, 34), displayText.c_str(), colorCoiCo);
 	textureText = SDL_CreateTextureFromSurface(m_p_renderer, surfaceText);
 
 	textRect.x = 623 - surfaceText->w / 2;
@@ -538,7 +582,7 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	renderWorldBackground();
 	m_p_currentWorld->renderWorld(m_p_renderer);
 	
-	if (m_gameState == gameStates::isRunning)
+	if (m_gameState == GameStates::isRunning)
 		renderHud();
 
 	m_gameState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu

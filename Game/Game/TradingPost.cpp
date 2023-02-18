@@ -7,6 +7,7 @@ TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberE
 {
     this->m_p_randomNumberEngine = m_p_randomNumberEngine_;
     this-> m_p_spawnEffect = m_p_spawnEffect_;
+
     SDL_Surface* tmpSurface = IMG_Load(RSC_TRADING_POST_BACKGROUND);
     m_p_TradingPostTextures[0] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
@@ -18,6 +19,12 @@ TradingPost::TradingPost(SDL_Renderer* renderer, std::mt19937* m_p_randomNumberE
     tmpSurface = IMG_Load(RSC_TRADING_POST_ROOF);
     m_p_TradingPostTextures[2] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
     SDL_FreeSurface(tmpSurface);
+
+    tmpSurface = IMG_Load(RSC_TRADING_POST_ALERT);
+    m_p_TradingPostTextures[3] = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    SDL_FreeSurface(tmpSurface);
+
+    //---------------------------------------------------------------------------------------------- Merchant animations
 
     tmpSurface = IMG_Load(RSC_MERCHANT_IDLE);
     m_merchantTextures.push_back(SDL_CreateTextureFromSurface(renderer, tmpSurface));
@@ -163,5 +170,15 @@ void TradingPost::renderTradingPostRoof(SDL_Renderer* renderer)
 
     positionExplosion();
     m_p_spawnEffect->renderEffect(renderer);
+
 }
 
+void TradingPost::renderAlert(SDL_Renderer* renderer)
+{
+        SDL_FRect alertRect = m_bounds;
+        alertRect.x += 40;
+        alertRect.y -= 70;
+        alertRect.w = 32;
+        alertRect.h = 32;
+        SDL_RenderCopyF(renderer, m_p_TradingPostTextures[3], NULL, &alertRect);
+}

@@ -19,7 +19,7 @@ private:
     short m_currentSprite;		// The current sprite of the animation that is playing
     MerchantMode m_currentMode;
     SDL_Rect m_textureCoords;    
-    SDL_Texture* m_p_TradingPostTextures[3]; //Stores the back- and foreground of the building as well as the roof
+    SDL_Texture* m_p_TradingPostTextures[4]; //Stores the back- and foreground of the building as well as the roof and the alert for the player
     std::vector<SDL_Texture*> m_merchantTextures;  //Stores every animation of the merchant
     int m_upgrade1Sold;    //How many times upgrade 1 Sold
     int m_upgrade2Sold;
@@ -38,5 +38,6 @@ public:
     void animateMerchant();
     void renderTradingPost(SDL_Renderer* renderer);
     void renderTradingPostRoof(SDL_Renderer* renderer);
+    void renderAlert(SDL_Renderer* renderer);
 };
 
