@@ -308,43 +308,11 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 34), "Restart", buttonInside, buttonBorder, renderer);
 
 
-	//----------------------------------------------------------------------------------------------- Render "music +" button
-
-	buttonBorder = { 229, 229, 203 };
-	buttonInside = { 27, 18, 15 };
-	buttonRect = { 472, 292, 64, 64 };
-
-	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
-		buttonBorder = { 240, 240, 240 };
-		buttonInside = { 20, 0, 0 };
-		if (mouseButtonPressed) {			//Button pressed
-			SoundHandler::getInstance().updateMusicVolume(1);
-			SoundHandler::getInstance().playClickSound();
-		}
-	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
-
-	//----------------------------------------------------------------------------------------------- Render "music -" button
-
-	buttonBorder = { 229, 229, 203 };
-	buttonInside = { 27, 18, 15 };
-	buttonRect = { 264, 292, 64, 64 };
-
-	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
-		buttonBorder = { 240, 240, 240 };
-		buttonInside = { 20, 0, 0 };
-		if (mouseButtonPressed) {			//Button pressed
-			SoundHandler::getInstance().updateMusicVolume(-1);
-			SoundHandler::getInstance().playClickSound();
-		}
-	}
-	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
-
 	//----------------------------------------------------------------------------------------------- Render "audio +" button
 
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	buttonRect = { 472, 413, 64, 64 };
+	buttonRect = { 472, 292, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
@@ -360,13 +328,45 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	buttonRect = { 264, 413, 64, 64 };
+	buttonRect = { 264, 292, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
 			SoundHandler::getInstance().updateAudioVolume(-1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "music +" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 472, 413, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "music -" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 264, 413, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(-1);
 			SoundHandler::getInstance().playClickSound();
 
 		}
@@ -376,7 +376,7 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 
 
 	//---------------------------------------------------------------------------------------------- Displaying volume
-	std::string displayText = std::to_string(SoundHandler::getInstance().getMusicVolumePercent());
+	std::string displayText = std::to_string(SoundHandler::getInstance().getAudioVolumePercent());
 	SDL_Color textColor = { 27, 18, 15 };
 
 	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
@@ -391,7 +391,7 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	SDL_FreeSurface(surfaceText);
 	SDL_DestroyTexture(textureText);
 
-	displayText = std::to_string(SoundHandler::getInstance().getAudioVolumePercent());
+	displayText = std::to_string(SoundHandler::getInstance().getMusicVolumePercent());
 	textColor = { 27, 18, 15 };
 
 	surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
