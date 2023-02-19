@@ -4,7 +4,7 @@
 #define ENEMY_SPEED 0.5f
 #define PLAYER_ATTACK_COOLDOWN 5000;
 
-#define RSC_LEVEL_1 "./Sprites/Maps/firstMap.png"
+#define RSC_LEVEL_1 "./Sprites/Maps/BottomMap.png"
 #define RSC_LEVEL_1_TOP "./Sprites/Maps/TopMap.png"
 #define RSC_WORLD_BACKGROUND "./Sprites/Maps/WorldBackground.png"
 

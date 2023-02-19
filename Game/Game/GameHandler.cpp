@@ -22,6 +22,9 @@ int GameHandler::gameLoop()
 
 		if (m_deltaTime >= 1000.0f / 60.0f) //Limit FPS auf 60
 		{
+			if (m_deltaTime > 150.0f)	//Capping deltatime
+				m_deltaTime = 150.0f;
+
 			lastTime = currentTime;
 			while (SDL_PollEvent(Interface::getInstance().getInputQueue()) != 0)
 			{
@@ -334,8 +337,42 @@ int GameHandler::initWorld()
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 720 * 2, -1280 + 592 * 2, 32, 60 })); //Second tree fourth row
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 640 * 2, 32, 62 })); //Third tree fourth row
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1472 * 2, -1280 + 736 * 2, 32, 60 })); //Fourth tree fourth row
-
 	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 752 * 2, -1280 + 1378 * 2, 128, 94 })); //Brocken well at the bottom
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 240 * 2, -1280 + 976 * 2, 32, 60 })); //First tree fifth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 576 * 2, -1280 + 960 * 2, 32, 52 })); //Second tree fifth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1056 * 2, -1280 + 976 * 2, 32, 56 })); //Third tree fifth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 960 * 2, 32, 54 })); //Third tree fifth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1488 * 2, -1280 + 1024 * 2, 32, 60 })); //Fifth tree fifth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 96 * 2, -1280 + 1120 * 2, 32, 56 })); //First tree sixth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 368 * 2, -1280 + 1104 * 2, 32, 60 })); //Second tree sixth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 720 * 2, -1280 + 1072 * 2, 32, 58 })); //Third tree sixth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1155 * 2, -1280 + 1072 * 2, 52, 60 })); //Entrance stone graveyard
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 1056 * 2, 64, 64 })); //Top row first grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1280 * 2, -1280 + 1056 * 2, 64, 64 })); //Top row second grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 1056 * 2, 64, 64 })); //Top row third grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1408 * 2, -1280 + 1056 * 2, 64, 64 })); //Top row fourth grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 1152 * 2, 64, 64 })); //Middle row first grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1280 * 2, -1280 + 1152 * 2, 64, 64 })); //Middle row second grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1344 * 2, -1280 + 1152 * 2, 64, 64 })); //Middle row third grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1408 * 2, -1280 + 1152 * 2, 64, 64 })); //Middle row fourth grave
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1216 * 2, -1280 + 1248 * 2, 64, 96 })); //Left coffin
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1296 * 2, -1280 + 1258 * 2, 128, 64 })); //Middle coffin
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1408 * 2, -1280 + 1248 * 2, 64, 96 })); //Right coffin
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 256 * 2, -1280 + 1184 * 2, 64, 64 })); //Pillar top left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 384 * 2, -1280 + 1184 * 2, 64, 64 })); //Pillar top right
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 256 * 2, -1280 + 1312 * 2, 64, 64 })); //Pillar bottom left
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 384 * 2, -1280 + 1312 * 2, 64, 64 })); //Pillar bottom right
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 512 * 2, -1280 + 1184 * 2, 32, 60 })); //First tree seventh row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 512 * 2, -1280 + 1184 * 2, 32, 60 })); //First tree seventh row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1472 * 2, -1280 + 1232 * 2, 32, 60 })); //Second tree seventh row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 609 * 2, -1280 + 1376 * 2, 32, 62 })); //First tree eigth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1040 * 2, -1280 + 1360 * 2, 32, 60 })); //Second tree eigth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1296 * 2, -1280 + 1408 * 2, 32, 60 })); //Third tree eigth row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 160 * 2, -1280 + 1440 * 2, 32, 62 })); //First tree last row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 496 * 2, -1280 + 1472 * 2, 32, 56 })); //Second tree last row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 960 * 2, -1280 + 1488 * 2, 32, 56 })); //Third tree last row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1168 * 2, -1280 + 1504 * 2, 32, 58 })); //Fourth tree last row
+	m_p_currentWorld->addEntityToMap(new Entity({ -1232 + 1488 * 2, -1280 + 1520 * 2, 32, 60 })); //Fourth tree last row
 
 	m_p_menuManager = new MenuManager(m_p_renderer, this, m_p_currentWorld);
 

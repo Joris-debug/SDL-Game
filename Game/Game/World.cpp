@@ -159,9 +159,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
 	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
-	for (auto cursor : m_entityVector) {
-		SDL_RenderDrawRectF( renderer, cursor->getBounds());
-	}
+	//for (auto cursor : m_entityVector) {
+	//	SDL_RenderDrawRectF( renderer, cursor->getBounds());
+	//}
 
 }
 
