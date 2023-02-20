@@ -21,6 +21,7 @@ private:
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
 	Clock* m_p_waveClock; //Used to detect whenever a second passes
+	Clock* m_p_newMenuOpened;	//To prevent players from skipping the title menu
 	World* m_p_currentWorld;
 	SDL_Renderer* m_p_renderer;
 	std::mt19937* m_p_randomNumberEngine; // Mersenne twister MT19937

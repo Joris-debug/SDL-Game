@@ -48,8 +48,7 @@ Interface::~Interface()
 void Interface::waitForInput(Uint32 ticksToWait)
 {
     ticksToWait += SDL_GetTicks();
-    SDL_PumpEvents();
-    SDL_FlushEvents(SDL_USEREVENT, SDL_LASTEVENT);
+    SDL_PumpEvents();    
     while (SDL_PollEvent(&m_inputQueue) >= 0)
     { 
         switch (m_inputQueue.type)
@@ -59,6 +58,7 @@ void Interface::waitForInput(Uint32 ticksToWait)
             break;
 
         case SDL_KEYDOWN:
+			SDL_FlushEvents(SDL_USEREVENT, SDL_LASTEVENT);
             if (SDL_GetTicks() > ticksToWait)
                 return;
         }

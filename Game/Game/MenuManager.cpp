@@ -117,7 +117,7 @@ bool MenuManager::renderGameOver(SDL_Renderer* renderer, double deltaTime)
 	SDL_DestroyTexture(textureText);
 	if (m_menuOpacity == 255) {			//Animation is done playing, i render the menu one last time and wait for input before returning true and reseting the game
 		SDL_RenderPresent(renderer);
-		Interface::getInstance().waitForInput(1000);
+		Interface::getInstance().waitForInput(300);
 		SoundHandler::getInstance().playClickSound();
 		return true;
 	}
@@ -204,7 +204,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 
 	upgradesCounter = p_merchant->getUpgrade3Sold();
 	price = 60 + upgradesCounter[0] * 60;
-	displayText = (upgradesCounter[0] < 15) ? std::to_string(price) + "C" : "Max";
+	displayText = (upgradesCounter[0] <= 15) ? std::to_string(price) + "C" : "Max";
 
 	buttonBorder = { 255, 191, 0 };
 	buttonInside = { 255, 112, 0 };

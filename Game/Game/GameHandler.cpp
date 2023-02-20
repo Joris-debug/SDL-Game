@@ -131,7 +131,7 @@ int GameHandler::gameLoop()
 					break;
 
 				case GameStates::isStarting:
-					if (keyPressed) {
+					if (keyPressed && m_p_newMenuOpened->checkClockState()) {
 						m_p_menuManager->closeMenu();
 						SoundHandler::getInstance().playClickSound();
 					}
@@ -161,6 +161,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_waveCounter = 0;
 	m_waveTimer = 0;
 	m_p_waveClock = new Clock(1000);
+	m_p_newMenuOpened = new Clock(1000);
 	m_p_currentWorld = nullptr;
 	m_p_menuManager = nullptr;
 	m_gameState = GameStates::isStarting;
@@ -258,6 +259,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 
 GameHandler::~GameHandler()
 {
+	delete m_p_newMenuOpened;
 	delete m_p_waveClock;
 	delete m_p_currentWorld;
 	delete m_p_menuManager;
@@ -387,6 +389,7 @@ void GameHandler::resetWorld()
 	delete m_p_menuManager;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
+	m_p_newMenuOpened->setStartPoint(SDL_GetTicks());
 	m_gameState = GameStates::isStarting;
 }
 
@@ -623,6 +626,6 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 		renderHud();
 
 	m_gameState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu
-	
+
 	SDL_RenderPresent(m_p_renderer);
 }

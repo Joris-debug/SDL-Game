@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "World.h"
 #include "Player.h"
+#include "Beetle.h"
 #include "Resources.h"
 int Enemy::m_s_enemyCount = 0;
 
@@ -87,7 +88,6 @@ void Enemy::animateBody(float x, float y)
 {
 	int totalSprites = 1;
 	int spriteLayer = 0;
-
  	do {
 		if (isInvincible()) {
 			m_currentMode = Mode::hit;
@@ -188,7 +188,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		this->moveEntity(xMovement, 0);
 
 		for (auto const& cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 				xCollision = true;
 				break;
 			}
@@ -196,7 +196,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!xCollision) {
 			for (auto const& cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 					xCollision = true;
 					break;
 				}
@@ -210,7 +210,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	if (y != 0) {
 		this->moveEntity(0, yMovement);
 		for (auto cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 				yCollision = true;
 				break;
 			}
@@ -218,7 +218,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 
 		if (!yCollision) {
 			for (auto cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 					yCollision = true;
 					break;
 				}
@@ -233,14 +233,14 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 		bool bothCollisons = false;
 		this->moveEntity(xMovement, yMovement);
 		for (auto cursor : *p_world->getEnemyVector()) {
-			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+			if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 				bothCollisons = true;
 				break;
 			}
 		}
 		if (!bothCollisons) {
 			for (auto cursor : *p_world->getEntityVector()) {
-				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && this != cursor) {
+				if (SDL_HasIntersectionF(&m_bounds, cursor->getBounds()) && typeid(*cursor) != typeid(Beetle) && this != cursor) {
 					bothCollisons = true;
 					break;
 				}
@@ -254,8 +254,7 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 			else
 				xCollision = true;
 		}
-
-			
+					
 	}
 
 	return { x * !xCollision, y * !yCollision };

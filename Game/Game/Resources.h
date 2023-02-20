@@ -2,7 +2,7 @@
 #define STARTUP_SCREEN_WIDTH 800
 #define STARTUP_SCREEN_HEIGHT 640
 #define ENEMY_SPEED 0.5f
-#define PLAYER_ATTACK_COOLDOWN 5000;
+#define PLAYER_ATTACK_COOLDOWN 5100;
 
 #define RSC_LEVEL_1 "./Sprites/Maps/BottomMap.png"
 #define RSC_LEVEL_1_TOP "./Sprites/Maps/TopMap.png"
