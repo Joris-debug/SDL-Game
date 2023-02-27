@@ -1,22 +1,27 @@
+#pragma once
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include <iostream>
 #include <vector>
 #include <random>
-#pragma once
 
 class Clock;
 class Interface;
 class World;
 class MenuManager;
+class WorkThread;
+enum class GameHandlerType {singleplayer, server, client};
 enum class GameStates {isStarting, isRunning, hasEnded};
 enum class Fonts { eightBit, pixelSplitter};
 
 class GameHandler	
 {
 private:
+	GameHandlerType m_gameHandlerType;
 	MenuManager* m_p_menuManager;
 	GameStates m_gameState;
+	WorkThread* m_p_communicationThread;
+	bool m_currentFrameTransmitted;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
@@ -45,5 +50,6 @@ public:
 	void renderHud(); //This function will render healthbar, attack status, etc
 	void renderEverything(bool leftMouseButtonPressed);
 	inline int getWaveCounter() { return m_waveCounter; }
+	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
 };
 

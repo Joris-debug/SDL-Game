@@ -29,20 +29,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -130,7 +130,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\SDL2-2.26.0\include;$(SolutionDir)\Libraries\SDL2_mixer-2.6.3\include;$(SolutionDir)\Libraries\SDL2_image-2.6.2\include;$(SolutionDir)\Libraries\SDL2_ttf-2.20.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -152,13 +152,18 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameHandler.cpp" />
+    <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ServerSocket.cpp" />
+    <ClCompile Include="Socket.cpp" />
     <ClCompile Include="SoundHandler.cpp" />
     <ClCompile Include="TradingPost.cpp" />
     <ClCompile Include="Vicinity.cpp" />
+    <ClCompile Include="VirtualEnemy.cpp" />
+    <ClCompile Include="WorkThread.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,13 +174,18 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameHandler.h" />
+    <ClInclude Include="GameServer.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MenuManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
+    <ClInclude Include="ServerSocket.h" />
+    <ClInclude Include="Socket.h" />
     <ClInclude Include="SoundHandler.h" />
     <ClInclude Include="TradingPost.h" />
     <ClInclude Include="Vicinity.h" />
+    <ClInclude Include="VirtualEnemy.h" />
+    <ClInclude Include="WorkThread.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>

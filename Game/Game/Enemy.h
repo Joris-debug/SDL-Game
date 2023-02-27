@@ -19,7 +19,7 @@ public:
     virtual void enemyPathfinding(World* p_world, float deltaTime);
     void animateBody(float x, float y) override;
     void moveEntity(float x, float y) override;
-    void renderBody(SDL_Renderer* renderer) override;
+    void renderBody(SDL_Renderer* renderer);
     virtual walkingVector checkEnemyMove(World* p_world, float x, float y, float deltaTime);        //Returns a legal move
     ~Enemy();
 };

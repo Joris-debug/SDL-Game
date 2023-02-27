@@ -1,4 +1,5 @@
 #include "GameHandler.h"
+#include "WorkThread.h"
 #include "Interface.h"
 #include "World.h"
 #include "Resources.h"
@@ -146,6 +147,7 @@ int GameHandler::gameLoop()
 			eKeyPressed = false;
 			keyPressed = false;
 			escKeyPressed = false;
+			m_currentFrameTransmitted = false;
 		}
 
 	}
@@ -255,6 +257,11 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 75));	//Font used for tombstone
 	m_gameFonts.push_back(TTF_OpenFont(RSC_PIXELSPLITTER_FONT, 40));	//Font used for pause menu volume buttons
+
+	m_gameHandlerType = GameHandlerType::singleplayer;
+	m_p_communicationThread = nullptr;
+	m_currentFrameTransmitted = false;
+
 }
 
 GameHandler::~GameHandler()

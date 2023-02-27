@@ -60,6 +60,21 @@
     <ClCompile Include="Beetle.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="WorkThread.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerSocket.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Socket.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualEnemy.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h">
@@ -105,6 +120,21 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Beetle.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkThread.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerSocket.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualEnemy.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
