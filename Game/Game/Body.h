@@ -48,6 +48,8 @@ public:
 	inline void updateMaxLives(int sum) { m_maxLives += sum; }
 	bool isInvincible();
 	Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_);
+	inline Mode getCurrentMode() { return m_currentMode; }
+	inline short getCurrentSprite() { return m_currentSprite; }
 	~Body();
 };
 

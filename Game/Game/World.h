@@ -22,10 +22,12 @@ private:
     std::vector<Enemy*> m_enemyVector;
     std::vector<Entity*> m_entityVector;
     std::mt19937* m_p_randomNumberEngine;
+    bool m_serverLock;  //Enemies cant be deleted when this lock is set to true, this ensures thread safety
 public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_);
     ~World();
     walkingVector checkPlayerMove(float x, float y, float deltaTime);
+    void setServerLock(bool lock) { m_serverLock = lock; }
     void moveWorld(float x, float y, float deltaTime);
     void renderWorld(SDL_Renderer* renderer);
     void triggerPlayerAttack();

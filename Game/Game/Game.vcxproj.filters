@@ -75,6 +75,9 @@
     <ClCompile Include="VirtualEnemy.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ServerClient.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h">
@@ -135,6 +138,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="VirtualEnemy.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerClient.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

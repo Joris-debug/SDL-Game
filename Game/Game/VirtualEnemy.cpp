@@ -1,9 +1,8 @@
 #include "VirtualEnemy.h"
 
-VirtualEnemy::VirtualEnemy(enemyType m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
-	: Enemy(m_p_textureIdle_, m_p_textureRun_, m_p_textureHit_, m_bounds_, m_spriteBounds_, m_maxLives_)
+VirtualEnemy::VirtualEnemy(Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
+	: Enemy(m_enemyType, m_p_textureIdle_, m_p_textureRun_, m_p_textureHit_, m_bounds_, m_spriteBounds_, m_maxLives_)
 {
-	this->m_enemyType = m_enemyType;
 
 	delete m_p_lastDamageTaken;		//VirtualEnemy wont need these
 	m_p_lastDamageTaken = nullptr;	

@@ -9,7 +9,7 @@ class GameServer :
     public WorkThread
 {
 private:
-    World* m_p_world;
+    World* m_p_currentWorld;
     ServerSocket* m_p_serverSocket;
     GameHandler* m_p_gameHandler;
 public:

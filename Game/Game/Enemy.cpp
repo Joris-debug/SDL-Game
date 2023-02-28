@@ -5,8 +5,9 @@
 #include "Resources.h"
 int Enemy::m_s_enemyCount = 0;
 
-Enemy::Enemy(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : Body(m_bounds_, m_spriteBounds_, m_maxLives_)
+Enemy::Enemy(Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_) : Body(m_bounds_, m_spriteBounds_, m_maxLives_)
 {
+	this->m_enemyType = static_cast<EnemyType>(m_enemyType);
 	this->m_p_textureIdle = m_p_textureIdle_;
 	this->m_p_textureRun = m_p_textureRun_;
 	this->m_p_textureHit = m_p_textureHit_;

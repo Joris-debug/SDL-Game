@@ -16,6 +16,7 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 	this->m_p_randomNumberEngine = m_p_randomNumberEngine_;
 	m_merchantIsActive = false;
 	m_p_merchant = new TradingPost(renderer, m_p_randomNumberEngine_, m_p_spawnEffect_);
+	m_serverLock = false;
 }
 
 World::~World()
@@ -207,6 +208,7 @@ void World::checkForDefeatedEnemies()
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
 		if ((*it)->getCurrentLives() == 0 && !(*it)->isInvincible()) {
+			while (m_serverLock);	//Wait for the server to finish transmitting
 			delete *it;
 			m_enemyVector.erase(it);
 			it--;

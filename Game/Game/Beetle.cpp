@@ -46,8 +46,8 @@ void Beetle::enemyPathfinding(World* p_world, float deltaTime)
 	animateBody(dirX, dirY);
 }
 
-Beetle::Beetle(SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
-	: Enemy(m_p_textureIdle_, m_p_textureRun_, m_p_textureHit_, m_bounds_, m_spriteBounds_, m_maxLives_)
+Beetle::Beetle(Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
+	: Enemy(m_enemyType, m_p_textureIdle_, m_p_textureRun_, m_p_textureHit_, m_bounds_, m_spriteBounds_, m_maxLives_)
 {
 }
 

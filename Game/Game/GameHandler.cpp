@@ -467,7 +467,7 @@ void GameHandler::checkCurrentWave()
 
 bool GameHandler::trySpawningEnemy()
 {
-	short enemyType = m_p_currentWorld->getRandomNumber(0, 2);		//Calculating what kind of enemy will spawn
+	Uint8 enemyType = m_p_currentWorld->getRandomNumber(0, 2);		//Calculating what kind of enemy will spawn
 	SDL_FPoint randomPosition = m_p_currentWorld->getRandomCoordinate(); //Random positon for the new enemy
 	
 	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64, 64 };
@@ -507,10 +507,10 @@ bool GameHandler::trySpawningEnemy()
 	Enemy* p_enemy;
 
 	if (enemyType == 2) {
-		p_enemy = new Beetle(m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
+		p_enemy = new Beetle(enemyType, m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
 	}
 	else {
-		p_enemy = new Enemy(m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
+		p_enemy = new Enemy(enemyType, m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
 	}
 
 	m_p_currentWorld->addEnemyToMap(p_enemy);
