@@ -4,7 +4,6 @@
 #include "Beetle.h"
 #include "Player.h"
 #include "GameHandler.h"
-#include <typeinfo>
 
 GameServer::GameServer(int port, World* m_p_world, GameHandler* m_p_gameHandler)
 {

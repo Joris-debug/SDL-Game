@@ -4,14 +4,36 @@
 #include "World.h"
 #include "Resources.h"
 #include "Beetle.h"
+#include "VirtualEnemy.h"
 #include "Player.h"
 #include "SDL_image.h"
 #include "Effect.h"
 #include "MenuManager.h"
 #include "SoundHandler.h"
+#include "GameServer.h"
+#include "GameClient.h"
 #include <string>
+
 int GameHandler::gameLoop()
 {
+	std::cout << "Singleplayer[0], Server[1] or Client[2] :";
+	char answer;
+	std::cin >> answer;
+	switch (atoi(&answer)) {
+
+	case 1:
+		m_gameHandlerType = GameHandlerType::server;
+		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
+		break;
+	case 2:
+		m_gameHandlerType = GameHandlerType::client;
+		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
+		break;
+	}
+
+	if(m_p_communicationThread != nullptr)
+		m_p_communicationThread->startThread();
+
 	int x_input = 0, y_input = 0;
 	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false, escKeyPressed = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
@@ -266,6 +288,8 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 
 GameHandler::~GameHandler()
 {
+	delete m_p_communicationThread;
+
 	delete m_p_newMenuOpened;
 	delete m_p_waveClock;
 	delete m_p_currentWorld;
@@ -457,10 +481,11 @@ void GameHandler::checkCurrentWave()
 		m_waveCounter++;
 		short enemiesToSpawn = 5 + m_waveCounter * 5;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
-		while (enemiesToSpawn > 0) {
-			if (trySpawningEnemy())
-				enemiesToSpawn--;
-		}
+		if(m_gameHandlerType != GameHandlerType::client)		//Clients don't spawn enemies themselves
+			while (enemiesToSpawn > 0) {
+				if (trySpawningEnemy())
+					enemiesToSpawn--;
+			}
 	}
 
 }
@@ -470,7 +495,7 @@ bool GameHandler::trySpawningEnemy()
 	Uint8 enemyType = m_p_currentWorld->getRandomNumber(0, 2);		//Calculating what kind of enemy will spawn
 	SDL_FPoint randomPosition = m_p_currentWorld->getRandomCoordinate(); //Random positon for the new enemy
 	
-	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64, 64 };
+	SDL_FRect tmpRectBounds{ randomPosition.x, randomPosition.y, 64.0f, 64.0f };
 	SDL_FRect tmpRectSprite = tmpRectBounds;
 	short lives = 0;
 
@@ -635,4 +660,16 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	m_gameState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu
 
 	SDL_RenderPresent(m_p_renderer);
+}
+
+void GameHandler::createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_Point enemyPos)
+{
+	SDL_FRect tmpRectBounds{ float(enemyPos.x) / 10.0f, float(enemyPos.y) / 10.0f, 64.0f, 64.0f };
+	SDL_FRect tmpRectSprite = tmpRectBounds;
+	if (enemyType == 1) {
+		tmpRectBounds.h = 32;
+		tmpRectBounds.y += 32;
+	}
+
+	m_p_currentWorld->addEnemyToMap(new VirtualEnemy(enemyId, enemyType, m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, 1));
 }

@@ -1,6 +1,6 @@
 #include "VirtualEnemy.h"
 
-VirtualEnemy::VirtualEnemy(Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
+VirtualEnemy::VirtualEnemy(int m_enemyId, Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL_Texture* m_p_textureRun_, SDL_Texture* m_p_textureHit_, SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_)
 	: Enemy(m_enemyType, m_p_textureIdle_, m_p_textureRun_, m_p_textureHit_, m_bounds_, m_spriteBounds_, m_maxLives_)
 {
 
@@ -12,6 +12,8 @@ VirtualEnemy::VirtualEnemy(Uint8 m_enemyType, SDL_Texture* m_p_textureIdle_, SDL
 	m_p_lastFrame = nullptr;
 	delete m_p_timeSinceZeroMovement;
 	m_p_timeSinceZeroMovement = nullptr;
+
+	this->m_enemyId = m_enemyId;
 }
 
 void VirtualEnemy::enemyPathfinding(World* p_world, float deltaTime)

@@ -157,7 +157,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="ServerClient.cpp" />
+    <ClCompile Include="GameClient.cpp" />
     <ClCompile Include="ServerSocket.cpp" />
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="SoundHandler.cpp" />
@@ -180,7 +180,7 @@
     <ClInclude Include="MenuManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resources.h" />
-    <ClInclude Include="ServerClient.h" />
+    <ClInclude Include="GameClient.h" />
     <ClInclude Include="ServerSocket.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="SoundHandler.h" />

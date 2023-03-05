@@ -139,7 +139,7 @@ void World::renderWorld(SDL_Renderer* renderer)
 		m_p_merchant->renderTradingPost(renderer);
 
 	for (auto cursor : m_enemyVector) {
-		if(typeid(*cursor) != typeid(Beetle))
+		if(cursor->getEnemyType() == EnemyType::beetle)
 			cursor->renderBody(renderer);
 	}  
 
@@ -154,7 +154,7 @@ void World::renderWorld(SDL_Renderer* renderer)
 		m_p_merchant->renderAlert(renderer);
 
 	for (auto cursor : m_enemyVector) {
-		if (typeid(*cursor) == typeid(Beetle))
+		if (cursor->getEnemyType() == EnemyType::beetle)
 			cursor->renderBody(renderer);
 	}
 
@@ -208,7 +208,7 @@ void World::checkForDefeatedEnemies()
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
 		if ((*it)->getCurrentLives() == 0 && !(*it)->isInvincible()) {
-			while (m_serverLock);	//Wait for the server to finish transmitting
+			while (m_serverLock);	//Wait for the GameHandler to finish transmitting
 			delete *it;
 			m_enemyVector.erase(it);
 			it--;
@@ -341,4 +341,12 @@ int World::getRandomNumber(int rangeBegin, int rangeEnde)
 {
 	std::uniform_int_distribution<int> distribution(rangeBegin, rangeEnde);
 	return (distribution(*m_p_randomNumberEngine));
+}
+
+bool World::checkIfEnemyExists(int enemyId)
+{
+	for(auto cursor : m_enemyVector)
+		if(cursor->getEnemyId() == enemyId)
+			return true;
+	return false;
 }

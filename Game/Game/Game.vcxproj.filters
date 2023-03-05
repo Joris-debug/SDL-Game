@@ -75,7 +75,7 @@
     <ClCompile Include="VirtualEnemy.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ServerClient.cpp">
+    <ClCompile Include="GameClient.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,7 +140,7 @@
     <ClInclude Include="VirtualEnemy.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ServerClient.h">
+    <ClInclude Include="GameClient.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
