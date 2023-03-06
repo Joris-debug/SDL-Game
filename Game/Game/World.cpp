@@ -139,7 +139,7 @@ void World::renderWorld(SDL_Renderer* renderer)
 		m_p_merchant->renderTradingPost(renderer);
 
 	for (auto cursor : m_enemyVector) {
-		if(cursor->getEnemyType() == EnemyType::beetle)
+		if(cursor->getEnemyType() != EnemyType::beetle)
 			cursor->renderBody(renderer);
 	}  
 
@@ -160,9 +160,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 
 	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
 	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
-	//for (auto cursor : m_entityVector) {
-	//	SDL_RenderDrawRectF( renderer, cursor->getBounds());
-	//}
+	for (auto cursor : m_enemyVector) {
+		SDL_RenderDrawRectF( renderer, cursor->getBounds());
+	}
 
 }
 

@@ -30,4 +30,9 @@ void VirtualEnemy::setAnimation(Uint8 mode, short frame)
 	m_currentSprite = frame;
 }
 
+bool VirtualEnemy::damageBody(short damage)
+{
+	return false;
+}
+
 

@@ -40,7 +40,7 @@ public:
 	virtual void animateBody(float x, float y) = 0;
 	virtual void renderBody(SDL_Renderer* renderer) = 0;
 	void moveEntity(float x, float y) override;
-	bool damageBody(short damage);	//Returns true if the body gets damaged
+	virtual bool damageBody(short damage);	//Returns true if the body gets damaged
 	inline short getCurrentLives() { return m_currentLives; }
 	inline short getMaxLives() { return m_maxLives; }
 	inline void healBody() { m_currentLives = m_maxLives; }

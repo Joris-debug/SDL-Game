@@ -29,8 +29,6 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_currentDirection = 0; //Player spawns looking right
 	m_lastDirection = 0;
 
-	m_isTurning = false;
-	m_isAttacking = false;
 	m_coinCounter = 0;
 	m_attackCooldown = PLAYER_ATTACK_COOLDOWN;
 	m_p_lastAttack = new Clock(m_attackCooldown, false);
@@ -68,25 +66,23 @@ void Player::animateBody(float x, float y)
 		if (isInvincible()) {
 			m_currentMode = Mode::hit;
 			totalSprites = 2;
-			m_isAttacking = false;
 			break;
 		}
 
-		if (m_isAttacking) //An attack started
+		if (m_currentMode == Mode::attack) //An attack started
 		{
 			totalSprites = 10;
-			m_currentMode = Mode::attack;
 
 			if (m_currentSprite >= 9) //Attack ends
-				m_isAttacking = false;
+				m_currentMode = Mode::idle;
 
 			break;
 		}
-		if (m_isTurning) //A turn started less than 3 frames ago
+		if (m_currentMode == Mode::turn) //A turn started less than 3 frames ago
 		{
 			totalSprites = 3;
 			if (m_currentSprite >= 2)
-				m_isTurning = false;
+				m_currentMode = Mode::idle;
 			break;
 		}
 
@@ -101,7 +97,6 @@ void Player::animateBody(float x, float y)
 		if (detectTurning()) {	//A turn movement starts now
 			totalSprites = 3;
 			m_currentMode = Mode::turn;
-			m_isTurning = true;
 			m_p_lastFrame->setStartPoint(0);
 			m_currentSprite = 0;
 			break;

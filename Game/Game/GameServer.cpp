@@ -20,15 +20,18 @@ GameServer::~GameServer()
 void GameServer::run()
 {
 	Socket* p_workSocket = m_p_serverSocket->accept();
+	m_p_gameHandler->updateConnectionEstablished(true);
 	bool* p_transmitNewFrame = m_p_gameHandler->getFrameTransmitted();
 
 	while (m_threadIsRunning) {
-		while (*p_transmitNewFrame);	//Wait for new frame
+		while (*p_transmitNewFrame)	//Wait for new frame
+			Sleep(1);
 		*p_transmitNewFrame = true;
 
-		p_workSocket->write("OK\n");
+		p_workSocket->write("OK");
 		m_p_currentWorld->setServerLock(true); //stop the world from interfering with this thread iterating trough the vector
 		int vectorSize = int(m_p_currentWorld->getEnemyVector()->size());
+		std::cout << vectorSize << std::endl;
 		p_workSocket->write(vectorSize);	//So the client knows how many enemies will be transmitted
 
 		for (auto cursor : *m_p_currentWorld->getEnemyVector()) {

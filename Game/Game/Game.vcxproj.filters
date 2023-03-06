@@ -78,6 +78,9 @@
     <ClCompile Include="GameClient.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerTwo.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h">
@@ -141,6 +144,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="GameClient.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTwo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

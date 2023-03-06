@@ -10,5 +10,6 @@ public:
     void enemyPathfinding(World* p_world, float deltaTime) override;
     void animateBody(float x, float y) override;
     void setAnimation(Uint8 mode, short frame);
+	bool damageBody(short damage) override;
 };
 

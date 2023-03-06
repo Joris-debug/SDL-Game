@@ -15,8 +15,6 @@ private:
     SDL_Texture* m_p_textureHit;
     Clock* m_p_lastAttack;       // Timestamp of the last attack
     int m_coinCounter;
-    bool m_isAttacking;
-    bool m_isTurning;
     bool m_currentDirection; // 0: right, 1 = left
     bool m_lastDirection; // 0: right, 1 = left
 	int m_attackCooldown;
@@ -32,8 +30,8 @@ public:
     inline int getCoinCounter() { return m_coinCounter; }
     inline void updateCoinCounter(int sum) { m_coinCounter += sum; }
     inline bool checkAttackCooldown() { return m_p_lastAttack->checkClockState(); }
-    inline bool getIsAttacking() { return m_isAttacking; }
-    inline void setIsAttacking() { m_isAttacking = true; m_currentSprite = 0; m_p_lastAttack->setStartPoint(SDL_GetTicks()); }
+    inline bool getIsAttacking() { return (m_currentMode == Mode::attack); }
+    inline void setIsAttacking() { m_currentMode = Mode::attack; m_currentSprite = 0; m_p_lastAttack->setStartPoint(SDL_GetTicks()); }
     inline void moveFootSpace(float x, float y) { m_footSpace.x += x; m_footSpace.y += y; }
 	inline SDL_FRect* getFootSpace() { return &m_footSpace; }
 };

@@ -22,6 +22,7 @@ private:
 	GameStates m_gameState;
 	WorkThread* m_p_communicationThread;
 	bool m_currentFrameTransmitted;
+	bool m_connectionEstablished;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
@@ -52,5 +53,6 @@ public:
 	void createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_Point enemyPos);
 	inline int getWaveCounter() { return m_waveCounter; }
 	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
+	inline void updateConnectionEstablished(bool newValue) { m_connectionEstablished = newValue; }
 };
 

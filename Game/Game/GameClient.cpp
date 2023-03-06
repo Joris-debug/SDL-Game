@@ -24,9 +24,9 @@ void GameClient::run()
 		std::cout << "Error";
 		return;
 	}
-
+	m_p_gameHandler->updateConnectionEstablished(true);
 	while (m_threadIsRunning) {
-		std::cout << m_p_socket->readLine();
+		std::cout << m_p_socket->readLine() << std::endl;
 		m_p_currentWorld->setServerLock(true); //stop the world from interfering with this thread iterating trough the vector
 
 		int vectorSize = m_p_socket->read();	//So the client knows how many enemies will be transmitted
@@ -35,7 +35,7 @@ void GameClient::run()
 		for (int i = 0; i < vectorSize; i++) {
 			int enemyId = m_p_socket->read();
 			Uint8 enemyType = m_p_socket->read();
-			//std::cout << enemyId << std::endl;
+			std::cout << enemyId << std::endl;
 			SDL_Point enemyPos;
 			enemyPos.x = m_p_socket->read();
 			enemyPos.y = m_p_socket->read();

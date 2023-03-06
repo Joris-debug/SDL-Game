@@ -24,10 +24,16 @@ int GameHandler::gameLoop()
 	case 1:
 		m_gameHandlerType = GameHandlerType::server;
 		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
+		while (!m_connectionEstablished);
+		m_gameState = GameStates::isRunning;
+		m_p_menuManager->closeMenu();
 		break;
 	case 2:
 		m_gameHandlerType = GameHandlerType::client;
 		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
+		while (!m_connectionEstablished);
+		m_gameState = GameStates::isRunning;
+		m_p_menuManager->closeMenu();
 		break;
 	}
 
@@ -283,7 +289,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_gameHandlerType = GameHandlerType::singleplayer;
 	m_p_communicationThread = nullptr;
 	m_currentFrameTransmitted = false;
-
+	m_connectionEstablished = false;
 }
 
 GameHandler::~GameHandler()
@@ -409,8 +415,6 @@ int GameHandler::initWorld()
 
 	m_p_menuManager = new MenuManager(m_p_renderer, this, m_p_currentWorld);
 
-
-
 	return gameLoop();
 }
 
@@ -458,7 +462,7 @@ TTF_Font* GameHandler::getFont(Fonts font, int fontSize)
 
 void GameHandler::checkCurrentWave()
 {
-	if (m_p_currentWorld->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
+	if (m_p_currentWorld->getEnemyVector()->size() > 0 || m_gameHandlerType == GameHandlerType::client) {	//The current wave is still ongoing
 		if (m_p_waveClock->checkClockState() && m_waveTimer > 0) {
 			m_waveTimer--;
 		}
@@ -530,7 +534,6 @@ bool GameHandler::trySpawningEnemy()
 	}
 
 	Enemy* p_enemy;
-
 	if (enemyType == 2) {
 		p_enemy = new Beetle(enemyType, m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, lives);
 	}
