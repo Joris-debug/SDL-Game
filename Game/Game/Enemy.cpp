@@ -176,6 +176,14 @@ void Enemy::renderBody(SDL_Renderer* renderer)
 	}
 }
 
+void Enemy::teleportEnemy(SDL_FPoint newPos)
+{
+	m_bounds.x = newPos.x;
+	m_bounds.y = newPos.y;
+	m_spriteBounds.x = newPos.x;
+	m_spriteBounds.y = (m_enemyType == EnemyType::maggot) ? newPos.y - 32 : newPos.y;
+}
+
 walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float deltaTime)
 { 	
 	if (!x && !y)
@@ -259,6 +267,12 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	}
 
 	return { x * !xCollision, y * !yCollision };
+}
+
+void Enemy::setAnimation(Uint8 mode, short frame)
+{
+	m_currentMode = static_cast<Mode>(mode);
+	m_currentSprite = frame;
 }
 
 Enemy::~Enemy()

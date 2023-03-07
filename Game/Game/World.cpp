@@ -209,9 +209,11 @@ void World::checkForDefeatedEnemies()
 	while (it != m_enemyVector.end()) {
 		if ((*it)->getCurrentLives() == 0 && !(*it)->isInvincible()) {
 			while (m_serverLock);	//Wait for the GameHandler to finish transmitting
+			m_serverLock = true;
 			delete *it;
 			m_enemyVector.erase(it);
 			it--;
+			m_serverLock = false;
 		}
 		it++;
 	}
@@ -349,4 +351,33 @@ bool World::checkIfEnemyExists(int enemyId)
 		if(cursor->getEnemyId() == enemyId)
 			return true;
 	return false;
+}
+
+Enemy* World::getEnemyById(int enemyId)
+{
+	for (auto cursor : m_enemyVector) {
+		if (cursor->getEnemyId() == enemyId)
+			return cursor;
+	}
+	return nullptr;
+}
+
+void World::deleteNotExistingVirtualEnemies(std::vector<int> existingEnemies)
+{
+	auto it = m_enemyVector.begin();
+	while (it != m_enemyVector.end()) {
+		bool foundEnemy = false;
+		int enemyId = (*it)->getEnemyId();
+		for (auto cursorId : existingEnemies) {
+			if (enemyId == cursorId)
+				foundEnemy = true;
+		}
+		if (!foundEnemy) {
+			delete* it;
+			m_enemyVector.erase(it);
+			it--;
+		}
+		it++;
+	}
+
 }

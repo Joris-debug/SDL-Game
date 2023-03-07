@@ -1,7 +1,6 @@
 #pragma once
 #include "Body.h"
 
-
 enum class EnemyType { mantis, maggot, beetle };
 class World;
 
@@ -24,7 +23,9 @@ public:
     void animateBody(float x, float y) override;
     void moveEntity(float x, float y) override;
     void renderBody(SDL_Renderer* renderer);
+    void teleportEnemy(SDL_FPoint newPos);
     virtual walkingVector checkEnemyMove(World* p_world, float x, float y, float deltaTime);        //Returns a legal move
+    void setAnimation(Uint8 mode, short frame);
     inline int getEnemyId() { return m_enemyId; }
     inline EnemyType getEnemyType() { return m_enemyType; }
     ~Enemy();

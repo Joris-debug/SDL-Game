@@ -50,7 +50,7 @@ public:
 	void renderWorldBackground();
 	void renderHud(); //This function will render healthbar, attack status, etc
 	void renderEverything(bool leftMouseButtonPressed);
-	void createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_Point enemyPos);
+	void createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_FPoint enemyPos);
 	inline int getWaveCounter() { return m_waveCounter; }
 	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
 	inline void updateConnectionEstablished(bool newValue) { m_connectionEstablished = newValue; }

@@ -27,7 +27,6 @@ public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_);
     ~World();
     walkingVector checkPlayerMove(float x, float y, float deltaTime);
-    void setServerLock(bool lock) { m_serverLock = lock; }
     void moveWorld(float x, float y, float deltaTime);
     void renderWorld(SDL_Renderer* renderer);
     void triggerPlayerAttack();
@@ -43,6 +42,9 @@ public:
     SDL_FPoint getRandomCoordinate();
     int getRandomNumber(int rangeBegin, int rangeEnde); //Used to generate random coordinate
     bool checkIfEnemyExists(int enemyId);
+    Enemy* getEnemyById(int enemyId);
+    void deleteNotExistingVirtualEnemies(std::vector<int> existingEnemies);
+    inline bool* getServerLock() { return &m_serverLock; }
     inline TradingPost* getMerchant() { return m_p_merchant; }
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap = newVinicity; }
     inline void addEntityToMap(Entity* newEntity) { m_entityVector.push_back(newEntity); }

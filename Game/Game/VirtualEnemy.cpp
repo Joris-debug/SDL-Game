@@ -24,15 +24,10 @@ void VirtualEnemy::animateBody(float x, float y)
 {
 }
 
-void VirtualEnemy::setAnimation(Uint8 mode, short frame)
-{
-	m_currentMode = static_cast<Mode>(mode);
-	m_currentSprite = frame;
-}
-
 bool VirtualEnemy::damageBody(short damage)
 {
 	return false;
 }
+
 
 

@@ -24,21 +24,24 @@ int GameHandler::gameLoop()
 	case 1:
 		m_gameHandlerType = GameHandlerType::server;
 		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
-		while (!m_connectionEstablished);
+		m_p_communicationThread->startThread();
+		while (!m_connectionEstablished) {
+			std::cout << ".";
+		}
 		m_gameState = GameStates::isRunning;
 		m_p_menuManager->closeMenu();
 		break;
 	case 2:
 		m_gameHandlerType = GameHandlerType::client;
 		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
-		while (!m_connectionEstablished);
+		m_p_communicationThread->startThread();
+		while (!m_connectionEstablished) {
+			std::cout << ".";
+		}
 		m_gameState = GameStates::isRunning;
 		m_p_menuManager->closeMenu();
 		break;
 	}
-
-	if(m_p_communicationThread != nullptr)
-		m_p_communicationThread->startThread();
 
 	int x_input = 0, y_input = 0;
 	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false, escKeyPressed = false;
@@ -156,7 +159,7 @@ int GameHandler::gameLoop()
 						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
-					m_p_currentWorld->moveWorld(x_input, y_input, 0.2f * m_deltaTime);
+					m_p_currentWorld->moveWorld(x_input, y_input, 0.12f * m_deltaTime);
 					break;
 
 				case GameStates::isStarting:
@@ -665,7 +668,7 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	SDL_RenderPresent(m_p_renderer);
 }
 
-void GameHandler::createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_Point enemyPos)
+void GameHandler::createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_FPoint enemyPos)
 {
 	SDL_FRect tmpRectBounds{ float(enemyPos.x) / 10.0f, float(enemyPos.y) / 10.0f, 64.0f, 64.0f };
 	SDL_FRect tmpRectSprite = tmpRectBounds;

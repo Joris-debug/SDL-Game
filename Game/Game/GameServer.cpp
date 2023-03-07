@@ -29,16 +29,19 @@ void GameServer::run()
 		*p_transmitNewFrame = true;
 
 		p_workSocket->write("OK");
-		m_p_currentWorld->setServerLock(true); //stop the world from interfering with this thread iterating trough the vector
+		bool* p_serverLock = m_p_currentWorld->getServerLock();
+		while (*p_serverLock);
+		*p_serverLock = true; //stop the world from interfering with this thread iterating trough the vector
 		int vectorSize = int(m_p_currentWorld->getEnemyVector()->size());
 		std::cout << vectorSize << std::endl;
 		p_workSocket->write(vectorSize);	//So the client knows how many enemies will be transmitted
+		SDL_FRect* p_mapBounds = m_p_currentWorld->getBounds();
 
 		for (auto cursor : *m_p_currentWorld->getEnemyVector()) {
 			p_workSocket->write(cursor->getEnemyId());							//Enemy identification Nr
-			p_workSocket->write(static_cast<int>(cursor->getEnemyType()));		//Enemy Type (needed for the creation of the enemy)
-			p_workSocket->write(round(cursor->getBounds()->x * 10.0f));
-			p_workSocket->write(round(cursor->getBounds()->y * 10.0f));
+			p_workSocket->write(static_cast<int>(cursor->getEnemyType()));		//Enemy Type (needed for the creation of the enemy) 
+			p_workSocket->write(round((p_mapBounds->x - cursor->getBounds()->x) * 10.0f)); //Enemy position relative to the map will be transmitted
+			p_workSocket->write(round((p_mapBounds->y - cursor->getBounds()->y) * 10.0f));
 			p_workSocket->write(static_cast<int>(cursor->getCurrentMode()));
 			p_workSocket->write(cursor->getCurrentSprite());
 		}
@@ -47,7 +50,7 @@ void GameServer::run()
 		p_workSocket->write(round(p_player->getBounds()->y * 10.0f));
 		p_workSocket->write(static_cast<int>(p_player->getCurrentMode()));
 		p_workSocket->write(p_player->getCurrentSprite());
-		m_p_currentWorld->setServerLock(false);
+		*p_serverLock = false;
 	}
 	m_p_serverSocket->close();
 }
