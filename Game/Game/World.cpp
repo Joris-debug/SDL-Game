@@ -5,6 +5,7 @@
 #include "SDL_image.h"
 #include "Beetle.h"
 #include "Player.h"
+#include "PlayerTwo.h"
 #include "Effect.h"
 #include "MenuManager.h"
 #include "TradingPost.h"
@@ -13,10 +14,12 @@
 World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_) : Vicinity(surface, m_bounds_, renderer)
 {
 	m_p_player = new Player(renderer);
+	m_p_playerTwo = nullptr; //The map is always initiated with just one player
 	this->m_p_randomNumberEngine = m_p_randomNumberEngine_;
 	m_merchantIsActive = false;
 	m_p_merchant = new TradingPost(renderer, m_p_randomNumberEngine_, m_p_spawnEffect_);
 	m_serverLock = false;
+	m_p_topMap = nullptr;
 }
 
 World::~World()
@@ -144,6 +147,9 @@ void World::renderWorld(SDL_Renderer* renderer)
 	}  
 
 	m_p_player->renderBody(renderer);
+
+	if (m_p_playerTwo)
+		m_p_playerTwo->renderBody(renderer);
 
 	if(m_merchantIsActive)
 		m_p_merchant->renderTradingPostRoof(renderer);

@@ -46,8 +46,8 @@ void GameServer::run()
 			p_workSocket->write(cursor->getCurrentSprite());
 		}
 		Player* p_player = m_p_currentWorld->getPlayer();
-		p_workSocket->write(round(p_player->getBounds()->x * 10.0f));
-		p_workSocket->write(round(p_player->getBounds()->y * 10.0f));
+		p_workSocket->write(round((p_mapBounds->x - p_player->getBounds()->x) * 10.0f));
+		p_workSocket->write(round((p_mapBounds->y - p_player->getBounds()->y) * 10.0f));
 		p_workSocket->write(static_cast<int>(p_player->getCurrentMode()));
 		p_workSocket->write(p_player->getCurrentSprite());
 		*p_serverLock = false;

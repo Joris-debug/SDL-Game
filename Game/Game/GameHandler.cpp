@@ -12,6 +12,7 @@
 #include "SoundHandler.h"
 #include "GameServer.h"
 #include "GameClient.h"
+#include "PlayerTwo.h"
 #include <string>
 
 int GameHandler::gameLoop()
@@ -34,6 +35,7 @@ int GameHandler::gameLoop()
 	case 2:
 		m_gameHandlerType = GameHandlerType::client;
 		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
+		m_p_currentWorld->setPlayerTwo(new PlayerTwo(m_p_renderer, { 0,0 }));
 		m_p_communicationThread->startThread();
 		while (!m_connectionEstablished) {
 			std::cout << ".";
@@ -202,6 +204,10 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
 	SDL_Surface* p_tmpSurface;
 
+	m_enemyTexturesIdle.reserve(3);
+	m_enemyTexturesWalk.reserve(3);
+	m_enemyTexturesHit.reserve(3);
+
 	//Load all Mantis Spritesheets
 	p_tmpSurface = IMG_Load(RSC_MANTIS_IDLE);
 	m_enemyTexturesIdle.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
@@ -236,6 +242,8 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	SDL_FreeSurface(p_tmpSurface);
 
 	//Load all hud textures
+	m_hudTextures.reserve(9);
+
 	p_tmpSurface = IMG_Load(RSC_HEALTHBAR_BORDER);
 	m_hudTextures.push_back(SDL_CreateTextureFromSurface(m_p_renderer_, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
@@ -283,6 +291,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	SDL_FreeSurface(p_tmpSurface);
 
 	//----------------------------------------------------------------------------------- Load all fonts
+	m_gameFonts.reserve(5);
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 45));	//Font used for the wave counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
@@ -488,6 +497,7 @@ void GameHandler::checkCurrentWave()
 		m_waveCounter++;
 		short enemiesToSpawn = 5 + m_waveCounter * 5;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
+		m_p_currentWorld->getEnemyVector()->reserve(enemiesToSpawn);
 		if(m_gameHandlerType != GameHandlerType::client)		//Clients don't spawn enemies themselves
 			while (enemiesToSpawn > 0) {
 				if (trySpawningEnemy())

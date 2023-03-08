@@ -2,6 +2,7 @@
 #include "SDL_image.h"
 #include "Resources.h"
 #include <iostream>
+
 Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 120 * 2, 80 * 2 }, 3)
 {
 	SDL_Surface *tmpSurface = IMG_Load(RSC_PLAYER_IDLE);
@@ -157,7 +158,6 @@ void Player::renderBody(SDL_Renderer* renderer)
 
 	if (m_currentDirection)
 		m_spriteBounds.x += 20;
-
 }
 
 float Player::getAttackCooldownPercent()

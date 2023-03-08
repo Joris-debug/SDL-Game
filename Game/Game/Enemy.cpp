@@ -269,12 +269,6 @@ walkingVector Enemy::checkEnemyMove(World* p_world, float x, float y, float delt
 	return { x * !xCollision, y * !yCollision };
 }
 
-void Enemy::setAnimation(Uint8 mode, short frame)
-{
-	m_currentMode = static_cast<Mode>(mode);
-	m_currentSprite = frame;
-}
-
 Enemy::~Enemy()
 {
 	delete m_p_lastTargetAssigned;

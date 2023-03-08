@@ -5,11 +5,12 @@
 #include <vector>
 #include <iostream>
 #include <random>
-class Interface;
+
 class Player;
 class Enemy;
 class TradingPost;
 class Effect;
+class PlayerTwo;
 
 class World :
     public Vicinity
@@ -19,6 +20,7 @@ private:
     TradingPost* m_p_merchant;
     bool m_merchantIsActive;
     Player* m_p_player;
+    PlayerTwo* m_p_playerTwo;
     std::vector<Enemy*> m_enemyVector;
     std::vector<Entity*> m_entityVector;
     std::mt19937* m_p_randomNumberEngine;
@@ -53,5 +55,7 @@ public:
     inline std::vector<Enemy*>* getEnemyVector() { return &m_enemyVector; }
     inline std::vector<Entity*>* getEntityVector() { return &m_entityVector; }
     inline Player* getPlayer() { return m_p_player; }
+    inline PlayerTwo* getPlayerTwo() { return m_p_playerTwo; }
+    inline void setPlayerTwo(PlayerTwo* m_p_playerTwo) { this->m_p_playerTwo = m_p_playerTwo; }
 };
 

@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "GameHandler.h"
 #include "VirtualEnemy.h"
+#include "PlayerTwo.h"
 #include <iostream>
 
 GameClient::GameClient(int port, World* m_p_world, GameHandler* m_p_gameHandler)
@@ -39,16 +40,14 @@ void GameClient::run()
 		while (*p_serverLock);
 		*p_serverLock = true; //stop the world from interfering with this thread iterating trough the vector
 		SDL_FRect* p_mapBounds = m_p_currentWorld->getBounds();
-		std::cout << "mapPosX:" << p_mapBounds->x << std::endl;
+		
 		for (int i = 0; i < vectorSize; i++) {
 			int enemyId = m_p_socket->read();
 			Uint8 enemyType = m_p_socket->read();
 			existingEnemies.push_back(enemyId);
-			std::cout << enemyId << std::endl;
 			SDL_FPoint enemyPos;
 			enemyPos.x = p_mapBounds->x - float(m_p_socket->read()) / 10.0f;
 			enemyPos.y = p_mapBounds->y - float(m_p_socket->read()) / 10.0f;
-			std::cout << enemyPos.x << ": pos\n";
 			Uint8 enemyMode = m_p_socket->read();
 			short currentSprite = m_p_socket->read();
 			if (!m_p_currentWorld->checkIfEnemyExists(enemyId))
@@ -59,10 +58,14 @@ void GameClient::run()
 		}
 		m_p_currentWorld->deleteNotExistingVirtualEnemies(existingEnemies);
 		std::cout << "Player:\n";
-		std::cout << m_p_socket->read() << std::endl;
-		std::cout << m_p_socket->read() << std::endl;
-		std::cout << m_p_socket->read() << std::endl;
-		std::cout << m_p_socket->read() << std::endl;
+		SDL_FPoint playerPos;
+		playerPos.x = p_mapBounds->x - float(m_p_socket->read()) / 10.0f;
+		playerPos.y = p_mapBounds->y - float(m_p_socket->read()) / 10.0f;
+		Uint8 playerMode = m_p_socket->read();
+		short currentSprite = m_p_socket->read();
+		PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
+		p_playerTwo->setAnimation(playerMode, currentSprite);
+		p_playerTwo->teleportPlayerTwo(playerPos);
 		*p_serverLock = true;
 	}
 	m_p_socket->close();

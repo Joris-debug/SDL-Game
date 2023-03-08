@@ -22,6 +22,8 @@ void VirtualEnemy::enemyPathfinding(World* p_world, float deltaTime)
 
 void VirtualEnemy::animateBody(float x, float y)
 {
+	m_textureCoords.x = m_textureCoords.w * m_currentSprite;/*
+	m_textureCoords.y = m_textureCoords.h * spriteLayer;*/
 }
 
 bool VirtualEnemy::damageBody(short damage)

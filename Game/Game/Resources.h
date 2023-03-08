@@ -14,6 +14,12 @@
 #define RSC_PLAYER_ATTACK "./Sprites/Player/Player 1/_AttackComboNoMovement.png"
 #define RSC_PLAYER_HIT "./Sprites/Player/Player 1/_Hit.png"
 
+#define RSC_PLAYER2_IDLE "./Sprites/Player/Player 2/_Idle.png"
+#define RSC_PLAYER2_RUN "./Sprites/Player/Player 2/_Run.png"
+#define RSC_PLAYER2_TURN "./Sprites/Player/Player 2/_TurnAround.png"
+#define RSC_PLAYER2_ATTACK "./Sprites/Player/Player 2/_AttackComboNoMovement.png"
+#define RSC_PLAYER2_HIT "./Sprites/Player/Player 2/_Hit.png"
+
 #define RSC_MANTIS_IDLE "./Sprites/Enemies/Mantis/_Idle.png"
 #define RSC_MANTIS_WALK "./Sprites/Enemies/Mantis/_Walk.png"
 #define RSC_MANTIS_HIT "./Sprites/Enemies/Mantis/_Hit.png"

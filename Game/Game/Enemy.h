@@ -25,7 +25,6 @@ public:
     void renderBody(SDL_Renderer* renderer);
     void teleportEnemy(SDL_FPoint newPos);
     virtual walkingVector checkEnemyMove(World* p_world, float x, float y, float deltaTime);        //Returns a legal move
-    void setAnimation(Uint8 mode, short frame);
     inline int getEnemyId() { return m_enemyId; }
     inline EnemyType getEnemyType() { return m_enemyType; }
     ~Enemy();
