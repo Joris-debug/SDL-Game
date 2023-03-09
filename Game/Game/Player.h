@@ -32,6 +32,7 @@ public:
     inline bool checkAttackCooldown() { return m_p_lastAttack->checkClockState(); }
     inline bool getIsAttacking() { return (m_currentMode == Mode::attack); }
     inline void setIsAttacking() { m_currentMode = Mode::attack; m_currentSprite = 0; m_p_lastAttack->setStartPoint(SDL_GetTicks()); }
+    inline bool getCurrentDirection() { return m_currentDirection; }
     inline void moveFootSpace(float x, float y) { m_footSpace.x += x; m_footSpace.y += y; }
 	inline SDL_FRect* getFootSpace() { return &m_footSpace; }
 };

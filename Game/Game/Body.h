@@ -45,6 +45,7 @@ public:
 	inline short getMaxLives() { return m_maxLives; }
 	inline void healBody() { m_currentLives = m_maxLives; }
 	inline SDL_FRect* getSpriteBounds() { return &m_spriteBounds; }
+	inline SDL_Rect* getTextureCoords() { return &m_textureCoords; }
 	inline void updateMaxLives(int sum) { m_maxLives += sum; }
 	bool isInvincible();
 	void setAnimation(Uint8 mode, short frame);

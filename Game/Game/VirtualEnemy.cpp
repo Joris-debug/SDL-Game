@@ -18,12 +18,12 @@ VirtualEnemy::VirtualEnemy(int m_enemyId, Uint8 m_enemyType, SDL_Texture* m_p_te
 
 void VirtualEnemy::enemyPathfinding(World* p_world, float deltaTime)
 {
+	animateBody(0, 0);
 }
 
 void VirtualEnemy::animateBody(float x, float y)
 {
-	m_textureCoords.x = m_textureCoords.w * m_currentSprite;/*
-	m_textureCoords.y = m_textureCoords.h * spriteLayer;*/
+	m_textureCoords.x = m_textureCoords.w * m_currentSprite;
 }
 
 bool VirtualEnemy::damageBody(short damage)

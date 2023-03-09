@@ -25,6 +25,7 @@ int GameHandler::gameLoop()
 	case 1:
 		m_gameHandlerType = GameHandlerType::server;
 		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
+		m_p_currentWorld->setPlayerTwo(new PlayerTwo(m_p_renderer, { 0,0 }));
 		m_p_communicationThread->startThread();
 		while (!m_connectionEstablished) {
 			std::cout << ".";
@@ -161,7 +162,7 @@ int GameHandler::gameLoop()
 						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
-					m_p_currentWorld->moveWorld(x_input, y_input, 0.12f * m_deltaTime);
+					m_p_currentWorld->moveWorld(x_input, y_input, 0.02f * m_deltaTime);
 					break;
 
 				case GameStates::isStarting:

@@ -3,6 +3,7 @@
 #include "World.h"
 #include "Beetle.h"
 #include "Player.h"
+#include "PlayerTwo.h"
 #include "GameHandler.h"
 
 GameServer::GameServer(int port, World* m_p_world, GameHandler* m_p_gameHandler)
@@ -44,12 +45,28 @@ void GameServer::run()
 			p_workSocket->write(round((p_mapBounds->y - cursor->getBounds()->y) * 10.0f));
 			p_workSocket->write(static_cast<int>(cursor->getCurrentMode()));
 			p_workSocket->write(cursor->getCurrentSprite());
+			p_workSocket->write(cursor->getTextureCoords()->y);
 		}
 		Player* p_player = m_p_currentWorld->getPlayer();
 		p_workSocket->write(round((p_mapBounds->x - p_player->getBounds()->x) * 10.0f));
 		p_workSocket->write(round((p_mapBounds->y - p_player->getBounds()->y) * 10.0f));
 		p_workSocket->write(static_cast<int>(p_player->getCurrentMode()));
 		p_workSocket->write(p_player->getCurrentSprite());
+		p_workSocket->write(p_player->getCurrentDirection());
+
+		//------------------------------------------------------------------------------------------------ Server will now receive client player data
+		SDL_FPoint playerPos;
+		playerPos.x = p_mapBounds->x - float(p_workSocket->read()) / 10.0f;
+		playerPos.y = p_mapBounds->y - float(p_workSocket->read()) / 10.0f;
+
+		Uint8 playerMode = p_workSocket->read();
+		short currentSprite = p_workSocket->read();
+		bool currentDirection = p_workSocket->read();
+
+		PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
+		p_playerTwo->setCurrentDirection(currentDirection);
+		p_playerTwo->setAnimation(playerMode, currentSprite);
+		p_playerTwo->teleportPlayerTwo(playerPos);
 		*p_serverLock = false;
 	}
 	m_p_serverSocket->close();

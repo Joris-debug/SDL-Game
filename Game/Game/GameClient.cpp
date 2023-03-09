@@ -30,6 +30,7 @@ void GameClient::run()
 	std::vector<int> existingEnemies;
 
 	while (m_threadIsRunning) {
+
 		std::cout << m_p_socket->readLine() << std::endl;
 
 		int vectorSize = m_p_socket->read();	//So the client knows how many enemies will be transmitted
@@ -42,31 +43,50 @@ void GameClient::run()
 		SDL_FRect* p_mapBounds = m_p_currentWorld->getBounds();
 		
 		for (int i = 0; i < vectorSize; i++) {
+
 			int enemyId = m_p_socket->read();
-			Uint8 enemyType = m_p_socket->read();
 			existingEnemies.push_back(enemyId);
+			Uint8 enemyType = m_p_socket->read();
+
 			SDL_FPoint enemyPos;
 			enemyPos.x = p_mapBounds->x - float(m_p_socket->read()) / 10.0f;
 			enemyPos.y = p_mapBounds->y - float(m_p_socket->read()) / 10.0f;
+
 			Uint8 enemyMode = m_p_socket->read();
 			short currentSprite = m_p_socket->read();
+			int textureCoordsY = m_p_socket->read();
+
 			if (!m_p_currentWorld->checkIfEnemyExists(enemyId))
 				m_p_gameHandler->createNewVirtualEnemy(enemyId, enemyType, enemyPos);	//create new enemy
+			//---------------------------------------------------------------------------------------------------- Update enemy data
 			Enemy* p_enemy = m_p_currentWorld->getEnemyById(enemyId);	//find the enemy
+			p_enemy->getTextureCoords()->y = textureCoordsY;
 			p_enemy->setAnimation(enemyMode, currentSprite);
 			p_enemy->teleportEnemy(enemyPos);
 		}
 		m_p_currentWorld->deleteNotExistingVirtualEnemies(existingEnemies);
-		std::cout << "Player:\n";
+
 		SDL_FPoint playerPos;
 		playerPos.x = p_mapBounds->x - float(m_p_socket->read()) / 10.0f;
 		playerPos.y = p_mapBounds->y - float(m_p_socket->read()) / 10.0f;
+
 		Uint8 playerMode = m_p_socket->read();
 		short currentSprite = m_p_socket->read();
+		bool currentDirection = m_p_socket->read();
+
 		PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
+		p_playerTwo->setCurrentDirection(currentDirection);
 		p_playerTwo->setAnimation(playerMode, currentSprite);
 		p_playerTwo->teleportPlayerTwo(playerPos);
 		*p_serverLock = true;
+
+		//------------------------------------------------------------------------------------------------------- Client will now send its own player data
+		Player* p_player = m_p_currentWorld->getPlayer();
+		m_p_socket->write(round((p_mapBounds->x - p_player->getBounds()->x) * 10.0f));
+		m_p_socket->write(round((p_mapBounds->y - p_player->getBounds()->y) * 10.0f));
+		m_p_socket->write(static_cast<int>(p_player->getCurrentMode()));
+		m_p_socket->write(p_player->getCurrentSprite());
+		m_p_socket->write(p_player->getCurrentDirection());
 	}
 	m_p_socket->close();
 }

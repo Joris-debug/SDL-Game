@@ -17,5 +17,6 @@ public:
     void teleportPlayerTwo(SDL_FPoint newPos);
     void animateBody(float x, float y) override;
     SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
+    inline void setCurrentDirection(bool m_currentDirection) { this->m_currentDirection = m_currentDirection; }
 };
 
