@@ -100,10 +100,10 @@ void Interface::startGame()
 {
     SoundHandler::getInstance();    //This will create the SoundHandler
     m_p_GameHandler = new GameHandler(m_p_renderer);
-    while (true) {
-        m_p_GameHandler->initWorld();
+    while (!m_p_GameHandler->initWorld()) {
         m_p_GameHandler->resetWorld();
     }
+    delete m_p_GameHandler;
 }
 
 void Interface::displayFPS(double deltaTime)

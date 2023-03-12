@@ -4,6 +4,7 @@
 #include "Resources.h"
 #include "SDL_image.h"
 #include "Beetle.h"
+#include "VirtualEnemy.h"
 #include "Player.h"
 #include "PlayerTwo.h"
 #include "Effect.h"
@@ -67,6 +68,13 @@ void World::moveWorld(float x, float y, float deltaTime)
 	}
 
 	checkIfPlayerHit();
+
+	if (m_p_playerTwo) {
+		if(m_p_playerTwo->isAttacking())
+			damageEnemysInPlayerTwoRadius();
+		checkIfPlayerTwoHit();
+	}
+
 	checkForDefeatedEnemies();
 	checkIfMerchantDespawned();
 
@@ -86,6 +94,9 @@ void World::moveWorld(float x, float y, float deltaTime)
 		cursor->moveEntity(x * deltaTime, y * deltaTime);
 	}
 
+	if (m_p_playerTwo)
+		m_p_playerTwo->moveEntity(x * deltaTime, y * deltaTime);
+
 	this->moveVicinity(x * deltaTime, y * deltaTime);
 	m_p_topMap->moveVicinity(x * deltaTime, y * deltaTime);
 }
@@ -98,6 +109,8 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 	bool xCollision = false, yCollision = false;
 	float xMovement = x * deltaTime * -1, yMovement = y * deltaTime * -1; //Invert because now I am going to move the player and not the world
 	SDL_FRect* p_playerBounds = m_p_player->getFootSpace();
+	SDL_FRect* p_playerTwoBounds = (m_p_playerTwo) ? m_p_playerTwo->getFootSpace() : nullptr;
+	bool playersOverlap = (m_p_playerTwo) ? SDL_HasIntersectionF(p_playerBounds, p_playerTwoBounds) : true;
 
 	m_p_player->moveFootSpace(xMovement, 0);
 
@@ -107,6 +120,11 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 			break;
 		}
 	}
+
+	if (!xCollision && !playersOverlap && SDL_HasIntersectionF(p_playerBounds, p_playerTwoBounds)) {
+		xCollision = true;
+	}
+
 	m_p_player->moveFootSpace(-xMovement, 0);
 
 	m_p_player->moveFootSpace(0, yMovement);
@@ -116,6 +134,11 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 			break;
 		}
 	}
+
+	if (!yCollision && !playersOverlap && SDL_HasIntersectionF(p_playerBounds, p_playerTwoBounds)) {
+		yCollision = true;
+	}
+
 	m_p_player->moveFootSpace(0, -yMovement);
 
 	if (!xCollision && !yCollision) { //check if x and y movement results in colission
@@ -127,8 +150,14 @@ walkingVector World::checkPlayerMove(float x, float y, float deltaTime)
 				break;
 			}
 		}
+
+		if (!yCollision && !playersOverlap && SDL_HasIntersectionF(p_playerBounds, p_playerTwoBounds)) {
+			yCollision = true;
+		}
+
 		m_p_player->moveFootSpace(-xMovement, -yMovement);
 	}
+
 	return{ !xCollision * x, !yCollision * y };
 }
 
@@ -144,12 +173,21 @@ void World::renderWorld(SDL_Renderer* renderer)
 	for (auto cursor : m_enemyVector) {
 		if(cursor->getEnemyType() != EnemyType::beetle)
 			cursor->renderBody(renderer);
-	}  
+	}
 
-	m_p_player->renderBody(renderer);
-
-	if (m_p_playerTwo)
-		m_p_playerTwo->renderBody(renderer);
+	if (m_p_playerTwo) {
+		if (m_p_playerTwo->getBounds()->x < m_p_player->getBounds()->x) {  //If there is a playerTwo and he is positioned above player one
+			m_p_playerTwo->renderBody(renderer);
+			m_p_player->renderBody(renderer);
+		}
+		else {
+			m_p_player->renderBody(renderer);
+			m_p_playerTwo->renderBody(renderer);
+		}
+	}
+	else
+		m_p_player->renderBody(renderer);
+	
 
 	if(m_merchantIsActive)
 		m_p_merchant->renderTradingPostRoof(renderer);
@@ -164,11 +202,15 @@ void World::renderWorld(SDL_Renderer* renderer)
 			cursor->renderBody(renderer);
 	}
 
-	//SDL_FRect* playerTextureCoords = m_p_player_->getBounds();
+	//SDL_FRect* playerTextureCoords = m_p_player->getFootSpace();
 	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
-	for (auto cursor : m_enemyVector) {
-		SDL_RenderDrawRectF( renderer, cursor->getBounds());
-	}
+
+	//playerTextureCoords = m_p_playerTwo->getFootSpace();
+	//SDL_RenderDrawRectF(renderer, playerTextureCoords);
+
+	//for (auto cursor : m_enemyVector) {
+	//	SDL_RenderDrawRectF( renderer, cursor->getBounds());
+	//}
 
 }
 
@@ -176,13 +218,14 @@ void World::triggerPlayerAttack()
 {
 	if (!m_p_player->checkAttackCooldown() || m_p_player->isInvincible())  //Player is already attacking or Attacked less than 8 seconds ago
 		return;
-
 	SoundHandler::getInstance().playSwordSound();
 	m_p_player->setIsAttacking();
 }
 
 void World::damageEnemysInPlayerRadius()
 {
+	if (m_enemyVector.empty())
+		return;
 	SDL_FRect* playerTextureCoords = m_p_player->getSpriteBounds();
 	SDL_FRect attackRadius = { playerTextureCoords->x + 26*2, playerTextureCoords->y + 40*2, 68*2, 41*2 };
 	auto it = m_enemyVector.begin();
@@ -194,12 +237,49 @@ void World::damageEnemysInPlayerRadius()
 	}
 }
 
-void World::checkIfPlayerHit()
+void World::damageEnemysInPlayerTwoRadius()
 {
+	if (m_enemyVector.empty())
+		return;
+	SDL_FRect* playerTextureCoords = m_p_playerTwo->getSpriteBounds();
+	SDL_FRect attackRadius = { playerTextureCoords->x + 26 * 2, playerTextureCoords->y + 40 * 2, 68 * 2, 41 * 2 };
 	auto it = m_enemyVector.begin();
 	while (it != m_enemyVector.end()) {
+		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds()) && (*it)->damageBody(1)) {
+			SoundHandler::getInstance().playEnemyHitSound();
+		}
+		it++;
+	}
+}
+
+void World::checkIfPlayerHit()
+{
+	if (m_enemyVector.empty())
+		return;
+
+	auto it = m_enemyVector.begin();
+	if (typeid(*it) == typeid(VirtualEnemy))	//VirtualEnemies dont damage the player
+			return;
+
+	while (it != m_enemyVector.end()) {
+
 		if (SDL_HasIntersectionF(m_p_player->getBounds(), (*it)->getBounds()) && m_p_player->damageBody(1)) {
 			SoundHandler::getInstance().playPlayerHitSound();
+		}
+		it++;
+	}
+}
+
+void World::checkIfPlayerTwoHit()
+{
+	if (!m_p_playerTwo->getPlayerType())		//Return value 1 means that player two is the client and i am the server, thats why i have to check for damage
+		return;
+
+	auto it = m_enemyVector.begin();
+	while (it != m_enemyVector.end()) {
+		if (SDL_HasIntersectionF(m_p_playerTwo->getBounds(), (*it)->getBounds()) && m_p_playerTwo->damageBody(1)) {
+			SoundHandler::getInstance().playPlayerHitSound();
+			m_p_playerTwo->setHitDetected(true);
 		}
 		it++;
 	}

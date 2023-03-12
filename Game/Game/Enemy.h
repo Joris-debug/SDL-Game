@@ -27,6 +27,6 @@ public:
     virtual walkingVector checkEnemyMove(World* p_world, float x, float y, float deltaTime);        //Returns a legal move
     inline int getEnemyId() { return m_enemyId; }
     inline EnemyType getEnemyType() { return m_enemyType; }
-    ~Enemy();
+    virtual ~Enemy();
 };
 

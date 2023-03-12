@@ -1,14 +1,14 @@
 #include "WorkThread.h"
-
+#include <iostream>
 WorkThread::WorkThread()
 {
-	m_threadIsRunning = true;
+	m_threadStatus = MultiplayerStatus::isRunning;
+	m_p_thread = nullptr;
 }
 
 WorkThread::~WorkThread()
 {
-	m_threadIsRunning = false;	//To ensure the app doesnt wait forever
-	m_p_thread->join();
+	std::cout << "Delete workthread";
 	delete m_p_thread;
 }
 

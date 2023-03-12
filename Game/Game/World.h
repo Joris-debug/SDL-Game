@@ -33,7 +33,9 @@ public:
     void renderWorld(SDL_Renderer* renderer);
     void triggerPlayerAttack();
     void damageEnemysInPlayerRadius();
+    void damageEnemysInPlayerTwoRadius();
     void checkIfPlayerHit();
+    void checkIfPlayerTwoHit();
     void checkForDefeatedEnemies();
     void makeMerchantAppear();
     bool trySpawningMerchantClose();

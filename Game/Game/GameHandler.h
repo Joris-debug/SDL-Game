@@ -52,7 +52,9 @@ public:
 	void renderEverything(bool leftMouseButtonPressed);
 	void createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_FPoint enemyPos);
 	inline int getWaveCounter() { return m_waveCounter; }
+	void updateWaveCounter(int newWaveCounter);
 	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
 	inline void updateConnectionEstablished(bool newValue) { m_connectionEstablished = newValue; }
+	inline void setGameState(GameStates m_gameState) { this->m_gameState = m_gameState; }
 };
 

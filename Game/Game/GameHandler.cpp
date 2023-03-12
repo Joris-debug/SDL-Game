@@ -25,7 +25,7 @@ int GameHandler::gameLoop()
 	case 1:
 		m_gameHandlerType = GameHandlerType::server;
 		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
-		m_p_currentWorld->setPlayerTwo(new PlayerTwo(m_p_renderer, { 0,0 }));
+		m_p_currentWorld->setPlayerTwo(new PlayerTwo(1, m_p_renderer, { 0,0 }));
 		m_p_communicationThread->startThread();
 		while (!m_connectionEstablished) {
 			std::cout << ".";
@@ -36,7 +36,7 @@ int GameHandler::gameLoop()
 	case 2:
 		m_gameHandlerType = GameHandlerType::client;
 		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
-		m_p_currentWorld->setPlayerTwo(new PlayerTwo(m_p_renderer, { 0,0 }));
+		m_p_currentWorld->setPlayerTwo(new PlayerTwo(0, m_p_renderer, { 0,0 }));
 		m_p_communicationThread->startThread();
 		while (!m_connectionEstablished) {
 			std::cout << ".";
@@ -67,7 +67,7 @@ int GameHandler::gameLoop()
 				switch (Interface::getInstance().getInputQueue()->type)
 				{
 				case SDL_QUIT:
-					exit(1);
+					return 1;
 					break;
 
 				case SDL_MOUSEBUTTONDOWN:
@@ -154,11 +154,11 @@ int GameHandler::gameLoop()
 						}
 					}
 
-
-
 					if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 						x_input = 0;
 						y_input = 0;
+						if (m_gameHandlerType != GameHandlerType::singleplayer) //If i am playing online
+							m_p_communicationThread->setThreadStatus(MultiplayerStatus::gameOver);	//So the other game will also end
 						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
@@ -186,7 +186,10 @@ int GameHandler::gameLoop()
 
 	}
 
-	exit_loop:;
+exit_loop:
+	if (m_gameHandlerType != GameHandlerType::singleplayer && m_p_communicationThread->getThreadStatus() != MultiplayerStatus::gameOver) //If i am playing online and exited the game normally
+		m_p_communicationThread->setThreadStatus(MultiplayerStatus::gameEnded);	//So the other game will also end
+
 	return 0;
 }
 
@@ -307,8 +310,9 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 
 GameHandler::~GameHandler()
 {
+	std::cout << "Delete GameHandler\n";
+	m_currentFrameTransmitted = false;
 	delete m_p_communicationThread;
-
 	delete m_p_newMenuOpened;
 	delete m_p_waveClock;
 	delete m_p_currentWorld;
@@ -433,6 +437,8 @@ int GameHandler::initWorld()
 
 void GameHandler::resetWorld()
 {
+	m_connectionEstablished = false;
+	delete m_p_communicationThread;
 	delete m_p_currentWorld;
 	delete m_p_menuManager;
 	m_waveCounter = 0;
@@ -494,16 +500,18 @@ void GameHandler::checkCurrentWave()
 		
 	}	
 
+	if (m_gameHandlerType == GameHandlerType::client)
+		return;
+
 	if (!m_p_currentWorld->getMerchantIsActive()) {
 		m_waveCounter++;
 		short enemiesToSpawn = 5 + m_waveCounter * 5;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 		m_p_currentWorld->getEnemyVector()->reserve(enemiesToSpawn);
-		if(m_gameHandlerType != GameHandlerType::client)		//Clients don't spawn enemies themselves
-			while (enemiesToSpawn > 0) {
-				if (trySpawningEnemy())
-					enemiesToSpawn--;
-			}
+		while (enemiesToSpawn > 0) {
+			if (trySpawningEnemy())
+				enemiesToSpawn--;
+		}
 	}
 
 }
@@ -689,4 +697,14 @@ void GameHandler::createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_FPoint
 	}
 
 	m_p_currentWorld->addEnemyToMap(new VirtualEnemy(enemyId, enemyType, m_enemyTexturesIdle[enemyType], m_enemyTexturesWalk[enemyType], m_enemyTexturesHit[enemyType], tmpRectBounds, tmpRectSprite, 1));
+}
+
+void GameHandler::updateWaveCounter(int newWaveCounter)
+{
+	if (newWaveCounter == m_waveCounter)
+		return;
+	m_waveCounter = newWaveCounter;
+	short enemiesToSpawn = 5 + m_waveCounter * 5;
+	m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
+	m_p_currentWorld->getEnemyVector()->reserve(enemiesToSpawn);
 }

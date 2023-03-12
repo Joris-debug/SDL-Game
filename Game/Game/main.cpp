@@ -4,4 +4,5 @@
 int main()
 {
 	Interface::getInstance().startGame();
+	return 0;
 }

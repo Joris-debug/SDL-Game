@@ -1,9 +1,10 @@
 #include "PlayerTwo.h"
 #include "Resources.h"
 #include "SDL_image.h"
+#include "Clock.h"
 #include <iostream>
 
-PlayerTwo::PlayerTwo(SDL_Renderer* renderer, SDL_FPoint startPos) : Body({ startPos.x,startPos.y, 40, 75 }, { startPos.x - 90, startPos.y - 85, 120 * 2, 80 * 2 }, 3)
+PlayerTwo::PlayerTwo(bool m_playerType, SDL_Renderer* renderer, SDL_FPoint startPos) : Body({ startPos.x,startPos.y, 40, 75 }, { startPos.x - 90, startPos.y - 85, 120 * 2, 80 * 2 }, 3)
 {
 	SDL_Surface* tmpSurface = IMG_Load(RSC_PLAYER2_IDLE);
 	m_p_textureIdle = SDL_CreateTextureFromSurface(renderer, tmpSurface);
@@ -26,6 +27,11 @@ PlayerTwo::PlayerTwo(SDL_Renderer* renderer, SDL_FPoint startPos) : Body({ start
 	SDL_FreeSurface(tmpSurface);
 
 	m_currentDirection = 0; //Player two spawns looking right
+	m_hitDetected = false;
+	this->m_playerType = m_playerType;
+	m_p_lastAttackTrigger = new Clock(1000, false);
+	m_p_lastAttackTrigger->setStartPoint(-1000);
+	m_footSpace = { startPos.x, startPos.y + 50, 40, 24 };
 }
 
 PlayerTwo::~PlayerTwo()
@@ -73,11 +79,27 @@ void PlayerTwo::teleportPlayerTwo(SDL_FPoint newPos)
 	m_bounds.y = newPos.y;
 	m_spriteBounds.x = newPos.x - 90;
 	m_spriteBounds.y = newPos.y - 85;
+	m_footSpace.x = newPos.x;
+	m_footSpace.y = newPos.y + 50;
 }
 
 void PlayerTwo::animateBody(float x, float y)
 {
 	m_textureCoords = { 120 * m_currentSprite, 0, 120, 80 };
+}
+
+bool PlayerTwo::damageBody(short damage)
+{
+	if (m_currentMode == Mode::hit)
+		return false;
+
+	return true;
+}
+
+void PlayerTwo::moveEntity(float x, float y)
+{
+	moveFootSpace(x, y);
+	Body::moveEntity(x, y);
 }
 
 SDL_FPoint* PlayerTwo::getPlayerTargets()

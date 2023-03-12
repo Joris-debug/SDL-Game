@@ -18,6 +18,7 @@ private:
     bool m_currentDirection; // 0: right, 1 = left
     bool m_lastDirection; // 0: right, 1 = left
 	int m_attackCooldown;
+    bool m_newAttackTriggered;  //Used for multiplayer
 public:
     Player(SDL_Renderer *renderer);
     ~Player();
@@ -25,13 +26,14 @@ public:
     void animateBody(float x, float y) override;
     void renderBody(SDL_Renderer *renderer) override;
     float getAttackCooldownPercent();
+    void setIsAttacking();
     SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
+    inline bool getNewAttackTriggered() { return (m_newAttackTriggered) ?  !bool(m_newAttackTriggered = false) : false; }
     inline void updateAttackCooldown(int sum) { m_attackCooldown += sum; m_p_lastAttack->setInterval(m_attackCooldown); };
     inline int getCoinCounter() { return m_coinCounter; }
     inline void updateCoinCounter(int sum) { m_coinCounter += sum; }
     inline bool checkAttackCooldown() { return m_p_lastAttack->checkClockState(); }
     inline bool getIsAttacking() { return (m_currentMode == Mode::attack); }
-    inline void setIsAttacking() { m_currentMode = Mode::attack; m_currentSprite = 0; m_p_lastAttack->setStartPoint(SDL_GetTicks()); }
     inline bool getCurrentDirection() { return m_currentDirection; }
     inline void moveFootSpace(float x, float y) { m_footSpace.x += x; m_footSpace.y += y; }
 	inline SDL_FRect* getFootSpace() { return &m_footSpace; }

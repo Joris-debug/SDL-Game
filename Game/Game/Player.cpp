@@ -25,7 +25,7 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_p_textureHit = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 	SDL_FreeSurface(tmpSurface);
 
-	m_footSpace = { 378, 336, 42, 24}; //This area collides with obstacles 
+	m_footSpace = { 380, 335, 40, 24}; //This area collides with obstacles 
 
 	m_currentDirection = 0; //Player spawns looking right
 	m_lastDirection = 0;
@@ -34,6 +34,7 @@ Player::Player(SDL_Renderer* renderer) : Body({ 380, 285, 40, 75 }, { 290, 200, 
 	m_attackCooldown = PLAYER_ATTACK_COOLDOWN;
 	m_p_lastAttack = new Clock(m_attackCooldown, false);
 	m_p_lastAttack->setStartPoint(-6000);
+	m_newAttackTriggered = false;
 	animateBody(0, 0);
 }
 
@@ -53,7 +54,6 @@ bool Player::detectTurning()
 	if(m_lastDirection != m_currentDirection) {
 		return true;
 	}
-
 	return false;
 }
 
@@ -167,6 +167,14 @@ float Player::getAttackCooldownPercent()
 
 	Uint32 lastAttack = m_p_lastAttack->getStartPoint();
 	return (SDL_GetTicks() - lastAttack) / float(m_attackCooldown);
+}
+
+void Player::setIsAttacking()
+{
+	m_newAttackTriggered = true;
+	m_currentMode = Mode::attack; 
+	m_currentSprite = 0; 
+	m_p_lastAttack->setStartPoint(SDL_GetTicks());
 }
 
 SDL_FPoint* Player::getPlayerTargets()

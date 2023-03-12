@@ -9,7 +9,7 @@ protected:
 
 public:
 	Vicinity(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer);
-	~Vicinity();
+	virtual ~Vicinity();
 	void moveVicinity(float x, float y);
 	void renderVicinity(SDL_Renderer* renderer);
 	inline SDL_FRect* getBounds() { return &m_bounds; }

@@ -16,6 +16,8 @@ GameClient::GameClient(int port, World* m_p_world, GameHandler* m_p_gameHandler)
 
 GameClient::~GameClient()
 {
+	m_threadStatus = MultiplayerStatus::gameEnded;	//To ensure the app doesnt wait forever
+	m_p_thread->join();
 	delete m_p_socket;
 }
 
@@ -27,14 +29,14 @@ void GameClient::run()
 	}
 
 	m_p_gameHandler->updateConnectionEstablished(true);
+	MultiplayerStatus serverStatus;
 	std::vector<int> existingEnemies;
+	Player* p_player = m_p_currentWorld->getPlayer();
+	PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
 
-	while (m_threadIsRunning) {
-
-		std::cout << m_p_socket->readLine() << std::endl;
-
+	while (true) {
 		int vectorSize = m_p_socket->read();	//So the client knows how many enemies will be transmitted
-		std::cout << vectorSize << std::endl;
+		//std::cout << vectorSize << std::endl;
 		existingEnemies.clear();			//I dont know which enemies exist at the moment
 
 		bool* p_serverLock = m_p_currentWorld->getServerLock();
@@ -74,19 +76,37 @@ void GameClient::run()
 		short currentSprite = m_p_socket->read();
 		bool currentDirection = m_p_socket->read();
 
-		PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
 		p_playerTwo->setCurrentDirection(currentDirection);
 		p_playerTwo->setAnimation(playerMode, currentSprite);
 		p_playerTwo->teleportPlayerTwo(playerPos);
 		*p_serverLock = true;
 
+		m_p_gameHandler->updateWaveCounter(m_p_socket->read());
+		if (m_p_socket->read())			//This transmitted flag tells the client that its been hit
+			p_player->damageBody(1);
 		//------------------------------------------------------------------------------------------------------- Client will now send its own player data
-		Player* p_player = m_p_currentWorld->getPlayer();
 		m_p_socket->write(round((p_mapBounds->x - p_player->getBounds()->x) * 10.0f));
 		m_p_socket->write(round((p_mapBounds->y - p_player->getBounds()->y) * 10.0f));
 		m_p_socket->write(static_cast<int>(p_player->getCurrentMode()));
 		m_p_socket->write(p_player->getCurrentSprite());
 		m_p_socket->write(p_player->getCurrentDirection());
+		//------------------------------------------------------------------------------------------------------- Client will now receive info about the game
+
+		m_p_socket->write(p_player->getNewAttackTriggered());
+		
+		m_p_socket->write(static_cast<int>(m_threadStatus));
+		serverStatus = static_cast<MultiplayerStatus>(m_p_socket->read());
+
+		if (serverStatus != MultiplayerStatus::isRunning || m_threadStatus != MultiplayerStatus::isRunning) {
+			/*std::cout << "Client ended\n";*/
+			break;
+		}
 	}
+
+	if (serverStatus == MultiplayerStatus::gameOver)	//If the server dies, the client dies also
+		p_player->damageBody(p_player->getCurrentLives());
+	else if (serverStatus == MultiplayerStatus::gameEnded)	//If the server exits the game, the client will also
+		m_p_gameHandler->setGameState(GameStates::hasEnded);
+
 	m_p_socket->close();
 }
