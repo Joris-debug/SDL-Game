@@ -102,6 +102,14 @@ void PlayerTwo::moveEntity(float x, float y)
 	Body::moveEntity(x, y);
 }
 
+SDL_FRect* PlayerTwo::getPlayerTwoScreen()
+{
+	static SDL_FRect screenBouds{ 0, 0, 800, 640 };
+	screenBouds.x = m_spriteBounds.x - 290;
+	screenBouds.x = m_spriteBounds.y - 200;
+	return &screenBouds;
+}
+
 SDL_FPoint* PlayerTwo::getPlayerTargets()
 {
 	return nullptr;

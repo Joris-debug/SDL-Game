@@ -21,6 +21,7 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 	m_p_merchant = new TradingPost(renderer, m_p_randomNumberEngine_, m_p_spawnEffect_);
 	m_serverLock = false;
 	m_p_topMap = nullptr;
+	m_triggerMerchantSpawnOnClient = false;	//I dont want the server to tell the client that it should spawn a merchant yet
 }
 
 World::~World()
@@ -176,7 +177,7 @@ void World::renderWorld(SDL_Renderer* renderer)
 	}
 
 	if (m_p_playerTwo) {
-		if (m_p_playerTwo->getBounds()->x < m_p_player->getBounds()->x) {  //If there is a playerTwo and he is positioned above player one
+		if (m_p_playerTwo->getBounds()->y < m_p_player->getBounds()->y) {  //If there is a playerTwo and he is positioned above player one
 			m_p_playerTwo->renderBody(renderer);
 			m_p_player->renderBody(renderer);
 		}
@@ -258,7 +259,7 @@ void World::checkIfPlayerHit()
 		return;
 
 	auto it = m_enemyVector.begin();
-	if (typeid(*it) == typeid(VirtualEnemy))	//VirtualEnemies dont damage the player
+	if (typeid(**it) == typeid(VirtualEnemy))	//VirtualEnemies dont damage the player
 			return;
 
 	while (it != m_enemyVector.end()) {
@@ -292,6 +293,10 @@ void World::checkForDefeatedEnemies()
 		return;
 
 	auto it = m_enemyVector.begin();
+
+	if (typeid(**it) == typeid(VirtualEnemy))	//VirtualEnemies wont be deleted in this function
+		return;
+
 	while (it != m_enemyVector.end()) {
 		if ((*it)->getCurrentLives() == 0 && !(*it)->isInvincible()) {
 			while (m_serverLock);	//Wait for the GameHandler to finish transmitting
@@ -310,6 +315,11 @@ void World::checkForDefeatedEnemies()
 
 void World::makeMerchantAppear()
 {
+	if (m_merchantIsActive)
+		return;
+
+	m_triggerMerchantSpawnOnClient = true;	//I will only look at this value if there is a server thread running in the background
+
 	m_merchantIsActive = true;
 
 	bool successfullSpawn = false;
@@ -420,8 +430,8 @@ bool World::checkIfMerchantDespawned()
 
 SDL_FPoint World::getRandomCoordinate()
 {
-	int randomXCoordinate = getRandomNumber(m_bounds.x + 32, m_bounds.x + m_bounds.w - 64);
-	int randomYCoordinate = getRandomNumber(m_bounds.y + 32, m_bounds.y + m_bounds.h - 64);
+	int randomXCoordinate = getRandomNumber(round(m_bounds.x) + 32, round(m_bounds.x + m_bounds.w) - 64);
+	int randomYCoordinate = getRandomNumber(round(m_bounds.y) + 32, round(m_bounds.y + m_bounds.h) - 64);
 	return { float(randomXCoordinate), float(randomYCoordinate) };
 }
 

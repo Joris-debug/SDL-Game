@@ -162,7 +162,7 @@ int GameHandler::gameLoop()
 						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
-					m_p_currentWorld->moveWorld(x_input, y_input, 0.02f * m_deltaTime);
+					m_p_currentWorld->moveWorld(x_input, y_input, 0.1f * m_deltaTime);
 					break;
 
 				case GameStates::isStarting:
@@ -174,7 +174,7 @@ int GameHandler::gameLoop()
 			}
 
 			Interface::getInstance().calculatePixelPerPixel();
-			Interface::getInstance().displayFPS(m_deltaTime);
+			Interface::getInstance().displayFPS(m_deltaTime, m_gameHandlerType);
 
 			renderEverything(leftMouseButtonPressed);
 			leftMouseButtonPressed = false;
@@ -205,7 +205,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_menuManager = nullptr;
 	m_gameState = GameStates::isStarting;
 
-	m_p_randomNumberEngine = new std::mt19937(Uint32(this));
+	m_p_randomNumberEngine = new std::mt19937(Uint64(this));
 	SDL_Surface* p_tmpSurface;
 
 	m_enemyTexturesIdle.reserve(3);
@@ -306,6 +306,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_p_communicationThread = nullptr;
 	m_currentFrameTransmitted = false;
 	m_connectionEstablished = false;
+	m_playerTwoReadyForNextWave = true;
 }
 
 GameHandler::~GameHandler()
@@ -500,7 +501,7 @@ void GameHandler::checkCurrentWave()
 		
 	}	
 
-	if (m_gameHandlerType == GameHandlerType::client)
+	if (m_gameHandlerType == GameHandlerType::client || !m_playerTwoReadyForNextWave)
 		return;
 
 	if (!m_p_currentWorld->getMerchantIsActive()) {
@@ -542,6 +543,11 @@ bool GameHandler::trySpawningEnemy()
 	SDL_FRect windowRect = { 0, 0, 800, 640 };
 	if (SDL_HasIntersectionF(&windowRect, &tmpRectBounds))
 		return false;
+
+	PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
+	if (p_playerTwo && SDL_HasIntersectionF(&tmpRectBounds, p_playerTwo->getPlayerTwoScreen())) {	//If there is a player two and the enemy spawns on his screen
+		return false;
+	}
 
 	for (auto const& cursor : *m_p_currentWorld->getEnemyVector()) {
 		if (SDL_HasIntersectionF(&tmpRectBounds, cursor->getBounds())) {
@@ -682,7 +688,9 @@ void GameHandler::renderEverything(bool leftMouseButtonPressed)
 	if (m_gameState == GameStates::isRunning)
 		renderHud();
 
-	m_gameState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu
+	GameStates newState = m_p_menuManager->interactWithMenu(leftMouseButtonPressed, m_p_renderer, m_deltaTime);	//This function also renders the menu
+	if (m_gameState != GameStates::hasEnded)	//The thread could have ended the game by now, thats why i have to do an extra check
+		m_gameState = newState;
 
 	SDL_RenderPresent(m_p_renderer);
 }

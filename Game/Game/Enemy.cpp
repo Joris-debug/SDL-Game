@@ -58,7 +58,7 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 		if (abs(enemyMiddle.x - m_enemyTarget.x) < margin && abs(enemyMiddle.y - m_enemyTarget.y) < margin) {		//New direction assigned if the old target is reached
 			m_enemyTarget = p_world->getRandomCoordinate();
 		}
-		else if (p_world->getRandomNumber(0, 200) == Uint32(this) % 10 && !playerSpotted) {			//New direction assigned if a random check is hit
+		else if (p_world->getRandomNumber(0, 200) == Uint64(this) % 10 && !playerSpotted) {			//New direction assigned if a random check is hit
 			m_enemyTarget = p_world->getRandomCoordinate();
 		}
 	}

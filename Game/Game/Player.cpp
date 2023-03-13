@@ -165,7 +165,7 @@ float Player::getAttackCooldownPercent()
 	if (checkAttackCooldown())
 		return 1.0f;
 
-	Uint32 lastAttack = m_p_lastAttack->getStartPoint();
+	Uint64 lastAttack = m_p_lastAttack->getStartPoint();
 	return (SDL_GetTicks() - lastAttack) / float(m_attackCooldown);
 }
 

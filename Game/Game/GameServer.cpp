@@ -35,7 +35,7 @@ void GameServer::run()
 	while (true) {
 
 		while (*p_transmitNewFrame)	//Wait for new frame
-			Sleep(1);
+			/*Sleep(1);*/ std::cout << "wait\n";
 		*p_transmitNewFrame = true;
 
 		bool* p_serverLock = m_p_currentWorld->getServerLock();
@@ -43,7 +43,7 @@ void GameServer::run()
 		*p_serverLock = true; //stop the world from interfering with this thread iterating trough the vector
 
 		int vectorSize = int(m_p_currentWorld->getEnemyVector()->size());
-		//std::cout << vectorSize << std::endl;
+		std::cout << vectorSize << std::endl;
 		p_workSocket->write(vectorSize);	//So the client knows how many enemies will be transmitted
 		SDL_FRect* p_mapBounds = m_p_currentWorld->getBounds();
 
@@ -81,6 +81,9 @@ void GameServer::run()
 		//------------------------------------------------------------------------------------------------ Client sends flag if a new attack started
 		if(p_workSocket->read())
 			p_playerTwo->triggerNewAttack();
+
+		p_workSocket->write(m_p_currentWorld->getTriggerMerchantSpawnOnClient());
+		m_p_gameHandler->setPlayerTwoReadyForNextWave(!p_workSocket->read());
 
 		clientStatus = static_cast<MultiplayerStatus>(p_workSocket->read());
 		p_workSocket->write(static_cast<int>(m_threadStatus));

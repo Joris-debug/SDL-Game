@@ -16,9 +16,11 @@ GameClient::GameClient(int port, World* m_p_world, GameHandler* m_p_gameHandler)
 
 GameClient::~GameClient()
 {
+	std::cout << "Delete Client start\n";
 	m_threadStatus = MultiplayerStatus::gameEnded;	//To ensure the app doesnt wait forever
 	m_p_thread->join();
 	delete m_p_socket;
+	std::cout << "Delete Client end\n";
 }
 
 void GameClient::run()
@@ -94,11 +96,15 @@ void GameClient::run()
 
 		m_p_socket->write(p_player->getNewAttackTriggered());
 		
+		if (m_p_socket->read()) //If the merchant on the server is active
+			m_p_currentWorld->makeMerchantAppear();
+		m_p_socket->write(m_p_currentWorld->getMerchantIsActive());
+
 		m_p_socket->write(static_cast<int>(m_threadStatus));
 		serverStatus = static_cast<MultiplayerStatus>(m_p_socket->read());
 
 		if (serverStatus != MultiplayerStatus::isRunning || m_threadStatus != MultiplayerStatus::isRunning) {
-			/*std::cout << "Client ended\n";*/
+			std::cout << "Client ended\n";
 			break;
 		}
 	}

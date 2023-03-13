@@ -22,11 +22,12 @@ public:
     void animateBody(float x, float y) override;
     bool damageBody(short damage) override;
     void moveEntity(float x, float y) override;
+    SDL_FRect* getPlayerTwoScreen();
     inline SDL_FRect* getFootSpace() { return &m_footSpace; }
     inline void moveFootSpace(float x, float y) { m_footSpace.x += x; m_footSpace.y += y; }
     inline void triggerNewAttack() { m_p_lastAttackTrigger->setStartPoint(SDL_GetTicks()); }
     inline bool isAttacking() { return !m_p_lastAttackTrigger->checkClockState(); }
-    inline bool getHitDetected() { return (m_hitDetected) ? !bool(m_hitDetected = false) : false; }
+    inline bool getHitDetected() { return (m_hitDetected) ? !(m_hitDetected = false) : false; }
     inline void setHitDetected(bool m_hitDetected) { this->m_hitDetected = m_hitDetected; }
     SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
     inline bool getPlayerType() { return m_playerType; }        //False: PlayerTwo is the server, true: PlayerTwo is the client

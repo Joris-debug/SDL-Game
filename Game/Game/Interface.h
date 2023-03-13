@@ -1,7 +1,7 @@
 #pragma once
+#include "GameHandler.h"
 #include "SDL.h"
 
-class GameHandler;
 class Clock;
 struct windowDimensions {
 	int width;
@@ -28,7 +28,7 @@ public:
 	void calculatePixelPerPixel();
 	void checkWindowProportions();
 	void startGame();
-	void displayFPS(double deltaTime);
+	void displayFPS(double deltaTime, GameHandlerType appType);
 	inline double getPixelPerPixel() { return m_pixel_per_pixel; }
 	Interface(const Interface& obj) = delete;
 };

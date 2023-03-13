@@ -21,6 +21,7 @@ private:
     bool m_merchantIsActive;
     Player* m_p_player;
     PlayerTwo* m_p_playerTwo;
+    bool m_triggerMerchantSpawnOnClient;
     std::vector<Enemy*> m_enemyVector;
     std::vector<Entity*> m_entityVector;
     std::mt19937* m_p_randomNumberEngine;
@@ -59,5 +60,6 @@ public:
     inline Player* getPlayer() { return m_p_player; }
     inline PlayerTwo* getPlayerTwo() { return m_p_playerTwo; }
     inline void setPlayerTwo(PlayerTwo* m_p_playerTwo) { this->m_p_playerTwo = m_p_playerTwo; }
+    inline bool getTriggerMerchantSpawnOnClient() { return (m_triggerMerchantSpawnOnClient) ? !(m_triggerMerchantSpawnOnClient = 0) : false; }
 };
 

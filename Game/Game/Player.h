@@ -28,7 +28,7 @@ public:
     float getAttackCooldownPercent();
     void setIsAttacking();
     SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
-    inline bool getNewAttackTriggered() { return (m_newAttackTriggered) ?  !bool(m_newAttackTriggered = false) : false; }
+    inline bool getNewAttackTriggered() { return (m_newAttackTriggered) ?  !(m_newAttackTriggered = false) : false; }
     inline void updateAttackCooldown(int sum) { m_attackCooldown += sum; m_p_lastAttack->setInterval(m_attackCooldown); };
     inline int getCoinCounter() { return m_coinCounter; }
     inline void updateCoinCounter(int sum) { m_coinCounter += sum; }

@@ -23,9 +23,11 @@ private:
 	WorkThread* m_p_communicationThread;
 	bool m_currentFrameTransmitted;
 	bool m_connectionEstablished;
+	bool m_playerTwoReadyForNextWave;
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
+	Uint32 m_timestampWaveStart;
 	Clock* m_p_waveClock; //Used to detect whenever a second passes
 	Clock* m_p_newMenuOpened;	//To prevent players from skipping the title menu
 	World* m_p_currentWorld;
@@ -56,5 +58,7 @@ public:
 	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
 	inline void updateConnectionEstablished(bool newValue) { m_connectionEstablished = newValue; }
 	inline void setGameState(GameStates m_gameState) { this->m_gameState = m_gameState; }
+	inline bool getPlayerTwoReadyForNextWave() { return m_playerTwoReadyForNextWave; }
+	inline void setPlayerTwoReadyForNextWave(bool m_playerTwoReadyForNextWave) { this->m_playerTwoReadyForNextWave = m_playerTwoReadyForNextWave; }
 };
 

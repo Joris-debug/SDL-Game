@@ -1,8 +1,7 @@
 #include "Interface.h"
 #include "Resources.h"
-#include "GameHandler.h"
-#include "Clock.h"
 #include "SoundHandler.h"
+#include "Clock.h"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <iostream>
@@ -18,7 +17,7 @@ Interface::Interface()
     int imgFlags = IMG_INIT_PNG;
     if (!(IMG_Init(imgFlags) & imgFlags))
     {
-        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        std::cout << "SDL_image could not initialize! SDL_image Error:" << IMG_GetError();
     }
 
     m_p_lastDisplayedFPS = new Clock(1000);
@@ -106,11 +105,19 @@ void Interface::startGame()
     delete m_p_GameHandler;
 }
 
-void Interface::displayFPS(double deltaTime)
+void Interface::displayFPS(double deltaTime, GameHandlerType appType)
 {
     if (m_p_lastDisplayedFPS->checkClockState()) {
         int fps = round(1000.0f / deltaTime);
         std::string windowTitle = "Medieval Debugger FPS:" + std::to_string(fps);
+        switch (appType) {
+        case GameHandlerType::server:
+            windowTitle += " [Server]";
+            break;
+        case GameHandlerType::client:
+            windowTitle += " [Client]";
+            break;
+        }
         SDL_SetWindowTitle(m_p_window, windowTitle.c_str());
     }
 }
