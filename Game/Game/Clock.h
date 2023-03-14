@@ -14,5 +14,6 @@ public:
 	inline void setStartPoint(int64_t m_startPoint_) { this->m_startPoint_ = m_startPoint_; }
 	inline int64_t getStartPoint() { return m_startPoint_; }
 	inline void setInterval(unsigned int m_clockInterval_) { this->m_clockInterval_ = m_clockInterval_; }
+	inline void updateStartPoint(unsigned int sum) { m_startPoint_ += sum; }
 };
 

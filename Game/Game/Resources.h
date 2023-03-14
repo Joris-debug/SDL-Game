@@ -60,6 +60,8 @@
 #define RSC_SHOP_MENU "./Sprites/Misc/Menus/Shop.png"
 #define RSC_GAME_OVER "./Sprites/Misc/Menus/GameOver.png"
 #define RSC_PAUSE_MENU "./Sprites/Misc/Menus/Pause.png"
+#define RSC_OPTION_BUTTON "./Sprites/Misc/Menus/OptionsButton.png"
+#define RSC_OPTIONS_BACKGROUND "./Sprites/Misc/Menus/OptionsBackground.png"
 
 #define RSC_SOUND_SWORD "./Audio/Effects/Sword.wav"
 #define RSC_SOUND_ENEMY_HIT "./Audio/Effects/EnemyHit.wav"

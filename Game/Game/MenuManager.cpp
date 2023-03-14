@@ -37,6 +37,14 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_OPTION_BUTTON);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
+	p_tmpSurface = IMG_Load(RSC_OPTIONS_BACKGROUND);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 	m_menuOpacity = 0;
 	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);	//Texture is now transparent (so we can make an blend effect later on)
 }
@@ -59,6 +67,12 @@ bool MenuManager::tryClosingMenu()
 	case Menus::start:
 		m_currentMenu = Menus::none;
 		return true;
+
+	case Menus::optionsDefault:	//These menus will only open another menu back up when closed
+	case Menus::optionsMultiplayer:
+		m_currentMenu = Menus::start;
+		return true;
+
 	default:
 		return false;
 	}
@@ -86,6 +100,11 @@ GameStates MenuManager::interactWithMenu(bool mouseButtonPressed, SDL_Renderer* 
 		case Menus::pause:
 			if (renderPauseMenu(mouseButtonPressed, renderer))
 				return GameStates::hasEnded;
+			break;
+		case Menus::optionsDefault:
+		case Menus::optionsMultiplayer:
+			renderOptionsMenu(mouseButtonPressed, renderer);
+			return GameStates::isStarting;
 			break;
 			
 	}
@@ -251,6 +270,13 @@ void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::strin
 
 void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
 {
+	int mousePosX, mousePosY;
+	float renderScale = Interface::getInstance().getPixelPerPixel();
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
+
 	SDL_FRect startMenuRect = { 50, -80, 800, 640 };
 	startMenuRect.y += 50.0f * sin(SDL_GetTicks() / 1000.0f);		//Formula for an oscillation
 	SDL_RenderCopyF(renderer, m_menuTextures[2], NULL, &startMenuRect);
@@ -259,6 +285,13 @@ void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	startMenuRect.y += 5.0f * sin(SDL_GetTicks() / 200.0f);
 	SDL_RenderCopyF(renderer, m_menuTextures[3], NULL, &startMenuRect);
 
+	SDL_Rect optionsButtonRect = { 715, 8, 77, 76 };	//The options button gets rendered
+	SDL_RenderCopy(renderer, m_menuTextures[5], NULL, &optionsButtonRect);
+
+	if (SDL_HasIntersection(&mouseBounds, &optionsButtonRect)&& mouseButtonPressed) {	//Mouse clicked on the button
+		m_currentMenu = Menus::optionsDefault;
+		SoundHandler::getInstance().playClickSound();
+	}
 	return;
 }
 
@@ -407,6 +440,11 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	SDL_DestroyTexture(textureText);
 
 	return returnValue;
+}
+
+void MenuManager::renderOptionsMenu(bool mouseButtonPressed, SDL_Renderer* renderer)
+{
+	SDL_RenderCopy(renderer, m_menuTextures[6], NULL, NULL);
 }
 
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)

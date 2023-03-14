@@ -27,7 +27,6 @@ private:
 	float m_deltaTime;
 	int m_waveCounter;
 	int m_waveTimer; //Decreasing every second the wave is active
-	Uint32 m_timestampWaveStart;
 	Clock* m_p_waveClock; //Used to detect whenever a second passes
 	Clock* m_p_newMenuOpened;	//To prevent players from skipping the title menu
 	World* m_p_currentWorld;

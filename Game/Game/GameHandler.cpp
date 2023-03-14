@@ -166,9 +166,13 @@ int GameHandler::gameLoop()
 					break;
 
 				case GameStates::isStarting:
-					if (keyPressed && m_p_newMenuOpened->checkClockState()) {
+					if (keyPressed && m_p_menuManager->getCurrentMenu() == Menus::start && m_p_newMenuOpened->checkClockState()) {	//If any button is pressed and the start menu is open for a few moments..
 						m_p_menuManager->closeMenu();
 						SoundHandler::getInstance().playClickSound();
+					}
+					else if (escKeyPressed && m_p_menuManager->tryClosingMenu()) {		//The option window must be open
+						SoundHandler::getInstance().playClickSound();
+						m_p_newMenuOpened->setStartPoint(SDL_GetTicks());
 					}
 					break;
 			}
@@ -199,7 +203,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	this->m_deltaTime = 1;
 	m_waveCounter = 0;
 	m_waveTimer = 0;
-	m_p_waveClock = new Clock(1000);
+	m_p_waveClock = new Clock(1000, false);
 	m_p_newMenuOpened = new Clock(1000);
 	m_p_currentWorld = nullptr;
 	m_p_menuManager = nullptr;
@@ -483,8 +487,9 @@ TTF_Font* GameHandler::getFont(Fonts font, int fontSize)
 void GameHandler::checkCurrentWave()
 {
 	if (m_p_currentWorld->getEnemyVector()->size() > 0 || m_gameHandlerType == GameHandlerType::client) {	//The current wave is still ongoing
-		if (m_p_waveClock->checkClockState() && m_waveTimer > 0) {
+		while (m_p_waveClock->checkClockState() && m_waveTimer > 0) {
 			m_waveTimer--;
+			m_p_waveClock->updateStartPoint(1000);	//Adding another second to the clock
 		}
 		return;
 	}
