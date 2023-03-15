@@ -2,7 +2,7 @@
 #define STARTUP_SCREEN_WIDTH 800
 #define STARTUP_SCREEN_HEIGHT 640
 #define ENEMY_SPEED 0.5f
-#define PLAYER_ATTACK_COOLDOWN 1000;	//5100
+#define PLAYER_ATTACK_COOLDOWN 1100;	//5100
 
 #define RSC_LEVEL_1 "./Sprites/Maps/BottomMap.png"
 #define RSC_LEVEL_1_TOP "./Sprites/Maps/TopMap.png"
@@ -62,6 +62,7 @@
 #define RSC_PAUSE_MENU "./Sprites/Misc/Menus/Pause.png"
 #define RSC_OPTION_BUTTON "./Sprites/Misc/Menus/OptionsButton.png"
 #define RSC_OPTIONS_BACKGROUND "./Sprites/Misc/Menus/OptionsBackground.png"
+#define RSC_AUDIO_ICONS "./Sprites/Misc/Menus/audioIcons.png"
 
 #define RSC_SOUND_SWORD "./Audio/Effects/Sword.wav"
 #define RSC_SOUND_ENEMY_HIT "./Audio/Effects/EnemyHit.wav"

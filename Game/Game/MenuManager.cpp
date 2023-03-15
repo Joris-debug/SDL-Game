@@ -9,7 +9,7 @@
 #include "SoundHandler.h"
 #include <math.h>
 #include <string>
-
+#include <fstream>
 
 MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld)
 {
@@ -45,8 +45,15 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_AUDIO_ICONS);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 	m_menuOpacity = 0;
 	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);	//Texture is now transparent (so we can make an blend effect later on)
+
+	m_ip4vAddress = "UNKNOWN";
+	findOutIpAddress();
 }
 
 MenuManager::~MenuManager()
@@ -150,7 +157,7 @@ void MenuManager::renderShop(bool mouseButtonPressed, SDL_Renderer* renderer)
 	SDL_GetMouseState(&mousePosX, &mousePosY);
 	mousePosX /= renderScale;
 	mousePosY /= renderScale;
-	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
 	SDL_RenderCopy(renderer, m_menuTextures[0], NULL, NULL);
 
 	//----------------------------------------------------------------------------------------------- Render "close" and "next wave" buttons
@@ -268,6 +275,35 @@ void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::strin
 	SDL_DestroyTexture(textureText);
 }
 
+void MenuManager::renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Color fontColor, SDL_Renderer* renderer)
+{
+	SDL_SetRenderDrawColor(renderer, borderColor.r, borderColor.g, borderColor.b, 255);
+	SDL_RenderFillRect(renderer, &buttonBounds);
+
+	buttonBounds.x += 5;
+	buttonBounds.y += 5;
+	buttonBounds.w -= 10;
+	buttonBounds.h -= 10;
+
+	SDL_SetRenderDrawColor(renderer, buttonColor.r, buttonColor.g, buttonColor.b, 255);
+	SDL_RenderFillRect(renderer, &buttonBounds);
+
+	//---------------------------------------------------------------------------------------------- Text on the button
+
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(font, displayText.c_str(), fontColor);
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	SDL_Rect textRect = buttonBounds;
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.y += textRect.h / 2 - surfaceText->h / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+}
+
 void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime)
 {
 	int mousePosX, mousePosY;
@@ -275,7 +311,7 @@ void MenuManager::renderStartMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	SDL_GetMouseState(&mousePosX, &mousePosY);
 	mousePosX /= renderScale;
 	mousePosY /= renderScale;
-	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
 
 	SDL_FRect startMenuRect = { 50, -80, 800, 640 };
 	startMenuRect.y += 50.0f * sin(SDL_GetTicks() / 1000.0f);		//Formula for an oscillation
@@ -303,9 +339,13 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 	SDL_GetMouseState(&mousePosX, &mousePosY);
 	mousePosX /= renderScale;
 	mousePosY /= renderScale;
-	SDL_Rect mouseBounds = { mousePosX, mousePosY, 5, 5 };
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
 
 	SDL_RenderCopy(renderer, m_menuTextures[4], NULL, NULL);
+
+
+	SDL_Rect iconsRect = {356, 266, 88, 237};
+	SDL_RenderCopy(renderer, m_menuTextures[7], NULL, &iconsRect);
 
 	//----------------------------------------------------------------------------------------------- Render "close" button
 
@@ -444,7 +484,197 @@ bool MenuManager::renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* rendere
 
 void MenuManager::renderOptionsMenu(bool mouseButtonPressed, SDL_Renderer* renderer)
 {
+	int mousePosX, mousePosY;
+	float renderScale = Interface::getInstance().getPixelPerPixel();
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
+
 	SDL_RenderCopy(renderer, m_menuTextures[6], NULL, NULL);
+
+	//----------------------------------------------------------------------------------------------- Render "Audio" button
+
+	SDL_Color buttonBorder = { 77, 51, 38 };
+	SDL_Color buttonInside = { 77, 51, 38 };
+	SDL_Color fontColor = { 26, 18, 11 };
+	SDL_Rect buttonRect = { 53, 53, 231, 60 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 66, 44, 34 };
+		buttonInside = { 66, 44, 34 };
+		if (mouseButtonPressed) {			//Button pressed
+			m_currentMenu = Menus::optionsDefault;
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 34), "Audio", buttonInside, buttonBorder, fontColor, renderer);
+
+	//------------------------------------------------------------------------------------------------ Render "Multiplayer" button
+	
+	buttonRect.y += 60;
+	buttonBorder = { 77, 51, 38 };
+	buttonInside = { 77, 51, 38 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 66, 44, 34 };
+		buttonInside = { 66, 44, 34 };
+		if (mouseButtonPressed) {			//Button pressed
+			m_currentMenu = Menus::optionsMultiplayer;
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 34), "Multiplayer", buttonInside, buttonBorder, fontColor, renderer);
+
+	//------------------------------------------------------------------------------------------------ Render the rest of the current options menu
+
+	switch (m_currentMenu) {
+	case Menus::optionsDefault:
+		renderOptionsAudio(mouseButtonPressed, renderer);
+		break;
+	case Menus::optionsMultiplayer:
+		renderOptionsMultiplayer(mouseButtonPressed, renderer);
+		break;
+	}
+
+}
+
+void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* renderer)
+{
+	bool returnValue = false;
+	int mousePosX, mousePosY;
+	float renderScale = Interface::getInstance().getPixelPerPixel();
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
+
+	SDL_Rect iconsRect = { 473, 202,  88, 237 };
+	SDL_RenderCopy(renderer, m_menuTextures[7], NULL, &iconsRect);
+
+	//----------------------------------------------------------------------------------------------- Render "audio +" button
+
+	SDL_Color buttonBorder = { 229, 229, 203 };
+	SDL_Color buttonInside = { 27, 18, 15 };
+	SDL_Rect buttonRect = { 589, 228, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateAudioVolume(1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "audio -" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 381, 228, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateAudioVolume(-1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "music +" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 589, 349, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(1);
+			SoundHandler::getInstance().playClickSound();
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "+", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------- Render "music -" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 381, 349, 64, 64 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			SoundHandler::getInstance().updateMusicVolume(-1);
+			SoundHandler::getInstance().playClickSound();
+
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::pixelSplitter, 40), "-", buttonInside, buttonBorder, renderer);
+
+
+	//---------------------------------------------------------------------------------------------- Displaying volume
+	std::string displayText = std::to_string(SoundHandler::getInstance().getAudioVolumePercent());
+	SDL_Color textColor = { 27, 18, 15 };
+
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	SDL_Rect textRect = { 478, 209, 78, 32 };
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.y += textRect.h / 2 - surfaceText->h / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+	displayText = std::to_string(SoundHandler::getInstance().getMusicVolumePercent());
+	textColor = { 27, 18, 15 };
+
+	surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
+	textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	textRect = { 478, 330, 78, 32 };
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.y += textRect.h / 2 - surfaceText->h / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
+
+}
+
+void MenuManager::renderOptionsMultiplayer(bool mouseButtonPressed, SDL_Renderer* renderer)
+{
+	bool returnValue = false;
+	int mousePosX, mousePosY;
+	float renderScale = Interface::getInstance().getPixelPerPixel();
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+	mousePosX /= renderScale;
+	mousePosY /= renderScale;
+	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
+
+	//---------------------------------------------------------------------------------------------- Displaying your ip
+	std::string displayText = "Your IP is " + m_ip4vAddress;
+	SDL_Color textColor = { 27, 18, 15 };
+
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+	SDL_Rect textRect = { 316, 83, 400, 60 };
+	textRect.x += textRect.w / 2 - surfaceText->w / 2;
+	textRect.w = surfaceText->w;
+	textRect.h = surfaceText->h;
+	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+	SDL_FreeSurface(surfaceText);
+	SDL_DestroyTexture(textureText);
 }
 
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)
@@ -480,6 +710,32 @@ void MenuManager::buyMoreStamina(int* itemBoughtCounter, int price)
 	p_player->updateCoinCounter(price * (-1));
 	p_player->updateAttackCooldown(-250);
 	(*itemBoughtCounter)++;	//Items has been bought one more time
+}
+
+void MenuManager::findOutIpAddress()
+{
+	std::string line;
+	std::ifstream IPFile;
+	std::string searchQuery = "IPv4-Adresse  . . . . . . . . . . :";
+	IPFile.open("ip.txt");
+
+	if (IPFile.is_open())
+	{
+		while (!IPFile.eof()) {
+
+			getline(IPFile, line);
+			if (line.find(searchQuery) != std::string::npos) {
+				line.erase(0, 39);
+				m_ip4vAddress = line;
+				break;
+			}
+		}
+
+		IPFile.close();
+	}
+	else {
+		std::cout << "Error, can't find ip adress\n";
+	}
 }
 
 bool MenuManager::openMenu(Menus newMenu)

@@ -1,0 +1,18 @@
+
+Windows-IP-Konfiguration
+
+
+Ethernet-Adapter Ethernet:
+
+   Verbindungsspezifisches DNS-Suffix: 
+   IPv6-Adresse. . . . . . . . . . . : 2a02:908:1a62:9f00::ce30
+   IPv6-Adresse. . . . . . . . . . . : 2a02:908:1a62:9f00:d167:47f7:3d11:f013
+   IPv6-Adresse. . . . . . . . . . . : fdcf:9642:2a5f::635
+   IPv6-Adresse. . . . . . . . . . . : fdcf:9642:2a5f:0:6130:42fb:9030:30fb
+   Tempor„re IPv6-Adresse. . . . . . : 2a02:908:1a62:9f00:9c00:abc3:285:4e2a
+   Tempor„re IPv6-Adresse. . . . . . : fdcf:9642:2a5f:0:9ca1:ae4f:1045:8c60
+   Verbindungslokale IPv6-Adresse  . : fe80::17fc:2d4e:958a:a1ac%9
+   IPv4-Adresse  . . . . . . . . . . : 192.168.0.100
+   Subnetzmaske  . . . . . . . . . . : 255.255.255.0
+   Standardgateway . . . . . . . . . : fe80::dea6:33ff:fe86:3802%9
+                                       192.168.0.1

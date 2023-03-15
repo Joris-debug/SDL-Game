@@ -304,6 +304,7 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 30));	//Font used for the enemy counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 34));	//Font used for wave timer + coin counter
 	m_gameFonts.push_back(TTF_OpenFont(RSC_8BIT_FONT, 75));	//Font used for tombstone
+	m_gameFonts.push_back(TTF_OpenFont(RSC_PIXELSPLITTER_FONT, 30));	//Font used for options menu
 	m_gameFonts.push_back(TTF_OpenFont(RSC_PIXELSPLITTER_FONT, 40));	//Font used for pause menu volume buttons
 
 	m_gameHandlerType = GameHandlerType::singleplayer;
@@ -474,8 +475,11 @@ TTF_Font* GameHandler::getFont(Fonts font, int fontSize)
 
 	case Fonts::pixelSplitter:
 		switch (fontSize) {
-		case 40:
+		case 30:
 			return m_gameFonts[4];
+			break;
+		case 40:
+			return m_gameFonts[5];
 			break;
 		}
 		break;

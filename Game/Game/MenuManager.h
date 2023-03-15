@@ -10,6 +10,7 @@ private:
 	World* m_p_currenWorld;	//Needed for the shop menu
 	std::vector<SDL_Texture*> m_menuTextures;
 	short m_menuOpacity;
+	std::string m_ip4vAddress;
 public:
 	MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld);
 	~MenuManager();
@@ -21,6 +22,7 @@ public:
 	bool renderGameOver(SDL_Renderer* renderer, double deltaTime);
 	void renderShop(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Renderer* renderer);
+	void renderButton(SDL_Rect buttonBounds, TTF_Font* font, std::string displayText, SDL_Color buttonColor, SDL_Color borderColor, SDL_Color fontColor, SDL_Renderer* renderer);	//Same as the method before, this one just takes more parameters
 	void renderStartMenu(bool mouseButtonPressed, SDL_Renderer* renderer, double deltaTime);	//Returns true if the game starts
 	bool renderPauseMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
 	void renderOptionsMenu(bool mouseButtonPressed, SDL_Renderer* renderer);
@@ -29,7 +31,7 @@ public:
 	void buyHealthPotion(int* itemBoughtCounter, int price);
 	void buyMoreHealth(int* itemBoughtCounter, int price);
 	void buyMoreStamina(int* itemBoughtCounter, int price);
-	MenuManager(const MenuManager& obj)	= delete;
+	void findOutIpAddress(); //Value gets assigned to m_ip4vAddress
 	bool openMenu(Menus newMenu);	//Returns true if the window can be opened
 
 };
