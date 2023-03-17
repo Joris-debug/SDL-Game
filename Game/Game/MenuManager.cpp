@@ -49,11 +49,15 @@ MenuManager::MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, W
 	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
 	SDL_FreeSurface(p_tmpSurface);
 
+	p_tmpSurface = IMG_Load(RSC_IP_INPUT);
+	m_menuTextures.push_back(SDL_CreateTextureFromSurface(renderer, p_tmpSurface));
+	SDL_FreeSurface(p_tmpSurface);
+
 	m_menuOpacity = 0;
 	SDL_SetTextureAlphaMod(m_menuTextures[1], m_menuOpacity);	//Texture is now transparent (so we can make an blend effect later on)
 
 	m_ip4vAddress = "UNKNOWN";
-	findOutIpAddress();
+	findOutLocalIpAddress();
 }
 
 MenuManager::~MenuManager()
@@ -63,6 +67,77 @@ MenuManager::~MenuManager()
 		SDL_DestroyTexture(m_menuTextures.back());
 		m_menuTextures.pop_back();
 	}
+}
+
+void MenuManager::generateUserInput(SDL_Renderer* renderer)
+{
+	SDL_Rect inputBoxRect = { 316, 355, 400, 60 };
+	SDL_RenderCopy(renderer, m_menuTextures[8], NULL, &inputBoxRect);
+
+	SDL_Event* p_inputQueue = Interface::getInstance().getInputQueue();
+	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
+	Uint32 lastTime = currentTime;
+
+	char inputedNumber = 0;	//No Input
+
+	while (true)
+	{
+		currentTime = SDL_GetTicks();
+		float deltaTime = float(currentTime - lastTime);
+
+		if (deltaTime >= 1000.0f / 60.0f) //Limit FPS auf 60
+		{
+
+			lastTime = currentTime;
+			while (SDL_PollEvent(Interface::getInstance().getInputQueue()) != 0)
+			{
+
+				switch (Interface::getInstance().getInputQueue()->type)
+				{
+				case SDL_QUIT:
+					exit(1);		//Terminate the programm (It is safe to assume that there are no other clients connected)
+					break;
+
+				case SDL_KEYDOWN:
+					keyPressed = true;
+					switch (Interface::getInstance().getInputQueue()->key.keysym.sym)
+					{
+
+					case SDLK_w:
+						y_input = 1;
+						break;
+
+					case SDLK_s:
+						y_input = -1;
+						break;
+
+					case SDLK_a:
+						x_input = 1;
+						break;
+
+					case SDLK_d:
+						x_input = -1;
+						break;
+
+					case SDLK_e:
+						eKeyPressed = true;
+						break;
+
+					case SDLK_f:
+						fKeyPressed = true;
+						break;
+
+					case SDLK_ESCAPE:
+						escKeyPressed = true;
+						break;
+					}
+					break;
+
+				}
+			}
+
+		}
+
 }
 
 bool MenuManager::tryClosingMenu()
@@ -541,6 +616,8 @@ void MenuManager::renderOptionsMenu(bool mouseButtonPressed, SDL_Renderer* rende
 
 void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* renderer)
 {
+	//INFO: Removing the -119 offset will center the icons
+
 	bool returnValue = false;
 	int mousePosX, mousePosY;
 	float renderScale = Interface::getInstance().getPixelPerPixel();
@@ -549,14 +626,14 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 	mousePosY /= renderScale;
 	SDL_Rect mouseBounds = { mousePosX, mousePosY, 1, 1 };
 
-	SDL_Rect iconsRect = { 473, 202,  88, 237 };
+	SDL_Rect iconsRect = { 473, 202 - 119,  88, 237 };
 	SDL_RenderCopy(renderer, m_menuTextures[7], NULL, &iconsRect);
 
 	//----------------------------------------------------------------------------------------------- Render "audio +" button
 
 	SDL_Color buttonBorder = { 229, 229, 203 };
 	SDL_Color buttonInside = { 27, 18, 15 };
-	SDL_Rect buttonRect = { 589, 228, 64, 64 };
+	SDL_Rect buttonRect = { 589, 228 - 119, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
@@ -572,7 +649,7 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	buttonRect = { 381, 228, 64, 64 };
+	buttonRect = { 381, 228 - 119, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
@@ -588,7 +665,7 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	buttonRect = { 589, 349, 64, 64 };
+	buttonRect = { 589, 349 - 119, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
@@ -604,7 +681,7 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 
 	buttonBorder = { 229, 229, 203 };
 	buttonInside = { 27, 18, 15 };
-	buttonRect = { 381, 349, 64, 64 };
+	buttonRect = { 381, 349 - 119, 64, 64 };
 
 	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
 		buttonBorder = { 240, 240, 240 };
@@ -625,7 +702,7 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 	SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
 
-	SDL_Rect textRect = { 478, 209, 78, 32 };
+	SDL_Rect textRect = { 478, 209 - 119, 78, 32 };
 	textRect.x += textRect.w / 2 - surfaceText->w / 2;
 	textRect.y += textRect.h / 2 - surfaceText->h / 2;
 	textRect.w = surfaceText->w;
@@ -640,7 +717,7 @@ void MenuManager::renderOptionsAudio(bool mouseButtonPressed, SDL_Renderer* rend
 	surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), displayText.c_str(), textColor);
 	textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
 
-	textRect = { 478, 330, 78, 32 };
+	textRect = { 478, 330 - 119, 78, 32 };
 	textRect.x += textRect.w / 2 - surfaceText->w / 2;
 	textRect.y += textRect.h / 2 - surfaceText->h / 2;
 	textRect.w = surfaceText->w;
@@ -675,6 +752,45 @@ void MenuManager::renderOptionsMultiplayer(bool mouseButtonPressed, SDL_Renderer
 	SDL_RenderCopy(renderer, textureText, NULL, &textRect);
 	SDL_FreeSurface(surfaceText);
 	SDL_DestroyTexture(textureText);
+
+	//----------------------------------------------------------------------------------------------  Render "Start server" button
+
+	SDL_Color buttonBorder = { 229, 229, 203 };
+	SDL_Color buttonInside = { 27, 18, 15 };
+	SDL_Rect buttonRect = { 316, 83 + 60, 400, 60 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			if(m_p_gameHandler->initiateServer())
+				SoundHandler::getInstance().playClickSound();
+			
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), (m_p_gameHandler->getGameHandlerType() == GameHandlerType::server) ? "Waiting for clients..." : "Start server", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------  Render "Join server" button
+
+	buttonBorder = { 229, 229, 203 };
+	buttonInside = { 27, 18, 15 };
+	buttonRect = { 316, 83 + 180, 400, 60 };
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		buttonBorder = { 240, 240, 240 };
+		buttonInside = { 20, 0, 0 };
+		if (mouseButtonPressed) {			//Button pressed
+			if(m_p_gameHandler->initiateClient("127.0.0.1"))
+				SoundHandler::getInstance().playClickSound();			
+		}
+	}
+	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), (m_p_gameHandler->getGameHandlerType() == GameHandlerType::client) ? "Joining server..." : "Join server", buttonInside, buttonBorder, renderer);
+
+	//----------------------------------------------------------------------------------------------  Render IP input box
+
+	buttonRect.y += 92;
+	SDL_RenderCopy(renderer, m_menuTextures[8], NULL, &buttonRect);
+
 }
 
 void MenuManager::buyHealthPotion(int* itemBoughtCounter, int price)
@@ -712,7 +828,7 @@ void MenuManager::buyMoreStamina(int* itemBoughtCounter, int price)
 	(*itemBoughtCounter)++;	//Items has been bought one more time
 }
 
-void MenuManager::findOutIpAddress()
+void MenuManager::findOutLocalIpAddress()
 {
 	std::string line;
 	std::ifstream IPFile;

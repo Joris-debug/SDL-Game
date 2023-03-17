@@ -17,35 +17,6 @@
 
 int GameHandler::gameLoop()
 {
-	std::cout << "Singleplayer[0], Server[1] or Client[2] :";
-	char answer;
-	std::cin >> answer;
-	switch (atoi(&answer)) {
-
-	case 1:
-		m_gameHandlerType = GameHandlerType::server;
-		m_p_communicationThread = new GameServer(4, m_p_currentWorld, this);
-		m_p_currentWorld->setPlayerTwo(new PlayerTwo(1, m_p_renderer, { 0,0 }));
-		m_p_communicationThread->startThread();
-		while (!m_connectionEstablished) {
-			std::cout << ".";
-		}
-		m_gameState = GameStates::isRunning;
-		m_p_menuManager->closeMenu();
-		break;
-	case 2:
-		m_gameHandlerType = GameHandlerType::client;
-		m_p_communicationThread = new GameClient(4, m_p_currentWorld, this);
-		m_p_currentWorld->setPlayerTwo(new PlayerTwo(0, m_p_renderer, { 0,0 }));
-		m_p_communicationThread->startThread();
-		while (!m_connectionEstablished) {
-			std::cout << ".";
-		}
-		m_gameState = GameStates::isRunning;
-		m_p_menuManager->closeMenu();
-		break;
-	}
-
 	int x_input = 0, y_input = 0;
 	bool leftMouseButtonPressed = false, keyPressed = false, eKeyPressed = false, fKeyPressed = false, escKeyPressed = false;
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
@@ -163,9 +134,28 @@ int GameHandler::gameLoop()
 					}
 
 					m_p_currentWorld->moveWorld(x_input, y_input, 0.1f * m_deltaTime);
+					m_currentFrameTransmitted = false;
 					break;
 
 				case GameStates::isStarting:
+
+					if (m_gameHandlerType != GameHandlerType::singleplayer) {
+						if (m_connectionEstablished) {
+							m_gameState = GameStates::isRunning;
+							m_p_menuManager->closeMenu();
+							break;
+						}
+
+						if (m_gameHandlerType == GameHandlerType::server) //The game waits for the client to connect and doesn't do anything else
+							break;
+						
+						if (escKeyPressed) { //The only possibility now is the GameHandler being a client 
+							goto exit_loop;		//Client changed its mind and wants to stop connecting to the server
+						}
+
+						break;	//The other cases shouldnt be checked
+					}
+
 					if (keyPressed && m_p_menuManager->getCurrentMenu() == Menus::start && m_p_newMenuOpened->checkClockState()) {	//If any button is pressed and the start menu is open for a few moments..
 						m_p_menuManager->closeMenu();
 						SoundHandler::getInstance().playClickSound();
@@ -185,7 +175,6 @@ int GameHandler::gameLoop()
 			eKeyPressed = false;
 			keyPressed = false;
 			escKeyPressed = false;
-			m_currentFrameTransmitted = false;
 		}
 
 	}
@@ -317,6 +306,11 @@ GameHandler::GameHandler(SDL_Renderer* m_p_renderer_)
 GameHandler::~GameHandler()
 {
 	std::cout << "Delete GameHandler\n";
+
+	if (m_gameHandlerType == GameHandlerType::server && !m_connectionEstablished) {	//Server isn't active yet
+		exit(1);	//The application can't be closed normally
+	}
+
 	m_currentFrameTransmitted = false;
 	delete m_p_communicationThread;
 	delete m_p_newMenuOpened;
@@ -443,8 +437,10 @@ int GameHandler::initWorld()
 
 void GameHandler::resetWorld()
 {
+	m_gameHandlerType = GameHandlerType::singleplayer;
 	m_connectionEstablished = false;
 	delete m_p_communicationThread;
+	m_p_communicationThread = nullptr;
 	delete m_p_currentWorld;
 	delete m_p_menuManager;
 	m_waveCounter = 0;
@@ -724,4 +720,29 @@ void GameHandler::updateWaveCounter(int newWaveCounter)
 	short enemiesToSpawn = 5 + m_waveCounter * 5;
 	m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 	m_p_currentWorld->getEnemyVector()->reserve(enemiesToSpawn);
+}
+
+bool GameHandler::initiateServer()
+{
+	if (m_gameHandlerType != GameHandlerType::singleplayer)
+		return false;
+
+	m_gameHandlerType = GameHandlerType::server;
+	m_p_communicationThread = new GameServer(m_p_currentWorld, this);
+	m_p_currentWorld->setPlayerTwo(new PlayerTwo(1, m_p_renderer, { 0,0 }));	//Actual Positon will be transmitted by the client a second afterwards
+	m_p_communicationThread->startThread();
+	return true;
+}
+
+bool GameHandler::initiateClient(std::string host)
+{
+	if (m_gameHandlerType != GameHandlerType::singleplayer)
+		return false;
+
+	m_gameHandlerType = GameHandlerType::client;
+	m_p_communicationThread = new GameClient(host, m_p_currentWorld, this);
+	m_p_currentWorld->setPlayerTwo(new PlayerTwo(0, m_p_renderer, { 0,0 }));
+	m_p_communicationThread->startThread();
+
+	return true;
 }

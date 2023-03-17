@@ -8,7 +8,7 @@ WorkThread::WorkThread()
 
 WorkThread::~WorkThread()
 {
-	std::cout << "Delete workthread";
+	std::cout << "Delete workthread\n";
 	delete m_p_thread;
 }
 

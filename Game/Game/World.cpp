@@ -22,6 +22,8 @@ World::World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, 
 	m_serverLock = false;
 	m_p_topMap = nullptr;
 	m_triggerMerchantSpawnOnClient = false;	//I dont want the server to tell the client that it should spawn a merchant yet
+	m_transmitEnemyHitSound = false;
+	m_transmitPlayerHitSound = false;
 }
 
 World::~World()
@@ -233,6 +235,7 @@ void World::damageEnemysInPlayerRadius()
 	while (it != m_enemyVector.end()) {
 		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds()) && (*it)->damageBody(1)) {
 			SoundHandler::getInstance().playEnemyHitSound();
+			m_transmitEnemyHitSound = true;
 		}
 		it++;		
 	}
@@ -248,6 +251,7 @@ void World::damageEnemysInPlayerTwoRadius()
 	while (it != m_enemyVector.end()) {
 		if (SDL_HasIntersectionF(&attackRadius, (*it)->getBounds()) && (*it)->damageBody(1)) {
 			SoundHandler::getInstance().playEnemyHitSound();
+			m_transmitEnemyHitSound = true;
 		}
 		it++;
 	}
@@ -266,6 +270,7 @@ void World::checkIfPlayerHit()
 
 		if (SDL_HasIntersectionF(m_p_player->getBounds(), (*it)->getBounds()) && m_p_player->damageBody(1)) {
 			SoundHandler::getInstance().playPlayerHitSound();
+			m_transmitPlayerHitSound = true;
 		}
 		it++;
 	}

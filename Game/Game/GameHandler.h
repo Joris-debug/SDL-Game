@@ -54,8 +54,13 @@ public:
 	void createNewVirtualEnemy(int enemyId, Uint8 enemyType, SDL_FPoint enemyPos);
 	inline int getWaveCounter() { return m_waveCounter; }
 	void updateWaveCounter(int newWaveCounter);
+	bool initiateServer();
+	bool initiateClient(std::string host);
+	inline GameHandlerType getGameHandlerType() { return m_gameHandlerType; }
+	inline void setGameHandlerType(GameHandlerType m_gameHandlerType) { this->m_gameHandlerType = m_gameHandlerType; }
 	inline bool* getFrameTransmitted() { return &m_currentFrameTransmitted; }
 	inline void updateConnectionEstablished(bool newValue) { m_connectionEstablished = newValue; }
+	inline bool getConnectionEstablished() { return m_connectionEstablished; }
 	inline void setGameState(GameStates m_gameState) { this->m_gameState = m_gameState; }
 	inline bool getPlayerTwoReadyForNextWave() { return m_playerTwoReadyForNextWave; }
 	inline void setPlayerTwoReadyForNextWave(bool m_playerTwoReadyForNextWave) { this->m_playerTwoReadyForNextWave = m_playerTwoReadyForNextWave; }

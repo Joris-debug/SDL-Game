@@ -63,6 +63,7 @@
 #define RSC_OPTION_BUTTON "./Sprites/Misc/Menus/OptionsButton.png"
 #define RSC_OPTIONS_BACKGROUND "./Sprites/Misc/Menus/OptionsBackground.png"
 #define RSC_AUDIO_ICONS "./Sprites/Misc/Menus/audioIcons.png"
+#define RSC_IP_INPUT "./Sprites/Misc/Menus/InputBoxIP.png"
 
 #define RSC_SOUND_SWORD "./Audio/Effects/Sword.wav"
 #define RSC_SOUND_ENEMY_HIT "./Audio/Effects/EnemyHit.wav"

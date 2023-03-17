@@ -1,5 +1,6 @@
 #pragma once
 #include "WorkThread.h"
+#include <string>
 
 class World;
 class GameHandler;
@@ -13,7 +14,7 @@ private:
     Socket* m_p_socket;
     GameHandler* m_p_gameHandler;
 public:
-    GameClient(int port, World* m_p_world, GameHandler* m_p_gameHandler);
+    GameClient(std::string host, World* m_p_world, GameHandler* m_p_gameHandler);
     ~GameClient();
     void run() override;
 };

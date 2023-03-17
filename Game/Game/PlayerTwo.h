@@ -1,5 +1,6 @@
 #pragma once
 #include "Body.h"
+#include "SoundHandler.h"
 class PlayerTwo :
     public Body
 {
@@ -25,7 +26,7 @@ public:
     SDL_FRect* getPlayerTwoScreen();
     inline SDL_FRect* getFootSpace() { return &m_footSpace; }
     inline void moveFootSpace(float x, float y) { m_footSpace.x += x; m_footSpace.y += y; }
-    inline void triggerNewAttack() { m_p_lastAttackTrigger->setStartPoint(SDL_GetTicks()); }
+    inline void triggerNewAttack() { m_p_lastAttackTrigger->setStartPoint(SDL_GetTicks()); SoundHandler::getInstance().playSwordSound(); }
     inline bool isAttacking() { return !m_p_lastAttackTrigger->checkClockState(); }
     inline bool getHitDetected() { return (m_hitDetected) ? !(m_hitDetected = false) : false; }
     inline void setHitDetected(bool m_hitDetected) { this->m_hitDetected = m_hitDetected; }

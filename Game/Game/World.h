@@ -26,6 +26,8 @@ private:
     std::vector<Entity*> m_entityVector;
     std::mt19937* m_p_randomNumberEngine;
     bool m_serverLock;  //Enemies cant be deleted when this lock is set to true, this ensures thread safety
+    bool m_transmitEnemyHitSound;
+    bool m_transmitPlayerHitSound;
 public:
     World(SDL_Surface* surface, SDL_FRect m_bounds_, SDL_Renderer* renderer, std::mt19937* m_p_randomNumberEngine_, Effect* m_p_spawnEffect_);
     ~World();
@@ -61,5 +63,7 @@ public:
     inline PlayerTwo* getPlayerTwo() { return m_p_playerTwo; }
     inline void setPlayerTwo(PlayerTwo* m_p_playerTwo) { this->m_p_playerTwo = m_p_playerTwo; }
     inline bool getTriggerMerchantSpawnOnClient() { return (m_triggerMerchantSpawnOnClient) ? !(m_triggerMerchantSpawnOnClient = 0) : false; }
+    inline bool getTransmitEnemyHitSound() { return (m_transmitEnemyHitSound) ? !(m_transmitEnemyHitSound = 0) : false; }
+    inline bool getTransmitPlayerHitSound() { return (m_transmitPlayerHitSound) ? !(m_transmitPlayerHitSound = 0) : false; }
 };
 

@@ -6,9 +6,9 @@
 #include "PlayerTwo.h"
 #include "GameHandler.h"
 
-GameServer::GameServer(int port, World* m_p_world, GameHandler* m_p_gameHandler)
+GameServer::GameServer(World* m_p_world, GameHandler* m_p_gameHandler)
 {
-	m_p_serverSocket = new ServerSocket(port);
+	m_p_serverSocket = new ServerSocket(27182);
 	this->m_p_currentWorld = m_p_world;
 	this->m_p_gameHandler = m_p_gameHandler;
 }
@@ -78,9 +78,16 @@ void GameServer::run()
 		p_playerTwo->setAnimation(playerMode, currentSprite);
 		p_playerTwo->teleportPlayerTwo(playerPos);
 		*p_serverLock = false;
+
+		//------------------------------------------------------------------------------------------------ Server tells the client if it needs to play a certain sound
+		p_workSocket->write(m_p_currentWorld->getTransmitEnemyHitSound());
+		p_workSocket->write(m_p_currentWorld->getTransmitPlayerHitSound());
+
 		//------------------------------------------------------------------------------------------------ Client sends flag if a new attack started
 		if(p_workSocket->read())
 			p_playerTwo->triggerNewAttack();
+
+
 
 		p_workSocket->write(m_p_currentWorld->getTriggerMerchantSpawnOnClient());
 		m_p_gameHandler->setPlayerTwoReadyForNextWave(!p_workSocket->read());

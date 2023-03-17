@@ -11,9 +11,11 @@ private:
 	std::vector<SDL_Texture*> m_menuTextures;
 	short m_menuOpacity;
 	std::string m_ip4vAddress;
+	std::string m_userInput;	//Currently only needed to store the inputed IP 
 public:
 	MenuManager(SDL_Renderer* renderer, GameHandler* m_p_gameHandler, World* m_p_currenWorld);
 	~MenuManager();
+	void generateUserInput(SDL_Renderer* renderer);	//This function will let the user input an IP
 	inline Menus getCurrentMenu() { return m_currentMenu; }
 	inline bool checkIfMenuOpen() { return (m_currentMenu == Menus::none) ? false : true; }
 	bool tryClosingMenu();	//Returns true if the menu can be closed without force
@@ -31,7 +33,7 @@ public:
 	void buyHealthPotion(int* itemBoughtCounter, int price);
 	void buyMoreHealth(int* itemBoughtCounter, int price);
 	void buyMoreStamina(int* itemBoughtCounter, int price);
-	void findOutIpAddress(); //Value gets assigned to m_ip4vAddress
+	void findOutLocalIpAddress(); //Value gets assigned to m_ip4vAddress
 	bool openMenu(Menus newMenu);	//Returns true if the window can be opened
 
 };
