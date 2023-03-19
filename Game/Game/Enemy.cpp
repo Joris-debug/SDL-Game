@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "World.h"
 #include "Player.h"
+#include "PlayerTwo.h"
 #include "Beetle.h"
 #include "Resources.h"
 int Enemy::m_s_enemyCount = 0;
@@ -53,6 +54,42 @@ void Enemy::enemyPathfinding(World* p_world, float deltaTime)
 				enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
 			}
 		}
+
+		PlayerTwo* p_playerTwo = p_world->getPlayerTwo();
+		if (p_playerTwo) {
+
+			p_playerTargets = p_playerTwo->getPlayerTwoTargets();
+			bool playerTwoSpotted = true;
+			SDL_FPoint alternateTarget = { 0,0 };
+			for (short targetNr = 0; targetNr < 3; targetNr++) {				//Looping the three possible target options			
+				auto it = p_entityVector->begin();
+				while (it != p_entityVector->end()) {					//Looping for every entity on the map
+					if (SDL_IntersectFRectAndLine((*it)->getBounds(), &p_playerTargets[targetNr].x, &p_playerTargets[targetNr].y, &enemyMiddle.x, &enemyMiddle.y)) {
+						playerTwoSpotted = false;
+						break;
+					}
+					it++;
+				}
+				if (playerTwoSpotted) {
+					alternateTarget = p_playerTargets[targetNr];
+					break;
+				}
+				else if (targetNr < 3) {		//Im reseting the variables for the next run
+					playerTwoSpotted = true;
+					enemyMiddle = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 };
+				}
+			}
+
+			if (playerSpotted && playerTwoSpotted) {		//Both players spotted
+				m_enemyTarget = p_world->getCloserPoint(enemyMiddle, m_enemyTarget, alternateTarget);
+			}
+			else if (playerTwoSpotted) {				//Only player two spotted
+				m_enemyTarget = alternateTarget;
+				playerSpotted = true;
+			}
+
+		}
+
 
 		short margin = 8;
 		if (abs(enemyMiddle.x - m_enemyTarget.x) < margin && abs(enemyMiddle.y - m_enemyTarget.y) < margin) {		//New direction assigned if the old target is reached

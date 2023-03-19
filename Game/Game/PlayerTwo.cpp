@@ -110,8 +110,12 @@ SDL_FRect* PlayerTwo::getPlayerTwoScreen()
 	return &screenBouds;
 }
 
-SDL_FPoint* PlayerTwo::getPlayerTargets()
+SDL_FPoint* PlayerTwo::getPlayerTwoTargets()
 {
-	return nullptr;
+	static SDL_FPoint s_playerTargets[3];
+	s_playerTargets[0] = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h / 2 }; //Middle of the Player
+	s_playerTargets[1] = { m_bounds.x + m_bounds.w / 2, m_bounds.y }; //Head of the Player
+	s_playerTargets[2] = { m_bounds.x + m_bounds.w / 2, m_bounds.y + m_bounds.h }; //Feet of the Player
+	return s_playerTargets;
 }
 

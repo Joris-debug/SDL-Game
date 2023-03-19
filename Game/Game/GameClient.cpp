@@ -108,9 +108,10 @@ void GameClient::run()
 
 		m_p_socket->write(p_player->getNewAttackTriggered());
 		
-		if (m_p_socket->read()) //If the merchant on the server is active
+		if (m_p_socket->read()) {//If the merchant on the server is active
 			m_p_currentWorld->makeMerchantAppear();
-
+			std::cout << "spawn Merchant\n";
+		}
 		m_p_socket->write(m_p_currentWorld->getMerchantIsActive());
 
 		MultiplayerStatus currentStatus = m_threadStatus;		
@@ -119,12 +120,14 @@ void GameClient::run()
 
 		if (serverStatus != MultiplayerStatus::isRunning || currentStatus != MultiplayerStatus::isRunning) {
 			std::cout << "Client ended\n";
+			std::cout << static_cast<int>(serverStatus) << std::endl;
+			std::cout << static_cast<int>(currentStatus) << std::endl;
 			break;
 		}
 	}
 
 	if (serverStatus == MultiplayerStatus::gameOver)	//If the server dies, the client dies also
-		p_player->damageBody(p_player->getCurrentLives());
+		p_player->killBody();
 	else if (serverStatus == MultiplayerStatus::gameEnded)	//If the server exits the game, the client will also
 		m_p_gameHandler->setGameState(GameStates::hasEnded);
 

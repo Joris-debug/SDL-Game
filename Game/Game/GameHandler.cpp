@@ -128,16 +128,18 @@ int GameHandler::gameLoop()
 					if (!m_p_currentWorld->getPlayer()->getCurrentLives()) {		//Player is GameOver
 						x_input = 0;
 						y_input = 0;
+
 						if (m_gameHandlerType != GameHandlerType::singleplayer) //If i am playing online
 							m_p_communicationThread->setThreadStatus(MultiplayerStatus::gameOver);	//So the other game will also end
+						m_currentFrameTransmitted = false;	//So that we can't be stuck in an endless loop
 						m_p_menuManager->openMenu(Menus::gameOver);
 					}
 
 					m_p_currentWorld->moveWorld(x_input, y_input, 0.1f * m_deltaTime);
-					m_currentFrameTransmitted = false;
 					break;
 
 				case GameStates::isStarting:
+					m_p_waveClock->setStartPoint(SDL_GetTicks()); //Prevent the clock from ticking befor the game starts
 
 					if (m_gameHandlerType != GameHandlerType::singleplayer) {
 						if (m_connectionEstablished) {
@@ -171,6 +173,7 @@ int GameHandler::gameLoop()
 			Interface::getInstance().displayFPS(m_deltaTime, m_gameHandlerType);
 
 			renderEverything(leftMouseButtonPressed);
+			m_currentFrameTransmitted = false;
 			leftMouseButtonPressed = false;
 			eKeyPressed = false;
 			keyPressed = false;
@@ -486,7 +489,7 @@ TTF_Font* GameHandler::getFont(Fonts font, int fontSize)
 
 void GameHandler::checkCurrentWave()
 {
-	if (m_p_currentWorld->getEnemyVector()->size() > 0 || m_gameHandlerType == GameHandlerType::client) {	//The current wave is still ongoing
+	if (m_p_currentWorld->getEnemyVector()->size() > 0) {	//The current wave is still ongoing
 		while (m_p_waveClock->checkClockState() && m_waveTimer > 0) {
 			m_waveTimer--;
 			m_p_waveClock->updateStartPoint(1000);	//Adding another second to the clock

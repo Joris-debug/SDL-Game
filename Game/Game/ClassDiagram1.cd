@@ -1,2 +1,221 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
+  <Class Name="Beetle">
+    <Position X="4.25" Y="17" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAACAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Beetle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Body">
+    <Position X="6.25" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ADCEACAAAEAFACACAAIBBggAAGAAAAEAAgAAAABCEEA=</HashCode>
+      <FileName>Body.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Clock">
+    <Position X="28.25" Y="1" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAIAAAAAAAAABIgAAAAgCIAAAgA=</HashCode>
+      <FileName>Clock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Effect">
+    <Position X="12.5" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>BAAgEAABAQgAIAAAAAAAAAgAAEAAAACACAAAAgAAAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Enemy">
+    <Position X="6.25" Y="11" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAgAAYAAMEAgAgAEABAAgICAAAAAAIgwAAAAAAIA=</HashCode>
+      <FileName>Enemy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entity">
+    <Position X="6.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAACAAAAAAEAAAAAAAAAAAAACAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Entity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameHandler">
+    <Position X="31.25" Y="1" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>LCyFEQAAFnAQAoAAgAkAABEAAEAAAACsANFDAEBBgwA=</HashCode>
+      <FileName>GameHandler.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameServer">
+    <Position X="0.5" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAAAggAAAAAAAAAAAAAAAAAEAAAAACAAAQAAAAAAAA=</HashCode>
+      <FileName>GameServer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interface">
+    <Position X="23.5" Y="8.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAgAAAAIACVAAEAQAGAAAAQAIIAAAgACgCA=</HashCode>
+      <FileName>Interface.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuManager">
+    <Position X="30.75" Y="12.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AQAAgCCAOAACAAQQQcIAAAAAAA4QgAAAAQQAIgEIAhA=</HashCode>
+      <FileName>MenuManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player">
+    <Position X="12.75" Y="10" Width="4" />
+    <TypeIdentifier>
+      <HashCode>CICAAAASACCJBhCAADEABAACMDEAAACAAAAAAQEQABA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerTwo">
+    <Position X="18" Y="10" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACSAAgOBBjIAgMgDAACIaAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>PlayerTwo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameClient">
+    <Position X="3.25" Y="10.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAgAAABAAAEAAAAAAAAAAAAAAAACAAAQAAAAAAAA=</HashCode>
+      <FileName>GameClient.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServerSocket">
+    <Position X="26" Y="16.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAIAAAACAAAAgAAIAAAAAAAAA=</HashCode>
+      <FileName>ServerSocket.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Socket">
+    <Position X="22.75" Y="16.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAgCAAAAAAAAAAAQgAAYkgAAAAAAA=</HashCode>
+      <FileName>Socket.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundHandler">
+    <Position X="42.25" Y="3.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAQAgACIAQAAAAECgAAAAAACAAwwAADAAYAAIAAA=</HashCode>
+      <FileName>SoundHandler.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TradingPost">
+    <Position X="15.75" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IiAAAACRAEAAAAAAkIQAAQgAECAACAGAGQgAAEAAkCA=</HashCode>
+      <FileName>TradingPost.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vicinity">
+    <Position X="36" Y="1.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAAAAAAAgAAAAEQAAAAAAAAACAAAAACAAAAAAA=</HashCode>
+      <FileName>Vicinity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VirtualEnemy">
+    <Position X="8.75" Y="17" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAIAAAAAACAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>VirtualEnemy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WorkThread">
+    <Position X="2" Y="3.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAFAAgAAAAAAAQAQAAQAAAAAAAAAEAAAAAAgAAAAAAA=</HashCode>
+      <FileName>WorkThread.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World">
+    <Position X="35.75" Y="6.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>YMCgABdAAJBgAyAQBhAcIQAaQAaCAAAAAQAABAhAZGg=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="walkingVector">
+    <Position X="20.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>Body.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="windowDimensions">
+    <Position X="22.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interface.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Mode">
+    <Position X="26" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQgIAAAAAAAAAAAAAAACAACAAAAAAAAA=</HashCode>
+      <FileName>Body.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EnemyType">
+    <Position X="20.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAgAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Enemy.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GameHandlerType">
+    <Position X="24" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAABAAAAAI=</HashCode>
+      <FileName>GameHandler.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GameStates">
+    <Position X="20.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAABAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameHandler.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Fonts">
+    <Position X="22.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>GameHandler.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Menus">
+    <Position X="22.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAgAAAAAAAAAAAAAAIAgAAAAAAAIIA=</HashCode>
+      <FileName>MenuManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MerchantMode">
+    <Position X="24" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAAQAAAQAAACA=</HashCode>
+      <FileName>TradingPost.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MultiplayerStatus">
+    <Position X="26" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>WorkThread.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

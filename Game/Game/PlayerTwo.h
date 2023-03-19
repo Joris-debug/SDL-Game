@@ -30,7 +30,7 @@ public:
     inline bool isAttacking() { return !m_p_lastAttackTrigger->checkClockState(); }
     inline bool getHitDetected() { return (m_hitDetected) ? !(m_hitDetected = false) : false; }
     inline void setHitDetected(bool m_hitDetected) { this->m_hitDetected = m_hitDetected; }
-    SDL_FPoint* getPlayerTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
+    SDL_FPoint* getPlayerTwoTargets();     //Returns an array of 3 points, that resemble head, stomach and feet of the player (Enemies will target these points)
     inline bool getPlayerType() { return m_playerType; }        //False: PlayerTwo is the server, true: PlayerTwo is the client
     inline void setCurrentDirection(bool m_currentDirection) { this->m_currentDirection = m_currentDirection; }
 

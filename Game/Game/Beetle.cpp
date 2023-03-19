@@ -1,6 +1,7 @@
 #include "Beetle.h"
 #include "World.h"
 #include "Player.h"
+#include "PlayerTwo.h"
 #include "Resources.h"
 
 void Beetle::enemyPathfinding(World* p_world, float deltaTime)
@@ -14,8 +15,13 @@ void Beetle::enemyPathfinding(World* p_world, float deltaTime)
 
 	if (m_p_lastTargetAssigned->checkClockState()) {
 		//----------------------------------------------------------------------------------------------- Checking if the player has been spotted
-		SDL_FPoint* p_playerTargets = p_world->getPlayer()->getPlayerTargets();
-		m_enemyTarget = p_playerTargets[0];
+		m_enemyTarget = p_world->getPlayer()->getPlayerTargets()[0];
+
+		PlayerTwo* p_playerTwo = p_world->getPlayerTwo();
+		if (p_playerTwo) {
+			SDL_FPoint alternateTarget = p_playerTwo->getPlayerTwoTargets()[0];
+			m_enemyTarget = p_world->getCloserPoint(enemyMiddle, m_enemyTarget, alternateTarget);
+		}
 
 		short margin = 8;
 		if (abs(enemyMiddle.x - m_enemyTarget.x) < margin && abs(enemyMiddle.y - m_enemyTarget.y) < margin) {		//New direction assigned if the old target is reached

@@ -71,9 +71,9 @@ MenuManager::~MenuManager()
 
 void MenuManager::generateUserInput(SDL_Renderer* renderer)
 {
-	SDL_Rect inputBoxRect = { 316, 355, 400, 60 };
-	SDL_RenderCopy(renderer, m_menuTextures[8], NULL, &inputBoxRect);
 
+	SDL_Rect inputBoxRect = { 316, 355, 400, 60 };
+	SDL_Rect textRect = { 471, 360, 240, 50 };
 	SDL_Event* p_inputQueue = Interface::getInstance().getInputQueue();
 	Uint32 currentTime = SDL_GetTicks(); //Calculate delta time
 	Uint32 lastTime = currentTime;
@@ -99,45 +99,118 @@ void MenuManager::generateUserInput(SDL_Renderer* renderer)
 					break;
 
 				case SDL_KEYDOWN:
-					keyPressed = true;
 					switch (Interface::getInstance().getInputQueue()->key.keysym.sym)
 					{
 
-					case SDLK_w:
-						y_input = 1;
+					case SDLK_1:
+						inputedNumber = '1';
 						break;
 
-					case SDLK_s:
-						y_input = -1;
+					case SDLK_2:
+						inputedNumber = '2';
 						break;
 
-					case SDLK_a:
-						x_input = 1;
+					case SDLK_3:
+						inputedNumber = '3';
 						break;
 
-					case SDLK_d:
-						x_input = -1;
+					case SDLK_4:
+						inputedNumber = '4';
 						break;
 
-					case SDLK_e:
-						eKeyPressed = true;
+					case SDLK_5:
+						inputedNumber = '5';
 						break;
 
-					case SDLK_f:
-						fKeyPressed = true;
+					case SDLK_6:
+						inputedNumber = '6';
 						break;
 
+					case SDLK_7:
+						inputedNumber = '7';
+						break;
+
+					case SDLK_8:
+						inputedNumber = '8';
+						break;
+
+					case SDLK_9:
+						inputedNumber = '9';
+						break;
+
+					case SDLK_0:
+						inputedNumber = '0';
+						break;
+
+					case SDLK_PERIOD:
+						inputedNumber = '.';
+						break;
+
+					case SDLK_BACKSPACE:
+						inputedNumber = '\b';
+						break;
+
+					case SDLK_KP_ENTER:
+					case SDLK_RETURN:
 					case SDLK_ESCAPE:
-						escKeyPressed = true;
-						break;
+						return;
+
+
 					}
 					break;
 
 				}
+
 			}
 
+			if (inputedNumber == 0)	//No user input yet
+				continue;
+
+			if (inputedNumber == '\b') {	//Removes last character from string
+				if (m_userInput.length()) {	//Only if the string contains any letters
+					m_userInput.pop_back();
+					inputedNumber = 0;
+				}
+				continue;
+			}
+
+			if (m_userInput.length() > 14)	//Cant write an infinite IP (This would break the GUI)
+				continue;
+
+			m_userInput.push_back(inputedNumber);
+			inputedNumber = 0;
+		}
+		//std::cout << m_userInput << std::endl;
+
+		SDL_RenderCopy(renderer, m_menuTextures[8], NULL, &inputBoxRect);
+		SDL_Color textColor = { 27, 18, 15 };
+
+		if (m_userInput.length()) {
+
+			SDL_Surface* surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), m_userInput.c_str(), textColor);
+			SDL_Texture* textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+			textRect.x += textRect.w / 2 - surfaceText->w / 2;
+			textRect.y += textRect.h / 2 - surfaceText->h / 2;
+			textRect.w = surfaceText->w;
+			textRect.h = surfaceText->h;
+			SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+			SDL_FreeSurface(surfaceText);
+			SDL_DestroyTexture(textureText);
 		}
 
+		if ((SDL_GetTicks() / 1000) % 2 == 0 && m_userInput.length() <= 14) {	//Only every other second and when you can still add charcters
+			SDL_SetRenderDrawColor(renderer, textColor.r, textColor.g, textColor.b, 255);
+			SDL_Rect pipeRect = { (m_userInput.length()) ? textRect.x + textRect.w + 3 : textRect.x + 3, 364, 3, 42 };
+
+			SDL_RenderFillRect(renderer, &pipeRect);
+		}
+
+
+
+		SDL_RenderPresent(renderer);
+
+	}
 }
 
 bool MenuManager::tryClosingMenu()
@@ -780,7 +853,7 @@ void MenuManager::renderOptionsMultiplayer(bool mouseButtonPressed, SDL_Renderer
 		buttonBorder = { 240, 240, 240 };
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
-			if(m_p_gameHandler->initiateClient("127.0.0.1"))
+			if(m_p_gameHandler->initiateClient(/*"127.0.0.1"*/m_userInput))
 				SoundHandler::getInstance().playClickSound();			
 		}
 	}
@@ -790,6 +863,28 @@ void MenuManager::renderOptionsMultiplayer(bool mouseButtonPressed, SDL_Renderer
 
 	buttonRect.y += 92;
 	SDL_RenderCopy(renderer, m_menuTextures[8], NULL, &buttonRect);
+
+	if (SDL_HasIntersection(&mouseBounds, &buttonRect)) {	//Mouse hovered over button
+		if (mouseButtonPressed && m_p_gameHandler->getGameHandlerType() == GameHandlerType::singleplayer) {			//Button pressed and the game is currently offline
+			generateUserInput(renderer);
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------- Render the Inputed IP
+
+	if (m_userInput.length()) {
+		textRect = { 471, 360, 240, 50 };
+		surfaceText = TTF_RenderText_Solid(m_p_gameHandler->getFont(Fonts::eightBit, 30), m_userInput.c_str(), textColor);
+		textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+
+		textRect.x += textRect.w / 2 - surfaceText->w / 2;
+		textRect.y += textRect.h / 2 - surfaceText->h / 2;
+		textRect.w = surfaceText->w;
+		textRect.h = surfaceText->h;
+		SDL_RenderCopy(renderer, textureText, NULL, &textRect);
+		SDL_FreeSurface(surfaceText);
+		SDL_DestroyTexture(textureText);
+	}
 
 }
 

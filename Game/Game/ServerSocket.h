@@ -10,6 +10,6 @@ private:
 
 public:
 				ServerSocket	(int port);
-				Socket* accept	(void);
+  Socket*		accept			(void);
   void			close			(void);
 };

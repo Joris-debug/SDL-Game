@@ -293,8 +293,8 @@ void World::checkIfPlayerTwoHit()
 
 void World::checkForDefeatedEnemies()
 {
-	int enemyCount = int(m_enemyVector.size());
-	if (!enemyCount)
+	bool enemiesExist = !m_enemyVector.empty();
+	if (!enemiesExist)
 		return;
 
 	auto it = m_enemyVector.begin();
@@ -314,7 +314,7 @@ void World::checkForDefeatedEnemies()
 		it++;
 	}
 
-	if (enemyCount && m_enemyVector.size() == 0)	//Enemys existed at the start of the function, but now the vector is empty
+	if (enemiesExist && m_enemyVector.size() == 0)	//Enemys existed at the start of the function, but now the vector is empty
 		makeMerchantAppear();
 }
 
@@ -481,4 +481,12 @@ void World::deleteNotExistingVirtualEnemies(std::vector<int> existingEnemies)
 		it++;
 	}
 
+}
+
+SDL_FPoint World::getCloserPoint(SDL_FPoint start, SDL_FPoint end1, SDL_FPoint end2)
+{
+	float lenght1 = sqrt(pow(end1.x - start.x, 2) + pow(end1.y - start.y, 2));
+	float lenght2 = sqrt(pow(end2.x - start.x, 2) + pow(end2.y - start.y, 2));
+
+	return (lenght1 < lenght2) ? end1 : end2;
 }

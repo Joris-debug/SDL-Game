@@ -52,6 +52,7 @@ public:
 	Body(SDL_FRect m_bounds_, SDL_FRect m_spriteBounds_, short m_maxLives_);
 	inline Mode getCurrentMode() { return m_currentMode; }
 	inline short getCurrentSprite() { return m_currentSprite; }
+	inline void killBody() { m_currentLives = 0; }
 	virtual ~Body();
 };
 

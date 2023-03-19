@@ -51,6 +51,7 @@ public:
     bool checkIfEnemyExists(int enemyId);
     Enemy* getEnemyById(int enemyId);
     void deleteNotExistingVirtualEnemies(std::vector<int> existingEnemies);
+    SDL_FPoint getCloserPoint(SDL_FPoint start, SDL_FPoint end1, SDL_FPoint end2);
     inline bool* getServerLock() { return &m_serverLock; }
     inline TradingPost* getMerchant() { return m_p_merchant; }
     inline void addVinicityToMap(Vicinity* newVinicity) { m_p_topMap = newVinicity; }

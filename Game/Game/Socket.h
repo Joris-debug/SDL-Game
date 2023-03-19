@@ -14,7 +14,7 @@ private:
 public:
 
 				Socket			(std::string host, int port);
-				Socket			(SOCKET socket);  // wird zur Socketerzeugung beim CServerSocket benoetigt
+				Socket			(SOCKET socket);  // wird zur Socketerzeugung beim ServerSocket benoetigt
   bool			connect			(void);
   int			dataAvailable	(void);
   void			write			(int b);

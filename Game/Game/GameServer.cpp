@@ -39,11 +39,11 @@ void GameServer::run()
 		*p_transmitNewFrame = true;
 
 		bool* p_serverLock = m_p_currentWorld->getServerLock();
-		while (*p_serverLock);
+		while (*p_serverLock) std::cout << "Vector is locked\n";
 		*p_serverLock = true; //stop the world from interfering with this thread iterating trough the vector
 
 		int vectorSize = int(m_p_currentWorld->getEnemyVector()->size());
-		std::cout << vectorSize << std::endl;
+		std::cout << "vecor size:" << vectorSize << std::endl;
 		p_workSocket->write(vectorSize);	//So the client knows how many enemies will be transmitted
 		SDL_FRect* p_mapBounds = m_p_currentWorld->getBounds();
 
@@ -87,14 +87,13 @@ void GameServer::run()
 		if(p_workSocket->read())
 			p_playerTwo->triggerNewAttack();
 
-
-
 		p_workSocket->write(m_p_currentWorld->getTriggerMerchantSpawnOnClient());
 		m_p_gameHandler->setPlayerTwoReadyForNextWave(!p_workSocket->read());
 
 		clientStatus = static_cast<MultiplayerStatus>(p_workSocket->read());
 		p_workSocket->write(static_cast<int>(m_threadStatus));
-
+		std::cout << static_cast<int>(clientStatus) << std::endl;
+		std::cout << static_cast<int>(m_threadStatus) << std::endl;
 		if (clientStatus != MultiplayerStatus::isRunning || m_threadStatus != MultiplayerStatus::isRunning) {
 			std::cout << "Server ended\n";
 			break;
@@ -102,7 +101,7 @@ void GameServer::run()
 	}
 
 	if (clientStatus == MultiplayerStatus::gameOver)	//If the client dies, the server dies also
-		p_player->damageBody(p_player->getCurrentLives());
+		p_player->killBody();
 	else if (clientStatus == MultiplayerStatus::gameEnded)	//If the client exits the game, the server will also
 		m_p_gameHandler->setGameState(GameStates::hasEnded);
 
