@@ -27,21 +27,24 @@ void GameClient::run()
 {
 	while (!m_p_socket->connect()) {
 		std::cout << "Error, couldn't connect to server! Retrying...\n";
-		Sleep(3000);
+		Sleep(2000);
 		if (m_threadStatus != MultiplayerStatus::isRunning)	//If the connection is stopped
 			return;
 	}	
 
+	m_p_currentWorld->moveWorld(956.0f, 0.0f, 1.0f);
+	m_p_currentWorld->moveWorld( 0.0f, -920.0f, 1.0f);
+
+	Player* p_player = m_p_currentWorld->getPlayer();
 	m_p_gameHandler->updateConnectionEstablished(true);
 	MultiplayerStatus serverStatus;
 	std::vector<int> existingEnemies;
-	Player* p_player = m_p_currentWorld->getPlayer();
 	PlayerTwo* p_playerTwo = m_p_currentWorld->getPlayerTwo();
 
 	while (true) {
 		int vectorSize = m_p_socket->read();	//So the client knows how many enemies will be transmitted
-		//std::cout << vectorSize << std::endl;
-		existingEnemies.clear();			//I dont know which enemies exist at the moment
+		/*std::cout << vectorSize << std::endl;*/
+		existingEnemies.clear();				//I dont know which enemies exist at the moment
 
 		bool* p_serverLock = m_p_currentWorld->getServerLock();
 		while (*p_serverLock);
@@ -51,6 +54,8 @@ void GameClient::run()
 		for (int i = 0; i < vectorSize; i++) {
 
 			int enemyId = m_p_socket->read();
+
+			/*std::cout << "EnemyId: " << enemyId << std::endl;*/
 			existingEnemies.push_back(enemyId);
 			Uint8 enemyType = m_p_socket->read();
 

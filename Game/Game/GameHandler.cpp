@@ -14,6 +14,7 @@
 #include "GameClient.h"
 #include "PlayerTwo.h"
 #include <string>
+#include <Windows.h>
 
 int GameHandler::gameLoop()
 {
@@ -513,14 +514,22 @@ void GameHandler::checkCurrentWave()
 		return;
 
 	if (!m_p_currentWorld->getMerchantIsActive()) {
+
+		bool* p_serverLock = m_p_currentWorld->getServerLock();
+		while (*p_serverLock) /*std::cout << "Vector is locked (GameHandler)\n"*/ Sleep(1);
+		*p_serverLock = true; //To reassure thread safety
+
 		m_waveCounter++;
-		short enemiesToSpawn = 5 + m_waveCounter * 5;
+		short enemiesToSpawn = 5 + m_waveCounter * 3;
 		m_waveTimer = enemiesToSpawn * 10;		//10 seconds to defeat each enemy
 		m_p_currentWorld->getEnemyVector()->reserve(enemiesToSpawn);
 		while (enemiesToSpawn > 0) {
 			if (trySpawningEnemy())
 				enemiesToSpawn--;
 		}
+
+		*p_serverLock = false;
+		m_p_waveClock->setStartPoint(SDL_GetTicks());
 	}
 
 }
@@ -578,6 +587,7 @@ bool GameHandler::trySpawningEnemy()
 	}
 
 	m_p_currentWorld->addEnemyToMap(p_enemy);
+
 	return true;
 }
 
@@ -632,7 +642,7 @@ void GameHandler::renderHud()
 	SDL_Rect enemyBarRect{ 234, 576, 333, 30 };
 	SDL_RenderCopy(m_p_renderer, m_hudTextures[6], NULL, NULL);
 	int numberOfEnemies = int(m_p_currentWorld->getEnemyVector()->size());
-	float enemyPercent = float(numberOfEnemies) / (m_waveCounter * 5.0f + 5.0f);
+	float enemyPercent = float(numberOfEnemies) / float(m_waveCounter * 3 + 5);
 	enemyBarRect.w *= enemyPercent;
 	SDL_RenderCopy(m_p_renderer, m_hudTextures[7], NULL, &enemyBarRect); // Enemy bar
 	enemyBarRect.w = 333;
@@ -732,7 +742,7 @@ bool GameHandler::initiateServer()
 
 	m_gameHandlerType = GameHandlerType::server;
 	m_p_communicationThread = new GameServer(m_p_currentWorld, this);
-	m_p_currentWorld->setPlayerTwo(new PlayerTwo(1, m_p_renderer, { 0,0 }));	//Actual Positon will be transmitted by the client a second afterwards
+	m_p_currentWorld->setPlayerTwo(new PlayerTwo(1, m_p_renderer, { 956.0f, 920.0f }));	//Actual Positon will be transmitted by the client a second afterwards
 	m_p_communicationThread->startThread();
 	return true;
 }
@@ -744,7 +754,7 @@ bool GameHandler::initiateClient(std::string host)
 
 	m_gameHandlerType = GameHandlerType::client;
 	m_p_communicationThread = new GameClient(host, m_p_currentWorld, this);
-	m_p_currentWorld->setPlayerTwo(new PlayerTwo(0, m_p_renderer, { 0,0 }));
+	m_p_currentWorld->setPlayerTwo(new PlayerTwo(0, m_p_renderer, { 9999, 9999 }));
 	m_p_communicationThread->startThread();
 
 	return true;

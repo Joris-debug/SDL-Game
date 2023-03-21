@@ -854,7 +854,7 @@ void MenuManager::renderOptionsMultiplayer(bool mouseButtonPressed, SDL_Renderer
 		buttonInside = { 20, 0, 0 };
 		if (mouseButtonPressed) {			//Button pressed
 			if(m_p_gameHandler->initiateClient(/*"127.0.0.1"*/m_userInput))
-				SoundHandler::getInstance().playClickSound();			
+				SoundHandler::getInstance().playClickSound();
 		}
 	}
 	renderButton(buttonRect, m_p_gameHandler->getFont(Fonts::eightBit, 30), (m_p_gameHandler->getGameHandlerType() == GameHandlerType::client) ? "Joining server..." : "Join server", buttonInside, buttonBorder, renderer);
@@ -928,6 +928,8 @@ void MenuManager::findOutLocalIpAddress()
 	std::string line;
 	std::ifstream IPFile;
 	std::string searchQuery = "IPv4-Adresse  . . . . . . . . . . :";
+
+	system("ipconfig > ip.txt");
 	IPFile.open("ip.txt");
 
 	if (IPFile.is_open())
